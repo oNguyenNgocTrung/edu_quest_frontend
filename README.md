@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EduQuest Web
+
+Next.js 16 frontend for EduQuest — a gamified learning platform for children with parent oversight.
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4
+- **State:** Zustand + React Query
+- **Animation:** Framer Motion
+- **Icons:** Lucide React
+- **Forms:** React Hook Form + Zod
+- **Component Library:** Storybook 10
 
 ## Getting Started
 
-First, run the development server:
+**Requirements:** Node.js 20+ (Storybook requires Node 20)
 
 ```bash
+# If using nvm
+nvm use 20
+
+# Install dependencies
+npm install
+
+# Start the dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Next.js dev server |
+| `npm run build` | Production build |
+| `npm run start` | Serve production build |
+| `npm run lint` | Run ESLint |
+| `npm run storybook` | Start Storybook at localhost:6006 |
+| `npm run build-storybook` | Build static Storybook site |
 
-## Learn More
+## Storybook
 
-To learn more about Next.js, take a look at the following resources:
+The component library is documented with Storybook 10 using `@storybook/nextjs-vite`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run storybook
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### What's in Storybook
 
-## Deploy on Vercel
+**UI Primitives** (`src/components/ui/`) — Reusable building blocks:
+- Button, Card, Badge, ProgressBar, Alert, Input, Select
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Components** — App-specific components with stories:
+- Mascot, BottomNav, BrainBoostBanner, YourSubjects
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Design System** (`src/stories/`) — Documentation pages:
+- Design Tokens (colors, typography, spacing)
+- Animations (hover, floating, spinning, shimmer)
+- Icons (Lucide icon gallery)
+
+## Project Structure
+
+```
+src/
+├── app/              # Next.js App Router pages
+├── components/
+│   ├── ui/           # Reusable UI primitives (Button, Card, etc.)
+│   ├── child/        # Child-facing app components
+│   └── Mascot.tsx    # Animated owl mascot
+├── lib/
+│   └── utils.ts      # cn() classname utility
+├── stores/           # Zustand stores
+├── services/         # API service layer
+├── types/            # TypeScript type definitions
+└── stories/          # Design system documentation
+```
