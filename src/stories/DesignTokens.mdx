@@ -1,0 +1,94 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Design System/Design Tokens" />
+
+# EduQuest Design Tokens
+
+## Color Palette
+
+### Child App Colors
+
+<div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "32px" }}>
+  <div>
+    <div style={{ height: "96px", background: "#9333ea", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Primary Purple</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>#9333EA</p>
+  </div>
+  <div>
+    <div style={{ height: "96px", background: "#ec4899", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Accent Pink</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>#EC4899</p>
+  </div>
+  <div>
+    <div style={{ height: "96px", background: "#f97316", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Secondary Orange</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>#F97316</p>
+  </div>
+  <div>
+    <div style={{ height: "96px", background: "#22c55e", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Success Green</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>#22C55E</p>
+  </div>
+</div>
+
+### Additional Colors
+
+<div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "32px" }}>
+  <div>
+    <div style={{ height: "96px", background: "#14b8a6", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Teal Accent</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>#14B8A6</p>
+  </div>
+  <div>
+    <div style={{ height: "96px", background: "#6366f1", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Parent Indigo</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>#6366F1</p>
+  </div>
+  <div>
+    <div style={{ height: "96px", background: "#ef4444", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Error Red</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>#EF4444</p>
+  </div>
+  <div>
+    <div style={{ height: "96px", background: "#fbbf24", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Warning Yellow</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>#FBBF24</p>
+  </div>
+</div>
+
+### Background Gradients
+
+<div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", marginBottom: "32px" }}>
+  <div>
+    <div style={{ height: "96px", background: "linear-gradient(to bottom, #f3e8ff, #fce7f3, #fff7ed)", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Page Background</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>from-purple-100 via-pink-50 to-orange-50</p>
+  </div>
+  <div>
+    <div style={{ height: "96px", background: "linear-gradient(to right, #a855f7, #ec4899)", borderRadius: "12px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", marginBottom: "8px" }} />
+    <p style={{ fontSize: "14px", fontWeight: 600, color: "#374151" }}>Primary Gradient</p>
+    <p style={{ fontSize: "12px", color: "#6b7280" }}>from-purple-500 to-pink-500</p>
+  </div>
+</div>
+
+---
+
+## Typography
+
+| Level | Font | Weight | Size | Class |
+|-------|------|--------|------|-------|
+| **H1** | Nunito | 900 (black) | 2.25rem | `text-4xl font-black` |
+| **H2** | Nunito | 900 (black) | 1.875rem | `text-3xl font-black` |
+| **H3** | Nunito | 700 (bold) | 1.5rem | `text-2xl font-bold` |
+| **Body** | Inter | 400 | 1rem | `text-base` |
+| **Small** | Inter | 400 | 0.875rem | `text-sm` |
+
+---
+
+## Spacing & Rounding
+
+- Touch targets: minimum 44px
+- Card corners: `rounded-xl` (12px), `rounded-2xl` (16px), `rounded-3xl` (24px)
+- Button corners: `rounded-xl` (12px)
+- Badge corners: `rounded-full`
+- Standard gaps: `gap-2` (8px), `gap-3` (12px), `gap-4` (16px), `gap-6` (24px)
