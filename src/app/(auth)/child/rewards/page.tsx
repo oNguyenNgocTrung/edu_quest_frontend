@@ -6,14 +6,16 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "@/lib/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Reward } from "@/types";
-import { ArrowLeft, Coins, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Coins, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { BottomNav } from "@/components/child/BottomNav";
 
 export default function RewardShopPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { currentChildProfile } = useAuthStore();
+  const [showConfetti, setShowConfetti] = useState(false);
   const [redeemedItem, setRedeemedItem] = useState<string | null>(null);
 
   const { data: rewards } = useQuery({
@@ -34,8 +36,13 @@ export default function RewardShopPage() {
     onSuccess: (_, rewardId) => {
       const reward = rewards?.find((r) => r.id === rewardId);
       setRedeemedItem(reward?.name || "Reward");
+      setShowConfetti(true);
       toast.success(`Redeemed: ${reward?.name}!`);
       queryClient.invalidateQueries({ queryKey: ["rewards"] });
+      setTimeout(() => {
+        setShowConfetti(false);
+        setRedeemedItem(null);
+      }, 3000);
     },
     onError: () => {
       toast.error("Not enough coins or reward unavailable");
@@ -45,106 +52,198 @@ export default function RewardShopPage() {
   const coins = currentChildProfile?.coins || 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 pb-20">
+    <div className="min-h-screen bg-gradient-to-b from-yellow-50 via-orange-50 to-pink-50 pb-24">
       {/* Header */}
-      <div className="bg-gradient-to-r from-amber-400 to-orange-400 px-4 py-6 text-white">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-white/80 hover:text-white mb-4"
-        >
-          <ArrowLeft size={20} />
-          Back
-        </button>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <ShoppingBag size={24} />
-              Reward Shop
-            </h1>
-            <p className="text-white/80 text-sm mt-1">
-              Spend your hard-earned coins!
-            </p>
-          </div>
-          <div className="bg-white/20 rounded-xl px-4 py-2 flex items-center gap-2">
-            <Coins size={20} />
-            <span className="text-xl font-bold">{coins}</span>
+      <div className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="max-w-2xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => router.back()}
+                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100"
+              >
+                <ArrowLeft className="w-6 h-6 text-gray-600" />
+              </button>
+              <h1 className="text-xl font-black text-gray-800">Reward Shop</h1>
+            </div>
+
+            <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-400 px-4 py-2 rounded-full shadow-lg">
+              <Coins className="w-5 h-5 text-white" />
+              <span className="font-black text-white text-lg">{coins}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Coin earning tips */}
-      <div className="max-w-lg mx-auto p-4">
-        <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
-          <h3 className="font-semibold text-gray-800 mb-2">Earn More Coins</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="flex items-center gap-2 text-gray-600">
-              <span className="text-amber-500">🎯</span> Daily Quest: 50 coins
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <span className="text-amber-500">⭐</span> Perfect Score: 30 coins
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <span className="text-amber-500">🔥</span> 7-Day Streak: 100 coins
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <span className="text-amber-500">⚔️</span> Beat Boss: 200 coins
-            </div>
+      {/* Content */}
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        {/* Promotional Banner */}
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl p-6 mb-6 text-white">
+          <div className="flex items-center gap-3 mb-2">
+            <Sparkles className="w-6 h-6" />
+            <h2 className="text-xl font-black">Spend Your Coins!</h2>
           </div>
+          <p className="text-white/90">
+            Complete lessons and quests to earn more coins and unlock amazing
+            rewards!
+          </p>
         </div>
 
-        {/* Rewards grid */}
-        <h3 className="font-bold text-gray-800 mb-3">Available Rewards</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {rewards?.map((reward) => {
+        {/* Rewards Grid */}
+        <div className="grid grid-cols-2 gap-4">
+          {rewards?.map((reward, index) => {
             const canAfford = coins >= reward.cost_coins;
+            const isLocked = !reward.is_active;
+
             return (
               <motion.div
                 key={reward.id}
-                whileHover={{ scale: 1.02 }}
-                className={`bg-white rounded-2xl p-4 shadow-sm ${
-                  !reward.is_active ? "opacity-50" : ""
-                }`}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.05 }}
+                className="relative"
               >
-                <div className="text-4xl text-center mb-2">{reward.icon}</div>
-                <h4 className="font-semibold text-gray-800 text-sm text-center">
-                  {reward.name}
-                </h4>
-                <div className="flex items-center justify-center gap-1 mt-2 text-amber-500">
-                  <Coins size={14} />
-                  <span className="text-sm font-bold">{reward.cost_coins}</span>
-                </div>
-                <button
-                  disabled={!canAfford || !reward.is_active || redeemMutation.isPending}
-                  onClick={() => redeemMutation.mutate(reward.id)}
-                  className={`w-full mt-3 py-2 rounded-lg text-sm font-semibold transition ${
-                    canAfford && reward.is_active
-                      ? "bg-indigo-600 text-white hover:bg-indigo-700"
-                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                <div
+                  className={`bg-white rounded-2xl p-5 shadow-lg transition-all ${
+                    isLocked ? "opacity-50" : ""
                   }`}
                 >
-                  {!reward.is_active
-                    ? "Locked"
-                    : canAfford
-                    ? "Redeem"
-                    : "Need more coins"}
-                </button>
+                  <div className="text-6xl mb-3 text-center">{reward.icon}</div>
+
+                  <h3 className="font-bold text-gray-800 text-center mb-3 min-h-[40px] text-sm">
+                    {reward.name}
+                  </h3>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-center gap-1 text-yellow-600 font-bold">
+                      <Coins className="w-4 h-4" />
+                      <span>{reward.cost_coins}</span>
+                    </div>
+
+                    <motion.button
+                      whileHover={
+                        canAfford && !isLocked ? { scale: 1.05 } : {}
+                      }
+                      whileTap={
+                        canAfford && !isLocked ? { scale: 0.95 } : {}
+                      }
+                      disabled={
+                        !canAfford || isLocked || redeemMutation.isPending
+                      }
+                      onClick={() => redeemMutation.mutate(reward.id)}
+                      className={`w-full py-2 rounded-xl font-bold text-sm transition-all ${
+                        isLocked
+                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          : canAfford
+                            ? "bg-gradient-to-r from-green-400 to-teal-500 text-white shadow-md hover:shadow-lg"
+                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      }`}
+                    >
+                      {isLocked
+                        ? "Locked"
+                        : canAfford
+                          ? "Redeem"
+                          : "Need More"}
+                    </motion.button>
+                  </div>
+                </div>
               </motion.div>
             );
           })}
         </div>
 
-        {/* Redeemed toast feedback */}
-        {redeemedItem && (
+        {/* Earn More Coins Tips */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-8 bg-blue-100 rounded-2xl p-5"
+        >
+          <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
+            <Sparkles className="w-5 h-5" />
+            Earn More Coins!
+          </h3>
+          <ul className="text-sm text-blue-800 space-y-1">
+            <li>
+              Complete daily quests:{" "}
+              <span className="font-bold">+50 coins</span>
+            </li>
+            <li>
+              Perfect lesson score:{" "}
+              <span className="font-bold">+30 coins</span>
+            </li>
+            <li>
+              7-day streak: <span className="font-bold">+100 coins</span>
+            </li>
+            <li>
+              Beat a boss level: <span className="font-bold">+200 coins</span>
+            </li>
+          </ul>
+        </motion.div>
+      </div>
+
+      {/* Confetti Celebration Overlay */}
+      <AnimatePresence>
+        {showConfetti && (
           <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="fixed bottom-4 left-4 right-4 bg-green-500 text-white rounded-xl p-4 text-center font-semibold shadow-lg"
-            onClick={() => setRedeemedItem(null)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center"
           >
-            🎉 You redeemed: {redeemedItem}!
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0, opacity: 0 }}
+              className="bg-white rounded-3xl p-8 shadow-2xl text-center max-w-sm"
+            >
+              <div className="text-6xl mb-4">🎉</div>
+              <h2 className="text-2xl font-black text-gray-800 mb-2">
+                Redeemed!
+              </h2>
+              <p className="text-gray-600">
+                You got:{" "}
+                <span className="font-bold text-purple-600">
+                  {redeemedItem}
+                </span>
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                Check with your parent to claim it!
+              </p>
+            </motion.div>
+
+            {/* Confetti particles */}
+            {Array.from({ length: 20 }).map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{
+                  x: 0,
+                  y: 0,
+                  scale: 0,
+                }}
+                animate={{
+                  x: Math.cos((i * 18 * Math.PI) / 180) * (150 + (i * 17) % 100),
+                  y: Math.sin((i * 18 * Math.PI) / 180) * (150 + (i * 13) % 100),
+                  scale: 1,
+                  rotate: (i * 47) % 360,
+                }}
+                transition={{
+                  duration: 1.5,
+                  delay: (i * 3) % 5 * 0.04,
+                }}
+                className="absolute w-4 h-4 rounded-full"
+                style={{
+                  backgroundColor: ["#f59e0b", "#ec4899", "#8b5cf6", "#10b981"][
+                    i % 4
+                  ],
+                }}
+              />
+            ))}
           </motion.div>
         )}
-      </div>
+      </AnimatePresence>
+
+      <BottomNav />
     </div>
   );
 }

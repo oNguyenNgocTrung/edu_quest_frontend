@@ -44,6 +44,7 @@ export interface Subject {
   position: number;
   enrollment?: SubjectEnrollment | null;
   skill_nodes_count: number;
+  worksheet_decks_count?: number;
 }
 
 // ─── Skill Node ────────────────────────────────────────────────
@@ -68,6 +69,7 @@ export interface Deck {
   deck_type: "flashcards" | "quiz" | "exam";
   tags: string[];
   is_published: boolean;
+  worksheet_id: string | null;
   flashcards_count: number;
   questions_count: number;
 }
@@ -89,6 +91,8 @@ export interface Question {
   options: string[];
   xp_value: number;
   position: number;
+  question_type: "mcq" | "fill_blank" | "true_false";
+  is_ai_generated: boolean;
   correct_answer_index?: number;
   explanation?: string;
 }
@@ -110,8 +114,33 @@ export interface SubmitAnswerResponse {
   xp_earned: number;
   lives_remaining: number;
   correct_answer_index: number;
+  correct_answer: string | null;
   explanation: string | null;
   session_status: string;
+}
+
+// ─── Practice ─────────────────────────────────────────────────
+export interface PracticeItem {
+  deck_id: string;
+  deck_name: string;
+  worksheet_title: string | null;
+  worksheet_date: string | null;
+  subject_name: string | null;
+  questions_count: number;
+  ai_generated_count: number;
+  estimated_minutes: number;
+  xp_reward: number;
+  best_stars: number;
+  in_progress_session_id: string | null;
+  status: "new" | "in_progress" | "review_due" | "completed";
+}
+
+export interface TodayPracticeResponse {
+  today_practice: PracticeItem[];
+  review_due: PracticeItem[];
+  completed: PracticeItem[];
+  total_pending: number;
+  total_review: number;
 }
 
 // ─── Gamification ──────────────────────────────────────────────
@@ -176,6 +205,28 @@ export interface MasteryDataPoint {
   color: string;
 }
 
+// ─── Dashboard Summary ────────────────────────────────────────
+export interface DashboardSummary {
+  accuracy: number;
+  accuracy_change: number;
+  daily_avg_minutes: number;
+  mastered_count: number;
+  streak_days: number;
+  streak_longest: number;
+  recent_activity: RecentActivity[];
+}
+
+export interface RecentActivity {
+  id: string;
+  subject_name: string;
+  subject_color: string;
+  lesson_name: string;
+  score: number;
+  stars: number;
+  xp_earned: number;
+  completed_at: string;
+}
+
 // ─── AI Generation ─────────────────────────────────────────────
 export interface AiGenerationJob {
   id: string;
@@ -193,6 +244,50 @@ export interface GeneratedCard {
   front: string;
   back: string;
   approved: boolean | null;
+}
+
+// ─── Worksheet ────────────────────────────────────────────────
+export interface WorksheetProcessingStep {
+  id: string;
+  label: string;
+  status: "completed" | "in-progress" | "pending";
+  progress: number;
+}
+
+export interface WorksheetExtractedQuestion {
+  id: number;
+  number: number;
+  text: string;
+  type: "mcq" | "fill-blank" | "true-false";
+  options: string[];
+  correct_answer: string;
+  confidence: number;
+  needs_review: boolean;
+  similar_exercises: WorksheetSimilarExercise[];
+}
+
+export interface WorksheetSimilarExercise {
+  text: string;
+  type: "mcq" | "fill-blank" | "true-false";
+  options: string[];
+  correct_answer: string;
+}
+
+export interface Worksheet {
+  id: string;
+  title: string | null;
+  status: "pending" | "processing" | "extracted" | "approved" | "failed";
+  school_date: string | null;
+  chapter: string | null;
+  textbook_reference: string | null;
+  questions_count: number;
+  ai_confidence: number;
+  extracted_questions: WorksheetExtractedQuestion[];
+  processing_steps: WorksheetProcessingStep[];
+  error_message: string | null;
+  image_url: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // ─── Card Review (Spaced Repetition) ───────────────────────────

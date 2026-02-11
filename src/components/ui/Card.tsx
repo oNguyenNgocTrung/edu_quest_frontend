@@ -40,7 +40,7 @@ export function Card({
           ? { background: gradient }
           : undefined
       }
-      {...props}
+      {...(props as React.ComponentPropsWithoutRef<typeof motion.div>)}
     >
       {children}
     </motion.div>
