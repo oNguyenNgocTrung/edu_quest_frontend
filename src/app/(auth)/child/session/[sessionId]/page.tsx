@@ -33,15 +33,20 @@ export default function SessionPage() {
   const [lastXPGain, setLastXPGain] = useState(0);
   const isCreatingRef = useRef(false);
 
-  // Create a new session from deckId (for /child/session/new?deckId=...)
+  // Create a new session from deckId or skillNodeId
   useEffect(() => {
     if (sessionId !== "new" || isCreatingRef.current || !currentChildProfile) return;
     const deckId = searchParams.get("deckId");
-    if (!deckId) return;
+    const skillNodeId = searchParams.get("skillNodeId");
+    if (!deckId && !skillNodeId) return;
 
     isCreatingRef.current = true;
+    const payload: Record<string, string> = {};
+    if (deckId) payload.deck_id = deckId;
+    if (skillNodeId) payload.skill_node_id = skillNodeId;
+
     apiClient
-      .post("/learning_sessions", { deck_id: deckId })
+      .post("/learning_sessions", payload)
       .then(({ data }) => {
         const newSession = data.session.attributes as LearningSession;
         const newQuestions = data.questions.map(

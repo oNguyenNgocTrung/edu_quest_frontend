@@ -455,7 +455,7 @@ export default function LearnSubjectPage() {
     .reduce((sum, n) => sum + n.xp_reward, 0);
 
   const handleNodeNavigate = (nodeId: string) => {
-    router.push(`/child/session/${nodeId}?subject=${subjectId}`);
+    router.push(`/child/session/new?skillNodeId=${nodeId}`);
   };
 
   const getMascotMessage = () => {
@@ -1007,7 +1007,7 @@ export default function LearnSubjectPage() {
                             status === "completed"
                           ) {
                             router.push(
-                              `/child/session/${node.id}?subject=${subjectId}`
+                              `/child/session/new?skillNodeId=${node.id}`
                             );
                           }
                         }}
