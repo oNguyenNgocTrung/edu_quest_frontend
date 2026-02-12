@@ -315,6 +315,8 @@ export interface CurriculumSubject {
   display_color: string;
   skill_nodes_count: number;
   is_enrolled: boolean;
+  creator_id: string | null;
+  is_custom: boolean;
   enrollment: {
     mastery_level: number;
     current_level: number;

@@ -494,7 +494,21 @@
     "updated": "Updated!",
     "noNodes": "No lessons in this subject yet",
     "enroll": "Enable subject",
-    "unenroll": "Disable subject"
+    "unenroll": "Disable subject",
+    "addSubject": "Add Subject",
+    "createSubject": "Create Subject",
+    "editSubject": "Edit Subject",
+    "subjectName": "Subject Name",
+    "subjectNamePlaceholder": "e.g., Art, Music...",
+    "subjectNameRequired": "Subject name is required",
+    "selectIcon": "Select Icon",
+    "selectColor": "Select Color",
+    "subjectCreated": "Subject created!",
+    "subjectUpdated": "Subject updated!",
+    "subjectDeleted": "Subject deleted",
+    "deleteSubjectConfirm": "Are you sure you want to delete this subject? All lessons inside will also be deleted.",
+    "createSubjectError": "Failed to create subject",
+    "updateSubjectError": "Failed to update subject"
   },
   "common": {
     "dashboard": "Dashboard",

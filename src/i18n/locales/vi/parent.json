@@ -493,7 +493,21 @@
     "updated": "Đã cập nhật!",
     "noNodes": "Chưa có bài học nào",
     "enroll": "Bật môn học",
-    "unenroll": "Tắt môn học"
+    "unenroll": "Tắt môn học",
+    "addSubject": "Thêm môn học",
+    "createSubject": "Tạo môn học",
+    "editSubject": "Sửa môn học",
+    "subjectName": "Tên môn học",
+    "subjectNamePlaceholder": "Ví dụ: Mỹ thuật, Âm nhạc...",
+    "subjectNameRequired": "Tên môn học là bắt buộc",
+    "selectIcon": "Chọn biểu tượng",
+    "selectColor": "Chọn màu sắc",
+    "subjectCreated": "Đã tạo môn học!",
+    "subjectUpdated": "Đã cập nhật môn học!",
+    "subjectDeleted": "Đã xóa môn học",
+    "deleteSubjectConfirm": "Bạn có chắc muốn xóa môn học này? Tất cả bài học bên trong cũng sẽ bị xóa.",
+    "createSubjectError": "Không thể tạo môn học",
+    "updateSubjectError": "Không thể cập nhật môn học"
   },
   "common": {
     "dashboard": "Tổng quan",

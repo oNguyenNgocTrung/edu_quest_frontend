@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import apiClient from "@/lib/api-client";
 import { useAuthStore } from "@/stores/auth-store";
+import { getSubjectIcon } from "@/lib/subject-icons";
+import { SubjectModal } from "@/components/parent/SubjectModal";
 import type {
   CurriculumSubject,
   CurriculumSkillNode,
@@ -20,26 +22,11 @@ import {
   Trophy,
   Plus,
   Trash2,
+  Pencil,
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
 import { toast } from "sonner";
-
-const subjectIcons: Record<string, string> = {
-  math: "🔢",
-  science: "🔬",
-  english: "📖",
-  history: "🏛️",
-  geography: "🌍",
-  art: "🎨",
-  music: "🎵",
-  book: "📚",
-};
-
-function getSubjectIcon(iconName: string | null): string {
-  if (!iconName) return "📚";
-  return subjectIcons[iconName.toLowerCase()] || "📚";
-}
 
 export default function CurriculumPage() {
   const router = useRouter();
@@ -59,6 +46,9 @@ export default function CurriculumPage() {
     node_type: "lesson" as "lesson" | "boss",
     deck_id: "",
   });
+  const [showSubjectModal, setShowSubjectModal] = useState(false);
+  const [editingSubject, setEditingSubject] =
+    useState<CurriculumSubject | null>(null);
 
   const selectedChild = childProfiles.find((c) => c.id === selectedChildId);
 
@@ -206,6 +196,25 @@ export default function CurriculumPage() {
     },
   });
 
+  // Delete custom subject
+  const deleteSubjectMutation = useMutation({
+    mutationFn: async (subjectId: string) => {
+      await apiClient.delete(`/curriculum/subjects/${subjectId}`);
+    },
+    onSuccess: () => {
+      toast.success(t("curriculum.subjectDeleted"));
+      if (expandedSubjectId) {
+        setExpandedSubjectId(null);
+      }
+      queryClient.invalidateQueries({
+        queryKey: ["curriculum_subjects", selectedChildId],
+      });
+    },
+    onError: () => {
+      toast.error(t("common.error"));
+    },
+  });
+
   // Reorder skill nodes
   const reorderMutation = useMutation({
     mutationFn: async (nodeIds: string[]) => {
@@ -237,6 +246,11 @@ export default function CurriculumPage() {
   const toggleExpand = (subjectId: string) => {
     setExpandedSubjectId(expandedSubjectId === subjectId ? null : subjectId);
     setShowAddNode(false);
+  };
+
+  const handleDeleteSubject = (subject: CurriculumSubject) => {
+    if (!confirm(t("curriculum.deleteSubjectConfirm"))) return;
+    deleteSubjectMutation.mutate(subject.id);
   };
 
   return (
@@ -336,9 +350,16 @@ export default function CurriculumPage() {
 
                 {/* Subject info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-gray-800 text-[15px]">
-                    {subject.name}
-                  </h3>
+                  <div className="flex items-center gap-1.5">
+                    <h3 className="font-bold text-gray-800 text-[15px]">
+                      {subject.name}
+                    </h3>
+                    {subject.is_custom && (
+                      <span className="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full leading-tight flex-shrink-0">
+                        {t("curriculum.custom")}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-xs text-gray-500 mt-0.5">
                     {subject.skill_nodes_count}{" "}
                     {t("curriculum.lessons").toLowerCase()}
@@ -359,6 +380,31 @@ export default function CurriculumPage() {
                       </div>
                     )}
                 </div>
+
+                {/* Edit/delete for custom subjects */}
+                {subject.is_custom && (
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingSubject(subject);
+                        setShowSubjectModal(true);
+                      }}
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteSubject(subject);
+                      }}
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
 
                 {/* Toggle switch */}
                 <button
@@ -638,7 +684,37 @@ export default function CurriculumPage() {
             </div>
           );
         })}
+
+        {/* Add Subject button */}
+        {!subjectsLoading && (
+          <button
+            onClick={() => {
+              setEditingSubject(null);
+              setShowSubjectModal(true);
+            }}
+            className="w-full py-4 border-2 border-dashed border-gray-200 rounded-xl text-gray-400 hover:border-indigo-300 hover:text-indigo-500 transition flex items-center justify-center gap-2 text-sm font-medium"
+          >
+            <Plus size={18} />
+            {t("curriculum.addSubject")}
+          </button>
+        )}
       </div>
+
+      {/* Subject Modal */}
+      {showSubjectModal && (
+        <SubjectModal
+          subject={editingSubject}
+          onClose={() => {
+            setShowSubjectModal(false);
+            setEditingSubject(null);
+          }}
+          onSaved={() => {
+            queryClient.invalidateQueries({
+              queryKey: ["curriculum_subjects", selectedChildId],
+            });
+          }}
+        />
+      )}
     </div>
   );
 }
