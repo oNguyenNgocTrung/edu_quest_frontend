@@ -453,7 +453,11 @@
     "cancel": "Cancel",
     "deckAssigned": "Deck assigned!",
     "nodeCreated": "Lesson created!",
-    "nodeDeleted": "Lesson deleted"
+    "nodeDeleted": "Lesson deleted",
+    "updated": "Updated!",
+    "noNodes": "No lessons in this subject yet",
+    "enroll": "Enable subject",
+    "unenroll": "Disable subject"
   },
   "common": {
     "dashboard": "Dashboard",

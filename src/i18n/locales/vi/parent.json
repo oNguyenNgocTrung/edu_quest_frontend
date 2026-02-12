@@ -452,7 +452,11 @@
     "cancel": "Hủy",
     "deckAssigned": "Đã gán bộ thẻ!",
     "nodeCreated": "Đã tạo bài học!",
-    "nodeDeleted": "Đã xóa bài học"
+    "nodeDeleted": "Đã xóa bài học",
+    "updated": "Đã cập nhật!",
+    "noNodes": "Chưa có bài học nào",
+    "enroll": "Bật môn học",
+    "unenroll": "Tắt môn học"
   },
   "common": {
     "dashboard": "Tổng quan",
