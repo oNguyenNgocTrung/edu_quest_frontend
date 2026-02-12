@@ -21,6 +21,7 @@ import {
   Flame,
   AlertCircle,
   Plus,
+  GraduationCap,
 } from "lucide-react";
 import apiClient from "@/lib/api-client";
 import type { Worksheet, DashboardSummary, MasteryDataPoint } from "@/types";
@@ -56,6 +57,13 @@ export default function ParentDashboardPage() {
   const { user, logout, childProfiles, selectChildProfile } = useAuthStore();
 
   const menuItems = [
+    {
+      label: t("dashboard.curriculum"),
+      icon: GraduationCap,
+      href: "/parent/curriculum",
+      color: "bg-teal-100 text-teal-600",
+      description: t("dashboard.manageCurriculum"),
+    },
     {
       label: t("dashboard.contentCreator"),
       icon: BookOpen,
@@ -510,6 +518,13 @@ export default function ParentDashboardPage() {
                 {t("dashboard.quickLinks")}
               </h2>
               <div className="space-y-2">
+                <button
+                  onClick={() => router.push("/parent/curriculum")}
+                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition-colors flex items-center gap-2"
+                >
+                  <GraduationCap className="w-4 h-4 text-teal-500" />
+                  {t("dashboard.manageCurriculum")}
+                </button>
                 <button
                   onClick={() => router.push("/parent/analytics")}
                   className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition-colors flex items-center gap-2"

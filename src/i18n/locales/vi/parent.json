@@ -54,7 +54,9 @@
     "trackProgress": "Theo dõi tiến trình học tập",
     "rewards": "Phần thưởng",
     "manageRewardShop": "Quản lý cửa hàng thưởng",
-    "accountSettings": "Cài đặt tài khoản"
+    "accountSettings": "Cài đặt tài khoản",
+    "curriculum": "Chương trình học",
+    "manageCurriculum": "Quản lý môn học & lộ trình"
   },
   "analytics": {
     "title": "Phân tích tiến trình",
@@ -431,6 +433,26 @@
     "questions": "Câu hỏi",
     "worksheetQuestions": "Câu hỏi bài tập",
     "fileEmpty": "File trống"
+  },
+  "curriculum": {
+    "title": "Quản lý chương trình học",
+    "subtitle": "Chọn môn học và gán nội dung cho lộ trình học của con",
+    "dashboard": "Tổng quan",
+    "selectChild": "Chọn con",
+    "managingFor": "Quản lý chương trình cho {{name}}",
+    "lessons": "Bài học",
+    "mastery": "thành thạo",
+    "custom": "Tùy chỉnh",
+    "lessonNode": "Bài học",
+    "bossNode": "Thử thách",
+    "noDeck": "Chưa gán bộ thẻ",
+    "addLesson": "Thêm bài học",
+    "lessonTitle": "Tên bài học...",
+    "create": "Tạo",
+    "cancel": "Hủy",
+    "deckAssigned": "Đã gán bộ thẻ!",
+    "nodeCreated": "Đã tạo bài học!",
+    "nodeDeleted": "Đã xóa bài học"
   },
   "common": {
     "dashboard": "Tổng quan",

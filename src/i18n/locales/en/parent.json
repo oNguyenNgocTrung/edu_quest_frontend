@@ -54,7 +54,9 @@
     "trackProgress": "Track learning progress",
     "rewards": "Rewards",
     "manageRewardShop": "Manage reward shop",
-    "accountSettings": "Account settings"
+    "accountSettings": "Account settings",
+    "curriculum": "Curriculum",
+    "manageCurriculum": "Manage subjects & learning path"
   },
   "analytics": {
     "title": "Progress Analytics",
@@ -432,6 +434,26 @@
     "questions": "Questions",
     "worksheetQuestions": "Worksheet Questions",
     "fileEmpty": "File is empty"
+  },
+  "curriculum": {
+    "title": "Curriculum Management",
+    "subtitle": "Choose subjects and assign content for your child's learning path",
+    "dashboard": "Dashboard",
+    "selectChild": "Select Child",
+    "managingFor": "Managing curriculum for {{name}}",
+    "lessons": "Lessons",
+    "mastery": "mastery",
+    "custom": "Custom",
+    "lessonNode": "Lesson",
+    "bossNode": "Challenge",
+    "noDeck": "No deck assigned",
+    "addLesson": "Add Lesson",
+    "lessonTitle": "Lesson title...",
+    "create": "Create",
+    "cancel": "Cancel",
+    "deckAssigned": "Deck assigned!",
+    "nodeCreated": "Lesson created!",
+    "nodeDeleted": "Lesson deleted"
   },
   "common": {
     "dashboard": "Dashboard",

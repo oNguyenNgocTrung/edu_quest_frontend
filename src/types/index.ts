@@ -31,6 +31,7 @@ export interface SubjectEnrollment {
   mastery_level: number;
   current_level: number;
   is_pinned: boolean;
+  is_active: boolean;
   total_xp: number;
   completed_nodes_count: number;
 }
@@ -59,6 +60,10 @@ export interface SkillNode {
   prerequisites: string[];
   unlocked?: boolean;
   best_stars?: number;
+  deck_id?: string | null;
+  deck_name?: string | null;
+  creator_id?: string | null;
+  is_custom?: boolean;
 }
 
 // ─── Deck ──────────────────────────────────────────────────────
@@ -70,6 +75,7 @@ export interface Deck {
   tags: string[];
   is_published: boolean;
   worksheet_id: string | null;
+  subject_id: string | null;
   flashcards_count: number;
   questions_count: number;
 }
@@ -288,6 +294,47 @@ export interface Worksheet {
   image_url: string | null;
   created_at: string;
   updated_at: string;
+}
+
+// ─── Curriculum ─────────────────────────────────────────────────
+export interface CurriculumSubject {
+  id: string;
+  name: string;
+  description: string;
+  icon_name: string;
+  display_color: string;
+  skill_nodes_count: number;
+  is_enrolled: boolean;
+  enrollment: {
+    mastery_level: number;
+    current_level: number;
+    total_xp: number;
+    completed_nodes_count: number;
+  } | null;
+}
+
+export interface CurriculumSkillNode {
+  id: string;
+  title: string;
+  position: number;
+  node_type: "lesson" | "boss";
+  xp_reward: number;
+  max_stars: number;
+  level_number: number;
+  deck_id: string | null;
+  deck_name: string | null;
+  creator_id: string | null;
+  is_custom: boolean;
+  best_stars?: number;
+}
+
+export interface AvailableDeck {
+  id: string;
+  name: string;
+  deck_type: string;
+  difficulty: string;
+  questions_count: number;
+  subject_id: string | null;
 }
 
 // ─── Card Review (Spaced Repetition) ───────────────────────────
