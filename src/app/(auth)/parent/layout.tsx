@@ -6,21 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTranslation } from "react-i18next";
+import { resolveAvatar } from "@/lib/avatars";
 import type { ChildProfile } from "@/types";
-
-const avatarEmojis: Record<string, string> = {
-  fox: "🦊",
-  owl: "🦉",
-  panda: "🐼",
-  rabbit: "🐰",
-  cat: "🐱",
-  dog: "🐶",
-};
-
-function getAvatarEmoji(avatar: string | null): string {
-  if (!avatar) return "🧒";
-  return avatarEmojis[avatar] || avatar;
-}
 
 export default function ParentLayout({
   children,
@@ -117,7 +104,7 @@ export default function ParentLayout({
                   className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-indigo-50 transition-colors text-left"
                 >
                   <span className="text-xl">
-                    {getAvatarEmoji(profile.avatar)}
+                    {resolveAvatar(profile.avatar).emoji}
                   </span>
                   <span className="text-sm font-semibold text-gray-700">
                     {profile.name}

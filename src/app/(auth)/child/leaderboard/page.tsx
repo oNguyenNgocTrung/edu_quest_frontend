@@ -9,6 +9,7 @@ import apiClient from "@/lib/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { ArrowLeft, Trophy, Medal, Crown } from "lucide-react";
 import { BottomNav } from "@/components/child/BottomNav";
+import { resolveAvatar } from "@/lib/avatars";
 
 interface LeaderboardEntry {
   id: string;
@@ -18,15 +19,6 @@ interface LeaderboardEntry {
   level: number;
   rank: number;
 }
-
-const avatarMap: Record<string, string> = {
-  fox: "🦊",
-  owl: "🦉",
-  panda: "🐼",
-  lion: "🦁",
-  rabbit: "🐰",
-  frog: "🐸",
-};
 
 function getRankColor(rank: number) {
   switch (rank) {
@@ -113,7 +105,7 @@ export default function LeaderboardPage() {
             >
               <div className="relative mb-2">
                 <div className="w-16 h-16 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center text-3xl shadow-lg">
-                  {avatarMap[topThree[1].avatar] ?? "👤"}
+                  {resolveAvatar(topThree[1].avatar).emoji}
                 </div>
                 <div className="absolute -top-1 -right-1 w-7 h-7 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center shadow-md">
                   <span className="text-white font-black text-xs">2</span>
@@ -139,7 +131,7 @@ export default function LeaderboardPage() {
                 className="relative mb-2"
               >
                 <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-4xl shadow-xl">
-                  {avatarMap[topThree[0].avatar] ?? "👤"}
+                  {resolveAvatar(topThree[0].avatar).emoji}
                 </div>
                 <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-md">
                   <Crown className="w-5 h-5 text-white" />
@@ -161,7 +153,7 @@ export default function LeaderboardPage() {
             >
               <div className="relative mb-2">
                 <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-yellow-600 rounded-full flex items-center justify-center text-3xl shadow-lg">
-                  {avatarMap[topThree[2].avatar] ?? "👤"}
+                  {resolveAvatar(topThree[2].avatar).emoji}
                 </div>
                 <div className="absolute -top-1 -right-1 w-7 h-7 bg-gradient-to-br from-orange-400 to-yellow-600 rounded-full flex items-center justify-center shadow-md">
                   <span className="text-white font-black text-xs">3</span>
@@ -197,7 +189,7 @@ export default function LeaderboardPage() {
                 </div>
 
                 <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center text-2xl">
-                  {avatarMap[player.avatar] ?? "👤"}
+                  {resolveAvatar(player.avatar).emoji}
                 </div>
 
                 <div className="flex-1">

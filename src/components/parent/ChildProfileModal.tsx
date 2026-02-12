@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth-store";
 import { AvatarSelector } from "@/components/onboarding/AvatarSelector";
-import { avatars } from "@/lib/avatars";
+import { avatars, resolveAvatar } from "@/lib/avatars";
 import type { ChildProfile } from "@/types";
 
 const AGE_RANGES = ["4-6", "7-9", "10-12", "13-15"];
@@ -28,8 +28,11 @@ export function ChildProfileModal({
 
   const isEditing = !!profile;
 
+  // Resolve legacy avatar keys (e.g., "fox") to emoji for the selector
+  const initialAvatar = profile?.avatar ? resolveAvatar(profile.avatar).emoji : null;
+
   const [name, setName] = useState(profile?.name || "");
-  const [avatar, setAvatar] = useState<string | null>(profile?.avatar || null);
+  const [avatar, setAvatar] = useState<string | null>(initialAvatar);
   const [ageRange, setAgeRange] = useState(profile?.age_range || "7-9");
   const [dailyGoal, setDailyGoal] = useState(
     profile?.daily_goal_minutes || 15

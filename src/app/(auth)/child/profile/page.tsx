@@ -16,15 +16,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { BottomNav } from "@/components/child/BottomNav";
-
-const avatarMap: Record<string, string> = {
-  fox: "🦊",
-  owl: "🦉",
-  panda: "🐼",
-  lion: "🦁",
-  rabbit: "🐰",
-  frog: "🐸",
-};
+import { resolveAvatar } from "@/lib/avatars";
 
 export default function ChildProfilePage() {
   const router = useRouter();
@@ -37,7 +29,7 @@ export default function ChildProfilePage() {
   }
 
   const profile = currentChildProfile;
-  const emoji = avatarMap[profile.avatar ?? ""] ?? "👤";
+  const { emoji } = resolveAvatar(profile.avatar);
 
   // Hardcoded achievements (would come from API)
   const achievements = [

@@ -33,6 +33,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Mascot } from "@/components/Mascot";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { resolveAvatar } from "@/lib/avatars";
 import { BrainBoostBanner } from "@/components/child/BrainBoostBanner";
 import { YourSubjects } from "@/components/child/YourSubjects";
 import { BottomNav } from "@/components/child/BottomNav";
@@ -408,7 +409,7 @@ export default function ChildHomePage() {
               onClick={() => router.push("/child/profile")}
               className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center cursor-pointer hover:shadow-md transition-all"
             >
-              <span className="text-lg">👧</span>
+              <span className="text-lg">{resolveAvatar(profile.avatar).emoji}</span>
             </motion.div>
           </div>
         </div>

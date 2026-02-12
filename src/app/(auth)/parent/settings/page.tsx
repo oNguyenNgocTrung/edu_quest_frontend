@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/auth-store";
 import { ArrowLeft, Shield, LogOut, Users, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { avatars } from "@/lib/avatars";
+import { resolveAvatar } from "@/lib/avatars";
 import { ChildProfileModal } from "@/components/parent/ChildProfileModal";
 import type { ChildProfile } from "@/types";
 
@@ -48,15 +48,6 @@ export default function SettingsPage() {
     }
   };
 
-  const getAvatarEmoji = (avatarValue: string | null) => {
-    const found = avatars.find((a) => a.emoji === avatarValue);
-    return found?.emoji || "🧒";
-  };
-
-  const getAvatarBg = (avatarValue: string | null) => {
-    const found = avatars.find((a) => a.emoji === avatarValue);
-    return found?.bgColor || "#F3F4F6";
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50">
@@ -114,7 +105,9 @@ export default function SettingsPage() {
             </p>
           ) : (
             <div className="space-y-2">
-              {childProfiles.map((profile) => (
+              {childProfiles.map((profile) => {
+                const { emoji, bgColor } = resolveAvatar(profile.avatar);
+                return (
                 <div
                   key={profile.id}
                   className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition"
@@ -124,11 +117,11 @@ export default function SettingsPage() {
                     style={{
                       width: "44px",
                       height: "44px",
-                      background: getAvatarBg(profile.avatar),
+                      background: bgColor,
                       fontSize: "24px",
                     }}
                   >
-                    {getAvatarEmoji(profile.avatar)}
+                    {emoji}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-800 text-sm truncate">
@@ -162,7 +155,8 @@ export default function SettingsPage() {
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

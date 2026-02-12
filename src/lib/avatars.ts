@@ -6,6 +6,42 @@ export interface Avatar {
   bgColor: string;
 }
 
+/** Map legacy string keys (stored in DB seeds) to emoji characters */
+const legacyAvatarMap: Record<string, string> = {
+  fox: "\u{1F98A}",
+  owl: "\u{1F989}",
+  panda: "\u{1F43C}",
+  rabbit: "\u{1F430}",
+  bunny: "\u{1F430}",
+  cat: "\u{1F431}",
+  dog: "\u{1F436}",
+  lion: "\u{1F981}",
+  frog: "\u{1F438}",
+};
+
+/**
+ * Resolve an avatar value (legacy key or emoji) to display info.
+ * Handles both legacy string keys ("fox") and direct emoji values ("🦊").
+ */
+export function resolveAvatar(value: string | null): { emoji: string; bgColor: string } {
+  const fallback = { emoji: "\u{1F9D2}", bgColor: "#FEF3C7" };
+  if (!value) return fallback;
+
+  // Try legacy key lookup first
+  const legacyEmoji = legacyAvatarMap[value];
+  if (legacyEmoji) {
+    const found = avatars.find((a) => a.emoji === legacyEmoji);
+    return { emoji: legacyEmoji, bgColor: found?.bgColor ?? fallback.bgColor };
+  }
+
+  // Try matching as a direct emoji in the avatars list
+  const found = avatars.find((a) => a.emoji === value);
+  if (found) return { emoji: found.emoji, bgColor: found.bgColor };
+
+  // Value is an emoji not in our list — show it as-is
+  return { emoji: value, bgColor: fallback.bgColor };
+}
+
 export const avatars: Avatar[] = [
   // Characters
   { id: "char-1", category: "characters", emoji: "\u{1F466}", name: "Boy", bgColor: "#DBEAFE" },
