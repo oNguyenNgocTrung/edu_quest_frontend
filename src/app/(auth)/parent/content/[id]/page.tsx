@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import apiClient from "@/lib/api-client";
 import type { Deck, Flashcard, Question, WorksheetExtractedQuestion } from "@/types";
@@ -27,6 +28,7 @@ import FileImportModal, {
 export default function DeckDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const { t } = useTranslation("parent");
   const queryClient = useQueryClient();
 
   const [editingCard, setEditingCard] = useState<string | null>(null);
@@ -85,7 +87,7 @@ export default function DeckDetailPage() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Flashcard added!");
+      toast.success(t("contentDetail.flashcardAdded"));
       queryClient.invalidateQueries({ queryKey: ["deck", id, "flashcards"] });
       queryClient.invalidateQueries({ queryKey: ["deck", id] });
       queryClient.invalidateQueries({ queryKey: ["decks"] });
@@ -109,7 +111,7 @@ export default function DeckDetailPage() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Flashcard updated!");
+      toast.success(t("contentDetail.flashcardUpdated"));
       queryClient.invalidateQueries({ queryKey: ["deck", id, "flashcards"] });
       setEditingCard(null);
     },
@@ -120,7 +122,7 @@ export default function DeckDetailPage() {
       await apiClient.delete(`/decks/${id}/flashcards/${cardId}`);
     },
     onSuccess: () => {
-      toast.success("Flashcard deleted");
+      toast.success(t("contentDetail.flashcardDeleted"));
       queryClient.invalidateQueries({ queryKey: ["deck", id, "flashcards"] });
       queryClient.invalidateQueries({ queryKey: ["deck", id] });
       queryClient.invalidateQueries({ queryKey: ["decks"] });
@@ -133,7 +135,7 @@ export default function DeckDetailPage() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Question added!");
+      toast.success(t("contentDetail.questionAdded"));
       queryClient.invalidateQueries({ queryKey: ["deck", id, "questions"] });
       queryClient.invalidateQueries({ queryKey: ["deck", id] });
       queryClient.invalidateQueries({ queryKey: ["decks"] });
@@ -163,7 +165,7 @@ export default function DeckDetailPage() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Question updated!");
+      toast.success(t("contentDetail.questionUpdated"));
       queryClient.invalidateQueries({ queryKey: ["deck", id, "questions"] });
       setEditingQuestion(null);
     },
@@ -174,7 +176,7 @@ export default function DeckDetailPage() {
       await apiClient.delete(`/decks/${id}/questions/${questionId}`);
     },
     onSuccess: () => {
-      toast.success("Question deleted");
+      toast.success(t("contentDetail.questionDeleted"));
       queryClient.invalidateQueries({ queryKey: ["deck", id, "questions"] });
       queryClient.invalidateQueries({ queryKey: ["deck", id] });
       queryClient.invalidateQueries({ queryKey: ["decks"] });
@@ -189,14 +191,14 @@ export default function DeckDetailPage() {
       return data;
     },
     onSuccess: (_data, variables) => {
-      toast.success(`${variables.length} flashcards imported!`);
+      toast.success(t("contentDetail.importedFlashcards", { count: variables.length }));
       queryClient.invalidateQueries({ queryKey: ["deck", id, "flashcards"] });
       queryClient.invalidateQueries({ queryKey: ["deck", id] });
       queryClient.invalidateQueries({ queryKey: ["decks"] });
       setShowImportModal(false);
     },
     onError: () => {
-      toast.error("Failed to import flashcards");
+      toast.error(t("contentDetail.importFlashcardsFailed"));
     },
   });
 
@@ -208,14 +210,14 @@ export default function DeckDetailPage() {
       return data;
     },
     onSuccess: (_data, variables) => {
-      toast.success(`${variables.length} questions imported!`);
+      toast.success(t("contentDetail.importedQuestions", { count: variables.length }));
       queryClient.invalidateQueries({ queryKey: ["deck", id, "questions"] });
       queryClient.invalidateQueries({ queryKey: ["deck", id] });
       queryClient.invalidateQueries({ queryKey: ["decks"] });
       setShowImportModal(false);
     },
     onError: () => {
-      toast.error("Failed to import questions");
+      toast.error(t("contentDetail.importQuestionsFailed"));
     },
   });
 
@@ -241,12 +243,12 @@ export default function DeckDetailPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">Deck not found</p>
+          <p className="text-gray-500 mb-4">{t("contentDetail.deckNotFound")}</p>
           <button
             onClick={() => router.push("/parent/content")}
             className="text-indigo-600 font-semibold hover:text-indigo-700"
           >
-            Back to Content
+            {t("contentDetail.backToContent")}
           </button>
         </div>
       </div>
@@ -265,7 +267,7 @@ export default function DeckDetailPage() {
             className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-3"
           >
             <ArrowLeft size={20} />
-            Back to Content
+            {t("contentDetail.backToContent")}
           </button>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -297,8 +299,8 @@ export default function DeckDetailPage() {
                   <span className="text-gray-300">|</span>
                   <span className="text-sm text-gray-500">
                     {isFlashcardDeck
-                      ? `${deck.flashcards_count} cards`
-                      : `${deck.questions_count} questions`}
+                      ? t("content.cardsCount", { count: deck.flashcards_count })
+                      : t("content.questionsCount", { count: deck.questions_count })}
                   </span>
                 </div>
               </div>
@@ -317,14 +319,14 @@ export default function DeckDetailPage() {
             className="flex-1 bg-white border-2 border-dashed border-gray-200 rounded-xl p-4 text-gray-500 hover:border-indigo-300 hover:text-indigo-500 transition flex items-center justify-center gap-2"
           >
             <Plus size={20} />
-            Add {isFlashcardDeck ? "Flashcard" : "Question"}
+            {isFlashcardDeck ? t("contentDetail.addFlashcard") : t("contentDetail.addQuestion")}
           </button>
           <button
             onClick={() => setShowImportModal(true)}
             className="bg-white border-2 border-dashed border-gray-200 rounded-xl p-4 text-gray-500 hover:border-indigo-300 hover:text-indigo-500 transition flex items-center justify-center gap-2 px-6"
           >
             <Upload size={20} />
-            Import from File
+            {t("contentDetail.importFile")}
           </button>
         </div>
 
@@ -336,33 +338,33 @@ export default function DeckDetailPage() {
             className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
           >
             <h3 className="font-semibold text-gray-800 mb-4">
-              New Flashcard
+              {t("contentDetail.newFlashcard")}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Front (Question)
+                  {t("contentDetail.frontQuestion")}
                 </label>
                 <textarea
                   value={newCard.front_text}
                   onChange={(e) =>
                     setNewCard((c) => ({ ...c, front_text: e.target.value }))
                   }
-                  placeholder="Enter question..."
+                  placeholder={t("contentDetail.enterQuestion")}
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
                   rows={3}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Back (Answer)
+                  {t("contentDetail.backAnswer")}
                 </label>
                 <textarea
                   value={newCard.back_text}
                   onChange={(e) =>
                     setNewCard((c) => ({ ...c, back_text: e.target.value }))
                   }
-                  placeholder="Enter answer..."
+                  placeholder={t("contentDetail.enterAnswer")}
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
                   rows={3}
                 />
@@ -379,7 +381,7 @@ export default function DeckDetailPage() {
                 className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium disabled:opacity-50 hover:bg-indigo-700 transition"
               >
                 <Save size={16} />
-                Save Card
+                {t("contentDetail.saveCard")}
               </button>
               <button
                 onClick={() => {
@@ -388,7 +390,7 @@ export default function DeckDetailPage() {
                 }}
                 className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
               >
-                Cancel
+                {t("contentDetail.cancel")}
               </button>
             </div>
           </motion.div>
@@ -401,11 +403,11 @@ export default function DeckDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
           >
-            <h3 className="font-semibold text-gray-800 mb-4">New Question</h3>
+            <h3 className="font-semibold text-gray-800 mb-4">{t("contentDetail.newQuestion")}</h3>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Question Text
+                  {t("contentDetail.questionText")}
                 </label>
                 <textarea
                   value={newQuestion.question_text}
@@ -415,14 +417,14 @@ export default function DeckDetailPage() {
                       question_text: e.target.value,
                     }))
                   }
-                  placeholder="Enter question..."
+                  placeholder={t("contentDetail.enterQuestion")}
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
                   rows={2}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Answer Options
+                  {t("contentDetail.answerOptions")}
                 </label>
                 <div className="space-y-2">
                   {newQuestion.options.map((opt, i) => (
@@ -463,12 +465,12 @@ export default function DeckDetailPage() {
                   ))}
                 </div>
                 <p className="text-xs text-gray-400 mt-2">
-                  Click the circle to mark the correct answer
+                  {t("contentDetail.markCorrect")}
                 </p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Explanation (optional)
+                  {t("contentDetail.explanationOptional")}
                 </label>
                 <input
                   type="text"
@@ -479,7 +481,7 @@ export default function DeckDetailPage() {
                       explanation: e.target.value,
                     }))
                   }
-                  placeholder="Why is this the correct answer?"
+                  placeholder={t("contentDetail.explanationPlaceholder")}
                   className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
@@ -495,7 +497,7 @@ export default function DeckDetailPage() {
                 className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium disabled:opacity-50 hover:bg-indigo-700 transition"
               >
                 <Save size={16} />
-                Save Question
+                {t("contentDetail.saveQuestion")}
               </button>
               <button
                 onClick={() => {
@@ -510,7 +512,7 @@ export default function DeckDetailPage() {
                 }}
                 className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
               >
-                Cancel
+                {t("contentDetail.cancel")}
               </button>
             </div>
           </motion.div>
@@ -537,9 +539,9 @@ export default function DeckDetailPage() {
             {flashcards?.length === 0 && (
               <div className="bg-white rounded-xl p-12 text-center">
                 <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">No flashcards yet</p>
+                <p className="text-gray-500">{t("contentDetail.noFlashcards")}</p>
                 <p className="text-sm text-gray-400 mt-1">
-                  Click &quot;Add Flashcard&quot; to create your first card
+                  {t("contentDetail.addFlashcardHint")}
                 </p>
               </div>
             )}
@@ -570,9 +572,9 @@ export default function DeckDetailPage() {
             {questions?.length === 0 && (
               <div className="bg-white rounded-xl p-12 text-center">
                 <HelpCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">No questions yet</p>
+                <p className="text-gray-500">{t("contentDetail.noQuestions")}</p>
                 <p className="text-sm text-gray-400 mt-1">
-                  Click &quot;Add Question&quot; to create your first question
+                  {t("contentDetail.addQuestionHint")}
                 </p>
               </div>
             )}
@@ -611,6 +613,7 @@ function FlashcardItem({
   onDelete: () => void;
   isSaving: boolean;
 }) {
+  const { t } = useTranslation("parent");
   const [front, setFront] = useState(card.front_text);
   const [back, setBack] = useState(card.back_text);
 
@@ -622,12 +625,12 @@ function FlashcardItem({
         className="bg-white rounded-xl p-6 shadow-sm border-2 border-indigo-200"
       >
         <h4 className="font-semibold text-gray-700 mb-4">
-          Edit Card {index + 1}
+          {t("contentDetail.editCard", { number: index + 1 })}
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Front (Question)
+              {t("contentDetail.frontQuestion")}
             </label>
             <textarea
               value={front}
@@ -638,7 +641,7 @@ function FlashcardItem({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Back (Answer)
+              {t("contentDetail.backAnswer")}
             </label>
             <textarea
               value={back}
@@ -655,7 +658,7 @@ function FlashcardItem({
             className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium disabled:opacity-50 hover:bg-indigo-700 transition"
           >
             <Check size={16} />
-            Save
+            {t("contentDetail.save")}
           </button>
           <button
             onClick={() => {
@@ -665,7 +668,7 @@ function FlashcardItem({
             }}
             className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
           >
-            Cancel
+            {t("contentDetail.cancel")}
           </button>
         </div>
       </motion.div>
@@ -687,13 +690,13 @@ function FlashcardItem({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
-                Front
+                {t("contentDetail.front")}
               </span>
               <p className="text-gray-800 mt-1">{card.front_text}</p>
             </div>
             <div>
               <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
-                Back
+                {t("contentDetail.back")}
               </span>
               <p className="text-gray-800 mt-1">{card.back_text}</p>
             </div>
@@ -737,6 +740,7 @@ function QuestionItem({
   onDelete: () => void;
   isSaving: boolean;
 }) {
+  const { t } = useTranslation("parent");
   const [text, setText] = useState(question.question_text);
   const [options, setOptions] = useState(question.options || []);
   const [correctIdx, setCorrectIdx] = useState(
@@ -752,12 +756,12 @@ function QuestionItem({
         className="bg-white rounded-xl p-6 shadow-sm border-2 border-indigo-200"
       >
         <h4 className="font-semibold text-gray-700 mb-4">
-          Edit Question {index + 1}
+          {t("contentDetail.editQuestion", { number: index + 1 })}
         </h4>
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Question Text
+              {t("contentDetail.questionText")}
             </label>
             <textarea
               value={text}
@@ -768,7 +772,7 @@ function QuestionItem({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Options
+              {t("contentDetail.options")}
             </label>
             <div className="space-y-2">
               {options.map((opt, i) => (
@@ -803,7 +807,7 @@ function QuestionItem({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Explanation
+              {t("contentDetail.explanation")}
             </label>
             <input
               type="text"
@@ -827,7 +831,7 @@ function QuestionItem({
             className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium disabled:opacity-50 hover:bg-indigo-700 transition"
           >
             <Check size={16} />
-            Save
+            {t("contentDetail.save")}
           </button>
           <button
             onClick={() => {
@@ -839,7 +843,7 @@ function QuestionItem({
             }}
             className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
           >
-            Cancel
+            {t("contentDetail.cancel")}
           </button>
         </div>
       </motion.div>

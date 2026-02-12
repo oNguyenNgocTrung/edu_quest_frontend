@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/auth-store";
 import apiClient from "@/lib/api-client";
 import type {
@@ -40,6 +41,7 @@ import { StatCard } from "@/components/parent/StatCard";
 
 export default function AnalyticsPage() {
   const router = useRouter();
+  const { t } = useTranslation("parent");
   const { currentChildProfile } = useAuthStore();
 
   const { data: summary } = useQuery({
@@ -98,7 +100,7 @@ export default function AnalyticsPage() {
       iconColor: "text-green-600",
       iconBg: "bg-green-100",
       value: `${summary?.accuracy ?? 0}%`,
-      label: "Average Score",
+      label: t("analytics.averageScore"),
       change:
         summary && summary.accuracy_change !== 0
           ? `${summary.accuracy_change > 0 ? "+" : ""}${summary.accuracy_change}%`
@@ -115,24 +117,24 @@ export default function AnalyticsPage() {
       iconColor: "text-blue-600",
       iconBg: "bg-blue-100",
       value: `${summary?.daily_avg_minutes ?? 0} min`,
-      label: "Daily Average",
+      label: t("analytics.dailyAverage"),
     },
     {
       icon: Award,
       iconColor: "text-purple-600",
       iconBg: "bg-purple-100",
       value: `${summary?.mastered_count ?? 0}`,
-      label: "Cards Mastered",
+      label: t("analytics.cardsMastered"),
     },
     {
       icon: Flame,
       iconColor: "text-orange-600",
       iconBg: "bg-orange-100",
       value: `${summary?.streak_days ?? 0} days`,
-      label: "Current Streak",
+      label: t("analytics.currentStreak"),
       change:
         summary && summary.streak_days === summary.streak_longest && summary.streak_days > 0
-          ? "Record!"
+          ? t("dashboard.record")
           : undefined,
       trend:
         summary && summary.streak_days === summary.streak_longest && summary.streak_days > 0
@@ -149,9 +151,9 @@ export default function AnalyticsPage() {
   };
 
   const weaknessLabel = (accuracy: number) => {
-    if (accuracy < 60) return "Needs more practice";
-    if (accuracy < 70) return "Below target";
-    return "Room for growth";
+    if (accuracy < 60) return t("analytics.needsMorePractice");
+    if (accuracy < 70) return t("analytics.belowTarget");
+    return t("analytics.roomForGrowth");
   };
 
   return (
@@ -169,11 +171,10 @@ export default function AnalyticsPage() {
               </button>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
-                  Progress Analytics
+                  {t("analytics.title")}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  Track {currentChildProfile?.name || "your child"}&apos;s
-                  learning journey
+                  {t("analytics.trackJourney", { name: currentChildProfile?.name || "your child" })}
                 </p>
               </div>
             </div>
@@ -181,14 +182,14 @@ export default function AnalyticsPage() {
             <div className="flex gap-2">
               <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition-colors text-sm">
                 <Calendar className="w-4 h-4" />
-                Last 7 Days
+                {t("analytics.last7Days")}
               </button>
               <button
                 onClick={() => window.print()}
                 className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors text-sm"
               >
                 <Download className="w-4 h-4" />
-                Export Report
+                {t("analytics.exportReport")}
               </button>
             </div>
           </div>
@@ -213,7 +214,7 @@ export default function AnalyticsPage() {
             className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
           >
             <h2 className="text-lg font-bold text-gray-800 mb-4">
-              Performance Trend
+              {t("analytics.performanceTrend")}
             </h2>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={performance || []}>
@@ -245,7 +246,7 @@ export default function AnalyticsPage() {
             className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
           >
             <h2 className="text-lg font-bold text-gray-800 mb-4">
-              Time by Subject
+              {t("analytics.timeBySubject")}
             </h2>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -277,7 +278,7 @@ export default function AnalyticsPage() {
             className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
           >
             <h2 className="text-lg font-bold text-gray-800 mb-4">
-              Accuracy by Topic
+              {t("analytics.accuracyByTopic")}
             </h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={accuracy || []} layout="vertical">
@@ -313,7 +314,7 @@ export default function AnalyticsPage() {
             className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
           >
             <h2 className="text-lg font-bold text-gray-800 mb-4">
-              Mastery Progress
+              {t("analytics.masteryProgress")}
             </h2>
             {mastery && (
               <div className="space-y-4">
@@ -324,7 +325,7 @@ export default function AnalyticsPage() {
                         {item.category}
                       </span>
                       <span className="text-sm font-bold text-gray-800">
-                        {item.count} cards
+                        {t("analytics.cards", { count: item.count })}
                       </span>
                     </div>
                     <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
@@ -342,7 +343,7 @@ export default function AnalyticsPage() {
             )}
             <div className="mt-6 pt-6 border-t border-gray-200">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Total Cards</span>
+                <span className="text-sm text-gray-600">{t("analytics.totalCards")}</span>
                 <span className="text-xl font-bold text-gray-800">
                   {totalCards}
                 </span>
@@ -365,7 +366,7 @@ export default function AnalyticsPage() {
               </div>
               <div className="flex-1">
                 <h3 className="text-lg font-bold text-gray-800 mb-2">
-                  Areas for Improvement
+                  {t("analytics.areasForImprovement")}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {weakTopics.map((topic) => (

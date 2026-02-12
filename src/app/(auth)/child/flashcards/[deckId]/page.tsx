@@ -7,22 +7,24 @@ import apiClient from "@/lib/api-client";
 import type { Flashcard } from "@/types";
 import { X, Flame, RotateCcw } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 type Difficulty = "again" | "hard" | "good" | "easy";
 
 const difficultyConfig: {
   key: Difficulty;
   color: string;
-  label: string;
-  time: string;
+  labelKey: string;
+  timeKey: string;
 }[] = [
-  { key: "again", color: "bg-red-500 hover:bg-red-600", label: "Again", time: "<1m" },
-  { key: "hard", color: "bg-orange-500 hover:bg-orange-600", label: "Hard", time: "10m" },
-  { key: "good", color: "bg-green-500 hover:bg-green-600", label: "Good", time: "1d" },
-  { key: "easy", color: "bg-blue-500 hover:bg-blue-600", label: "Easy", time: "4d" },
+  { key: "again", color: "bg-red-500 hover:bg-red-600", labelKey: "flashcards.again", timeKey: "flashcards.intervalAgain" },
+  { key: "hard", color: "bg-orange-500 hover:bg-orange-600", labelKey: "flashcards.hard", timeKey: "flashcards.intervalHard" },
+  { key: "good", color: "bg-green-500 hover:bg-green-600", labelKey: "flashcards.good", timeKey: "flashcards.intervalGood" },
+  { key: "easy", color: "bg-blue-500 hover:bg-blue-600", labelKey: "flashcards.easy", timeKey: "flashcards.intervalEasy" },
 ];
 
 export default function FlashcardReviewPage() {
+  const { t } = useTranslation('child');
   const { deckId } = useParams();
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -92,12 +94,12 @@ export default function FlashcardReviewPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-teal-50 to-blue-50 p-4">
         <div className="text-center">
-          <p className="text-gray-500 mb-4">No flashcards in this deck</p>
+          <p className="text-gray-500 mb-4">{t('flashcards.noCards')}</p>
           <button
             onClick={() => router.back()}
             className="text-teal-600 font-bold"
           >
-            Go Back
+            {t('flashcards.goBack')}
           </button>
         </div>
       </div>
@@ -115,10 +117,10 @@ export default function FlashcardReviewPage() {
         >
           <div className="text-6xl mb-4">🎉</div>
           <h2 className="text-2xl font-black text-gray-800 mb-2">
-            Review Complete!
+            {t('flashcards.reviewComplete')}
           </h2>
           <p className="text-gray-500 mb-6">
-            You reviewed {reviewed} cards with a best streak of {streak}
+            {t('flashcards.reviewSummary', { reviewed, streak })}
           </p>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -126,7 +128,7 @@ export default function FlashcardReviewPage() {
             onClick={() => router.push("/child/home")}
             className="w-full py-4 bg-gradient-to-r from-teal-500 to-blue-500 text-white rounded-2xl font-bold shadow-lg"
           >
-            Back to Home
+            {t('flashcards.backToHome')}
           </motion.button>
         </motion.div>
       </div>
@@ -158,7 +160,7 @@ export default function FlashcardReviewPage() {
                 </span>
               </div>
               <span className="text-sm font-bold text-gray-600">
-                {cardsRemaining} cards left
+                {t('flashcards.cardsLeft', { count: cardsRemaining })}
               </span>
             </div>
           </div>
@@ -193,7 +195,7 @@ export default function FlashcardReviewPage() {
                   <div className="mb-6">
                     <RotateCcw className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                     <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">
-                      Question
+                      {t('flashcards.question')}
                     </p>
                   </div>
                   <h2 className="text-3xl font-black text-gray-800 mb-8">
@@ -208,7 +210,7 @@ export default function FlashcardReviewPage() {
                     }}
                     className="bg-gradient-to-r from-teal-500 to-blue-500 text-white font-bold px-8 py-4 rounded-2xl shadow-lg"
                   >
-                    Show Answer
+                    {t('flashcards.showAnswer')}
                   </motion.button>
                 </div>
               ) : (
@@ -218,7 +220,7 @@ export default function FlashcardReviewPage() {
                       <span className="text-2xl">✓</span>
                     </div>
                     <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">
-                      Answer
+                      {t('flashcards.answer')}
                     </p>
                   </div>
                   <h2 className="text-3xl font-black text-gray-800 mb-12">
@@ -240,7 +242,7 @@ export default function FlashcardReviewPage() {
         >
           <div className="max-w-2xl mx-auto">
             <p className="text-center text-sm text-gray-600 mb-3">
-              How well did you know this?
+              {t('flashcards.howWell')}
             </p>
             <div className="grid grid-cols-4 gap-2">
               {difficultyConfig.map((d) => (
@@ -250,8 +252,8 @@ export default function FlashcardReviewPage() {
                   onClick={() => handleRate(d.key)}
                   className={`${d.color} text-white font-bold py-4 px-3 rounded-xl`}
                 >
-                  <div className="text-xs mb-1">{d.label}</div>
-                  <div className="text-lg">{d.time}</div>
+                  <div className="text-xs mb-1">{t(d.labelKey)}</div>
+                  <div className="text-lg">{t(d.timeKey)}</div>
                 </motion.button>
               ))}
             </div>

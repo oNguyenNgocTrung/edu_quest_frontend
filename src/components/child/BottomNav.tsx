@@ -3,46 +3,48 @@
 import { motion } from "framer-motion";
 import { Home, Gift, BookOpen, Trophy, User } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-
-const navItems = [
-  {
-    path: "/child/home",
-    icon: Home,
-    label: "Home",
-    activeColor: "#14B8A6",
-  },
-  {
-    path: "/child/rewards",
-    icon: Gift,
-    label: "Rewards",
-    activeColor: "#14B8A6",
-    hasNotification: true,
-    notificationCount: 3,
-  },
-  {
-    path: "/child/learn",
-    icon: BookOpen,
-    label: "Learn",
-    activeColor: "#7C3AED",
-    isPrimary: true,
-  },
-  {
-    path: "/child/leaderboard",
-    icon: Trophy,
-    label: "Ranks",
-    activeColor: "#14B8A6",
-  },
-  {
-    path: "/child/profile",
-    icon: User,
-    label: "Profile",
-    activeColor: "#14B8A6",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useTranslation('common');
+
+  const navItems = [
+    {
+      path: "/child/home",
+      icon: Home,
+      label: t('nav.home'),
+      activeColor: "#14B8A6",
+    },
+    {
+      path: "/child/rewards",
+      icon: Gift,
+      label: t('nav.rewards'),
+      activeColor: "#14B8A6",
+      hasNotification: true,
+      notificationCount: 3,
+    },
+    {
+      path: "/child/learn",
+      icon: BookOpen,
+      label: t('nav.learn'),
+      activeColor: "#7C3AED",
+      isPrimary: true,
+    },
+    {
+      path: "/child/leaderboard",
+      icon: Trophy,
+      label: t('nav.ranks'),
+      activeColor: "#14B8A6",
+    },
+    {
+      path: "/child/profile",
+      icon: User,
+      label: t('nav.profile'),
+      activeColor: "#14B8A6",
+    },
+  ];
 
   return (
     <motion.nav

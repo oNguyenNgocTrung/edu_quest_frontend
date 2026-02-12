@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight, Clock, Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { PracticeItem } from "@/types";
 
 interface TodaysPracticeCardProps {
@@ -10,6 +11,7 @@ interface TodaysPracticeCardProps {
 }
 
 export function TodaysPracticeCard({ practice, onStart }: TodaysPracticeCardProps) {
+  const { t } = useTranslation('child');
   const isInProgress = practice.status === "in_progress";
 
   return (
@@ -29,7 +31,7 @@ export function TodaysPracticeCard({ practice, onStart }: TodaysPracticeCardProp
           <div className="flex items-start justify-between mb-4">
             <div>
               <span className="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold mb-3">
-                📚 TODAY&apos;S PRACTICE
+                {t('todaysPractice.title')}
               </span>
               <h2 className="text-2xl font-black mb-2" style={{ fontFamily: "Nunito, sans-serif" }}>
                 {practice.deck_name}
@@ -65,7 +67,7 @@ export function TodaysPracticeCard({ practice, onStart }: TodaysPracticeCardProp
             className="w-full bg-white text-purple-600 py-4 rounded-2xl font-black text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
             style={{ fontFamily: "Nunito, sans-serif" }}
           >
-            {isInProgress ? "Continue Practice" : "Start Practice"}
+            {isInProgress ? t('todaysPractice.startReview') : t('todaysPractice.startReview')}
             <ArrowRight className="w-6 h-6" />
           </motion.button>
         </div>

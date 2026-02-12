@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import apiClient from "@/lib/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import { ArrowLeft, Trophy, Medal, Crown } from "lucide-react";
@@ -43,6 +44,7 @@ function getRankColor(rank: number) {
 export default function LeaderboardPage() {
   const router = useRouter();
   const { currentChildProfile } = useAuthStore();
+  const { t } = useTranslation('child');
   const [timeframe, setTimeframe] = useState<"week" | "alltime">("week");
 
   const { data: entries } = useQuery({
@@ -69,7 +71,7 @@ export default function LeaderboardPage() {
             >
               <ArrowLeft className="w-6 h-6 text-gray-600" />
             </button>
-            <h1 className="text-xl font-black text-gray-800">Leaderboard</h1>
+            <h1 className="text-xl font-black text-gray-800">{t('leaderboard.title')}</h1>
           </div>
 
           {/* Time Toggle */}
@@ -82,7 +84,7 @@ export default function LeaderboardPage() {
                   : "text-gray-600"
               }`}
             >
-              This Week
+              {t('leaderboard.thisWeek')}
             </button>
             <button
               onClick={() => setTimeframe("alltime")}
@@ -92,7 +94,7 @@ export default function LeaderboardPage() {
                   : "text-gray-600"
               }`}
             >
-              All Time
+              {t('leaderboard.allTime')}
             </button>
           </div>
         </div>
@@ -118,7 +120,7 @@ export default function LeaderboardPage() {
                 </div>
               </div>
               <p className="font-bold text-gray-800 text-sm">{topThree[1].name}</p>
-              <p className="text-xs text-gray-500">{topThree[1].total_xp} XP</p>
+              <p className="text-xs text-gray-500">{t('leaderboard.xpAmount', { xp: topThree[1].total_xp })}</p>
               <div className="w-20 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded-t-2xl mt-2 flex items-center justify-center">
                 <Medal className="w-8 h-8 text-gray-500" />
               </div>
@@ -144,7 +146,7 @@ export default function LeaderboardPage() {
                 </div>
               </motion.div>
               <p className="font-black text-gray-800">{topThree[0].name}</p>
-              <p className="text-sm text-gray-600">{topThree[0].total_xp} XP</p>
+              <p className="text-sm text-gray-600">{t('leaderboard.xpAmount', { xp: topThree[0].total_xp })}</p>
               <div className="w-24 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-t-2xl mt-2 flex items-center justify-center">
                 <Trophy className="w-10 h-10 text-white" />
               </div>
@@ -166,7 +168,7 @@ export default function LeaderboardPage() {
                 </div>
               </div>
               <p className="font-bold text-gray-800 text-sm">{topThree[2].name}</p>
-              <p className="text-xs text-gray-500">{topThree[2].total_xp} XP</p>
+              <p className="text-xs text-gray-500">{t('leaderboard.xpAmount', { xp: topThree[2].total_xp })}</p>
               <div className="w-20 h-20 bg-gradient-to-br from-orange-300 to-yellow-400 rounded-t-2xl mt-2 flex items-center justify-center">
                 <Medal className="w-8 h-8 text-orange-600" />
               </div>
@@ -202,10 +204,10 @@ export default function LeaderboardPage() {
                   <p className="font-bold text-gray-800">
                     {player.name}{" "}
                     {isCurrentUser && (
-                      <span className="text-purple-500">(You)</span>
+                      <span className="text-purple-500">{t('leaderboard.you')}</span>
                     )}
                   </p>
-                  <p className="text-sm text-gray-500">{player.total_xp} XP</p>
+                  <p className="text-sm text-gray-500">{t('leaderboard.xpAmount', { xp: player.total_xp })}</p>
                 </div>
               </motion.div>
             );
@@ -220,9 +222,9 @@ export default function LeaderboardPage() {
           className="mt-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl p-6 text-white"
         >
           <Trophy className="w-10 h-10 mb-3" />
-          <h3 className="text-lg font-black mb-2">Keep Climbing!</h3>
+          <h3 className="text-lg font-black mb-2">{t('leaderboard.keepClimbing')}</h3>
           <p className="text-white/90 text-sm">
-            Complete more lessons to climb the rankings!
+            {t('leaderboard.keepClimbingDesc')}
           </p>
         </motion.div>
       </div>

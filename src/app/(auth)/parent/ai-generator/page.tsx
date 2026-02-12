@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useMutation } from "@tanstack/react-query";
 import apiClient from "@/lib/api-client";
 import type { AiGenerationJob, GeneratedCard } from "@/types";
@@ -10,6 +11,7 @@ import { toast } from "sonner";
 
 export default function AIGeneratorPage() {
   const router = useRouter();
+  const { t } = useTranslation('parent');
   const [inputText, setInputText] = useState("");
   const [contentType, setContentType] = useState("Flashcards");
   const [subject, setSubject] = useState("Auto-detect");
@@ -33,7 +35,7 @@ export default function AIGeneratorPage() {
       pollJob(data.data?.attributes?.id || data.id);
     },
     onError: () => {
-      toast.error("Failed to start generation");
+      toast.error(t('aiGenerator.generationFailed'));
     },
   });
 
@@ -50,7 +52,7 @@ export default function AIGeneratorPage() {
           return;
         }
         if (jobData.status === "failed") {
-          toast.error(jobData.error_message || "Generation failed");
+          toast.error(jobData.error_message || t('aiGenerator.generationFailed'));
           return;
         }
       } catch {
@@ -80,7 +82,7 @@ export default function AIGeneratorPage() {
       });
     },
     onSuccess: () => {
-      toast.success("Cards saved to deck!");
+      toast.success(t('aiGenerator.cardsSaved'));
       setJob(null);
       setCards([]);
       setInputText("");
@@ -99,11 +101,11 @@ export default function AIGeneratorPage() {
             className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-3"
           >
             <ArrowLeft size={20} />
-            Dashboard
+            {t('aiGenerator.dashboard')}
           </button>
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
             <Sparkles className="text-purple-500" size={24} />
-            AI Content Generator
+            {t('aiGenerator.title')}
           </h1>
         </div>
       </div>
@@ -113,26 +115,26 @@ export default function AIGeneratorPage() {
         <div className="bg-white rounded-xl p-4 shadow-sm space-y-3">
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="text-xs text-gray-500 block mb-1">Type</label>
+              <label className="text-xs text-gray-500 block mb-1">{t('aiGenerator.type')}</label>
               <select
                 value={contentType}
                 onChange={(e) => setContentType(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
               >
-                <option>Flashcards</option>
-                <option>Multiple Choice Quiz</option>
-                <option>True/False Quiz</option>
-                <option>Mixed Exam</option>
+                <option>{t('aiGenerator.flashcards')}</option>
+                <option>{t('aiGenerator.multipleChoiceQuiz')}</option>
+                <option>{t('aiGenerator.trueFalseQuiz')}</option>
+                <option>{t('aiGenerator.mixedExam')}</option>
               </select>
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-1">Subject</label>
+              <label className="text-xs text-gray-500 block mb-1">{t('aiGenerator.subject')}</label>
               <select
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
               >
-                <option>Auto-detect</option>
+                <option>{t('aiGenerator.autoDetect')}</option>
                 <option>Math</option>
                 <option>Science</option>
                 <option>Language</option>
@@ -140,16 +142,16 @@ export default function AIGeneratorPage() {
               </select>
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-1">Difficulty</label>
+              <label className="text-xs text-gray-500 block mb-1">{t('aiGenerator.difficulty')}</label>
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
               >
-                <option>Auto-adjust</option>
-                <option>Easy</option>
-                <option>Medium</option>
-                <option>Hard</option>
+                <option>{t('aiGenerator.autoAdjust')}</option>
+                <option>{t('aiGenerator.easy')}</option>
+                <option>{t('aiGenerator.medium')}</option>
+                <option>{t('aiGenerator.hard')}</option>
               </select>
             </div>
           </div>
@@ -158,13 +160,13 @@ export default function AIGeneratorPage() {
         {/* Input */}
         <div className="bg-white rounded-xl p-4 shadow-sm">
           <label className="text-sm font-medium text-gray-700 block mb-2">
-            Paste your learning content
+            {t('aiGenerator.pasteContent')}
           </label>
           <textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             rows={6}
-            placeholder="Paste text from a textbook, article, or lesson notes. The AI will generate flashcards or quiz questions from it..."
+            placeholder={t('aiGenerator.pasteContentPlaceholder')}
             className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-purple-500 resize-none"
           />
           <button
@@ -175,12 +177,12 @@ export default function AIGeneratorPage() {
             {isGenerating ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
-                Generating...
+                {t('aiGenerator.generating')}
               </>
             ) : (
               <>
                 <Sparkles size={18} />
-                Generate with AI
+                {t('aiGenerator.generate')}
               </>
             )}
           </button>
@@ -191,10 +193,10 @@ export default function AIGeneratorPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-gray-800">
-                Generated Cards ({cards.length})
+                {t('aiGenerator.generatedCards', { count: cards.length })}
               </h3>
               <span className="text-sm text-green-600 font-medium">
-                {approvedCount} approved
+                {t('aiGenerator.approved', { count: approvedCount })}
               </span>
             </div>
 
@@ -210,11 +212,11 @@ export default function AIGeneratorPage() {
                 }`}
               >
                 <div className="mb-3">
-                  <p className="text-xs text-gray-400 mb-1">Front</p>
+                  <p className="text-xs text-gray-400 mb-1">{t('aiGenerator.front')}</p>
                   <p className="text-gray-800 font-medium">{card.front}</p>
                 </div>
                 <div className="mb-3">
-                  <p className="text-xs text-gray-400 mb-1">Back</p>
+                  <p className="text-xs text-gray-400 mb-1">{t('aiGenerator.back')}</p>
                   <p className="text-gray-600">{card.back}</p>
                 </div>
                 <div className="flex gap-2">
@@ -227,7 +229,7 @@ export default function AIGeneratorPage() {
                     }`}
                   >
                     <Check size={16} />
-                    Approve
+                    {t('aiGenerator.approve')}
                   </button>
                   <button
                     onClick={() => handleReject(card.id)}
@@ -238,7 +240,7 @@ export default function AIGeneratorPage() {
                     }`}
                   >
                     <X size={16} />
-                    Reject
+                    {t('aiGenerator.reject')}
                   </button>
                 </div>
               </div>
@@ -250,7 +252,7 @@ export default function AIGeneratorPage() {
                 disabled={approveAll.isPending}
                 className="w-full py-3 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition"
               >
-                Save {approvedCount} Approved Cards to Deck
+                {t('aiGenerator.saveApproved', { count: approvedCount })}
               </button>
             )}
           </div>

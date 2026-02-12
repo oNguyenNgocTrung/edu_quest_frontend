@@ -1,0 +1,47 @@
+{
+  "stepOf": "Step {{step}} of {{total}}",
+  "stepSecurity": "Step {{step}} of {{total}} — Security",
+  "stepChildProfile": "Step {{step}} of {{total}} — Child Profile",
+  "security": "Security",
+  "childProfile": "Child Profile",
+  "pin": {
+    "title": "Create a Security PIN",
+    "subtitle": "A 4-digit PIN to protect parent settings",
+    "enterPin": "Enter a 4-digit PIN",
+    "confirmPin": "Confirm your PIN",
+    "pinMismatch": "PINs don't match. Please try again.",
+    "continue": "Continue",
+    "setting": "Setting up...",
+    "whyPin": "Why a PIN?",
+    "whyPinExplain": "The PIN keeps parent settings secure so kids can use the app freely."
+  },
+  "child": {
+    "title": "Add Your First Learner",
+    "subtitle": "Let's set up a profile for your child",
+    "name": "Child's Name",
+    "namePlaceholder": "Enter name",
+    "ageRange": "Age Range",
+    "ageRanges": {
+      "5-6": "5-6 years",
+      "7-9": "7-9 years",
+      "10-12": "10-12 years"
+    },
+    "avatar": "Choose a Mascot",
+    "changeAvatar": "Change Avatar",
+    "tapToSelectAvatar": "Tap to select avatar",
+    "continue": "Create Profile",
+    "creating": "Creating...",
+    "nameRequired": "Please enter a name",
+    "avatarRequired": "Please select an avatar",
+    "createFailed": "Failed to create profile. Please try again.",
+    "profileCreated": "{{name}}'s profile created!",
+    "avatarNames": {
+      "fox": "Fox",
+      "owl": "Owl",
+      "panda": "Panda",
+      "rabbit": "Rabbit",
+      "lion": "Lion",
+      "frog": "Frog"
+    }
+  }
+}

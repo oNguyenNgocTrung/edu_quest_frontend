@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import {
   ChevronDown,
   Star,
@@ -28,6 +29,8 @@ function DeckCard({
   variant: "practice" | "review" | "completed";
   onStart: (deckId: string, sessionId?: string | null) => void;
 }) {
+  const { t } = useTranslation('child');
+
   const bgStyles = {
     practice:
       "bg-gradient-to-br from-orange-50 to-purple-50 border border-orange-200",
@@ -44,9 +47,9 @@ function DeckCard({
 
   const buttonLabel = {
     practice:
-      item.status === "in_progress" ? "Continue" : "Start",
-    review: "Review",
-    completed: "Redo",
+      item.status === "in_progress" ? t('worksheetCollections.practice') : t('worksheetCollections.practice'),
+    review: t('worksheetCollections.practice'),
+    completed: t('worksheetCollections.practice'),
   };
 
   return (
@@ -89,7 +92,7 @@ function DeckCard({
             )}
             <span className="text-xs text-gray-500 flex items-center gap-1">
               <BookOpen className="w-3 h-3" />
-              {item.questions_count} questions
+              {t('worksheetCollections.questions', { count: item.questions_count })}
             </span>
             <span className="text-xs text-gray-500 flex items-center gap-1">
               <Clock className="w-3 h-3" />~{item.estimated_minutes} min
@@ -194,6 +197,7 @@ function CollapsibleGroup({
 export function WorksheetCollections({
   practiceData,
 }: WorksheetCollectionsProps) {
+  const { t } = useTranslation('child');
   const router = useRouter();
 
   const readyItems = practiceData.today_practice.filter(
@@ -221,13 +225,13 @@ export function WorksheetCollections({
       >
         <div className="flex items-center gap-2 mb-4">
           <FileText className="w-5 h-5 text-gray-500" />
-          <h2 className="text-lg font-bold text-gray-800">My Worksheets</h2>
+          <h2 className="text-lg font-bold text-gray-800">{t('worksheetCollections.title')}</h2>
         </div>
         <div className="bg-white rounded-2xl p-8 shadow-sm text-center">
           <div className="text-4xl mb-3">📝</div>
-          <h3 className="font-bold text-gray-700 mb-1">No worksheets yet!</h3>
+          <h3 className="font-bold text-gray-700 mb-1">{t('worksheetCollections.noCollections')}</h3>
           <p className="text-sm text-gray-500">
-            Ask your parent to upload one.
+            {t('worksheetCollections.noCollections')}
           </p>
         </div>
       </motion.div>
@@ -251,7 +255,7 @@ export function WorksheetCollections({
 
       {/* Ready to Practice */}
       <CollapsibleGroup
-        title="Ready to Practice"
+        title={t('worksheetCollections.practice')}
         icon={Sparkles}
         iconColor="#9333EA"
         count={readyItems.length}
@@ -268,7 +272,7 @@ export function WorksheetCollections({
 
       {/* Review Due */}
       <CollapsibleGroup
-        title="Review Due"
+        title={t('worksheetCollections.fromWorksheets')}
         icon={RefreshCw}
         iconColor="#3B82F6"
         count={reviewItems.length}
@@ -285,7 +289,7 @@ export function WorksheetCollections({
 
       {/* Completed */}
       <CollapsibleGroup
-        title="Completed"
+        title={t('worksheetCollections.title')}
         icon={CheckCircle}
         iconColor="#10B981"
         count={completedItems.length}

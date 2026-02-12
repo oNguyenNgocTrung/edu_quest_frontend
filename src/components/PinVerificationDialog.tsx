@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, X, AlertCircle } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
+import { useTranslation } from "react-i18next";
 
 interface PinVerificationDialogProps {
   isOpen: boolean;
@@ -17,10 +18,14 @@ export function PinVerificationDialog({
   isOpen,
   onClose,
   onSuccess,
-  title = "Parent Access",
-  description = "Enter your 4-digit PIN to continue",
+  title,
+  description,
 }: PinVerificationDialogProps) {
   const { verifyPin } = useAuthStore();
+  const { t } = useTranslation('common');
+
+  const resolvedTitle = title || t('pin.title');
+  const resolvedDescription = description || t('pin.subtitle');
   const [pin, setPin] = useState(["", "", "", ""]);
   const [error, setError] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -100,12 +105,12 @@ export function PinVerificationDialog({
         onSuccess();
         onClose();
       } else {
-        setError("Incorrect PIN. Try again.");
+        setError(t('pin.incorrectPin'));
         setPin(["", "", "", ""]);
         inputRefs[0].current?.focus();
       }
     } catch {
-      setError("Verification failed. Please try again.");
+      setError(t('pin.incorrectPin'));
       setPin(["", "", "", ""]);
       inputRefs[0].current?.focus();
     } finally {
@@ -152,8 +157,8 @@ export function PinVerificationDialog({
 
             {/* Title & Description */}
             <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">{title}</h2>
-              <p className="text-gray-600">{description}</p>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">{resolvedTitle}</h2>
+              <p className="text-gray-600">{resolvedDescription}</p>
             </div>
 
             {/* PIN Input */}
@@ -200,14 +205,14 @@ export function PinVerificationDialog({
             {isVerifying && (
               <div className="text-center text-gray-600">
                 <div className="inline-block animate-spin w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full mb-2" />
-                <p className="text-sm">Verifying...</p>
+                <p className="text-sm">{t('pin.verifying')}</p>
               </div>
             )}
 
             {/* Hint */}
             {!error && !isVerifying && (
               <p className="text-center text-sm text-gray-500">
-                Enter the PIN you created during registration
+                {t('pin.enterPin')}
               </p>
             )}
           </motion.div>

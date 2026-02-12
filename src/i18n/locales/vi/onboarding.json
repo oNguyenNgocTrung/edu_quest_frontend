@@ -1,0 +1,47 @@
+{
+  "stepOf": "Bước {{step}} / {{total}}",
+  "stepSecurity": "Bước {{step}} / {{total}} — Bảo mật",
+  "stepChildProfile": "Bước {{step}} / {{total}} — Hồ sơ con",
+  "security": "Bảo mật",
+  "childProfile": "Hồ sơ con",
+  "pin": {
+    "title": "Tạo mã PIN bảo mật",
+    "subtitle": "Mã PIN 4 chữ số để bảo vệ cài đặt phụ huynh",
+    "enterPin": "Nhập mã PIN 4 chữ số",
+    "confirmPin": "Xác nhận mã PIN",
+    "pinMismatch": "Mã PIN không khớp. Vui lòng thử lại.",
+    "continue": "Tiếp tục",
+    "setting": "Đang thiết lập...",
+    "whyPin": "Tại sao cần mã PIN?",
+    "whyPinExplain": "Mã PIN giữ an toàn cho cài đặt phụ huynh, để trẻ có thể sử dụng ứng dụng một cách tự do."
+  },
+  "child": {
+    "title": "Thêm người học đầu tiên",
+    "subtitle": "Hãy thiết lập hồ sơ cho con bạn",
+    "name": "Tên con",
+    "namePlaceholder": "Nhập tên",
+    "ageRange": "Độ tuổi",
+    "ageRanges": {
+      "5-6": "5-6 tuổi",
+      "7-9": "7-9 tuổi",
+      "10-12": "10-12 tuổi"
+    },
+    "avatar": "Chọn nhân vật",
+    "changeAvatar": "Đổi nhân vật",
+    "tapToSelectAvatar": "Nhấn để chọn nhân vật",
+    "continue": "Tạo hồ sơ",
+    "creating": "Đang tạo...",
+    "nameRequired": "Vui lòng nhập tên",
+    "avatarRequired": "Vui lòng chọn nhân vật",
+    "createFailed": "Không thể tạo hồ sơ. Vui lòng thử lại.",
+    "profileCreated": "Đã tạo hồ sơ cho {{name}}!",
+    "avatarNames": {
+      "fox": "Cáo",
+      "owl": "Cú",
+      "panda": "Gấu trúc",
+      "rabbit": "Thỏ",
+      "lion": "Sư tử",
+      "frog": "Ếch"
+    }
+  }
+}

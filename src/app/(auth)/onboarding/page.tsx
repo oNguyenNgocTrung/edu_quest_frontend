@@ -6,11 +6,13 @@ import { motion } from "framer-motion";
 import { useAuthStore } from "@/stores/auth-store";
 import { PinSetupStep } from "@/components/onboarding/PinSetupStep";
 import { CreateChildStep } from "@/components/onboarding/CreateChildStep";
+import { useTranslation } from "react-i18next";
 
 type OnboardingStep = "pin" | "child";
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const { t } = useTranslation("onboarding");
   const user = useAuthStore((s) => s.user);
   const childProfiles = useAuthStore((s) => s.childProfiles);
   const fetchChildProfiles = useAuthStore((s) => s.fetchChildProfiles);
@@ -65,7 +67,7 @@ export default function OnboardingPage() {
       <div className="px-6 pt-6 pb-2">
         <div className="flex items-center justify-between mb-2">
           <p className="text-sm font-medium text-gray-500">
-            Step {stepNumber} of {totalSteps}
+            {t("stepOf", { step: stepNumber, total: totalSteps })}
           </p>
         </div>
         <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -93,13 +95,13 @@ export default function OnboardingPage() {
         >
           {currentStep === "pin" && (
             <PinSetupStep
-              stepLabel={`Step ${stepNumber} of ${totalSteps} — Security`}
+              stepLabel={t("stepSecurity", { step: stepNumber, total: totalSteps })}
               onComplete={handleStepComplete}
             />
           )}
           {currentStep === "child" && (
             <CreateChildStep
-              stepLabel={`Step ${stepNumber} of ${totalSteps} — Child Profile`}
+              stepLabel={t("stepChildProfile", { step: stepNumber, total: totalSteps })}
               onComplete={handleStepComplete}
             />
           )}

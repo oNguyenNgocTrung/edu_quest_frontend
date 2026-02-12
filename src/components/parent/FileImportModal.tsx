@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload,
@@ -469,6 +470,7 @@ export default function FileImportModal({
   onImport,
   isSubmitting = false,
 }: FileImportModalProps) {
+  const { t } = useTranslation('parent');
   const [parsedData, setParsedData] = useState<
     ImportedFlashcard[] | ImportedQuestion[] | WorksheetExtractedQuestion[]
   >([]);
@@ -498,7 +500,7 @@ export default function FileImportModal({
       reader.onload = (e) => {
         const text = e.target?.result as string;
         if (!text || !text.trim()) {
-          setErrors(["File is empty"]);
+          setErrors([t('fileImport.fileEmpty')]);
           return;
         }
 
@@ -534,7 +536,7 @@ export default function FileImportModal({
       };
       reader.readAsText(file);
     },
-    [importType]
+    [importType, t]
   );
 
   const handleDrop = useCallback(
@@ -557,10 +559,10 @@ export default function FileImportModal({
 
   const typeLabel =
     importType === "flashcards"
-      ? "Flashcards"
+      ? t('fileImport.flashcards')
       : importType === "questions"
-        ? "Questions"
-        : "Worksheet Questions";
+        ? t('fileImport.questions')
+        : t('fileImport.worksheetQuestions');
 
   if (!isOpen) return null;
 
@@ -587,10 +589,10 @@ export default function FileImportModal({
                 className="text-xl font-bold text-gray-800"
                 style={{ fontFamily: "Nunito, sans-serif" }}
               >
-                Import {typeLabel}
+                {t('fileImport.title', { type: typeLabel })}
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                Upload a CSV or JSON file
+                {t('fileImport.subtitle')}
               </p>
             </div>
             <button
@@ -627,11 +629,11 @@ export default function FileImportModal({
                   />
                   <p className="font-semibold text-gray-700">
                     {isDragging
-                      ? "Drop file here..."
-                      : "Drop file here or click to browse"}
+                      ? t('fileImport.dropHere')
+                      : t('fileImport.dropFile')}
                   </p>
                   <p className="text-sm text-gray-400 mt-1">
-                    Supports .csv and .json files
+                    {t('fileImport.supportedFormats')}
                   </p>
                   <input
                     ref={fileInputRef}
@@ -644,7 +646,7 @@ export default function FileImportModal({
 
                 {/* Template Downloads */}
                 <div className="mt-4 flex items-center justify-center gap-4 text-sm">
-                  <span className="text-gray-400">Download template:</span>
+                  <span className="text-gray-400">{t('fileImport.downloadTemplate')}</span>
                   <button
                     onClick={() => downloadTemplate(importType, "csv")}
                     className="flex items-center gap-1 text-indigo-600 hover:text-indigo-700 font-medium"
@@ -669,7 +671,7 @@ export default function FileImportModal({
                 <div className="flex items-center gap-2 mb-2">
                   <AlertCircle size={16} className="text-red-500" />
                   <span className="font-semibold text-red-700 text-sm">
-                    {errors.length} error{errors.length > 1 ? "s" : ""} found
+                    {t('fileImport.errorsFound', { count: errors.length })}
                   </span>
                 </div>
                 <ul className="text-sm text-red-600 space-y-1">
@@ -678,7 +680,7 @@ export default function FileImportModal({
                   ))}
                   {errors.length > 5 && (
                     <li className="text-red-400">
-                      ...and {errors.length - 5} more
+                      {t('fileImport.andMore', { count: errors.length - 5 })}
                     </li>
                   )}
                 </ul>
@@ -695,15 +697,14 @@ export default function FileImportModal({
                       {fileName}
                     </span>
                     <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
-                      {parsedData.length} item
-                      {parsedData.length !== 1 ? "s" : ""} ready
+                      {t('fileImport.itemsReady', { count: parsedData.length })}
                     </span>
                   </div>
                   <button
                     onClick={resetState}
                     className="text-sm text-gray-400 hover:text-gray-600"
                   >
-                    Choose different file
+                    {t('fileImport.chooseDifferent')}
                   </button>
                 </div>
 
@@ -718,19 +719,19 @@ export default function FileImportModal({
                           {importType === "flashcards" ? (
                             <>
                               <th className="text-left px-4 py-2 text-gray-500 font-medium">
-                                Front
+                                {t('fileImport.front')}
                               </th>
                               <th className="text-left px-4 py-2 text-gray-500 font-medium">
-                                Back
+                                {t('fileImport.back')}
                               </th>
                             </>
                           ) : (
                             <>
                               <th className="text-left px-4 py-2 text-gray-500 font-medium">
-                                Question
+                                {t('fileImport.question')}
                               </th>
                               <th className="text-left px-4 py-2 text-gray-500 font-medium">
-                                Answer
+                                {t('fileImport.answer')}
                               </th>
                             </>
                           )}
@@ -800,7 +801,7 @@ export default function FileImportModal({
                 onClick={handleClose}
                 className="px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200 transition"
               >
-                Cancel
+                {t('fileImport.cancel')}
               </button>
               <button
                 onClick={() => onImport(parsedData)}
@@ -810,13 +811,12 @@ export default function FileImportModal({
                 {isSubmitting ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Importing...
+                    {t('fileImport.importing')}
                   </>
                 ) : (
                   <>
                     <Check size={16} />
-                    Import {parsedData.length} item
-                    {parsedData.length !== 1 ? "s" : ""}
+                    {t('fileImport.importCount', { count: parsedData.length })}
                   </>
                 )}
               </button>

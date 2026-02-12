@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/auth-store";
 import { motion } from "framer-motion";
 import {
@@ -26,44 +27,6 @@ import type { Worksheet, DashboardSummary, MasteryDataPoint } from "@/types";
 import { ChildSelector } from "@/components/parent/ChildSelector";
 import { StatCard } from "@/components/parent/StatCard";
 import { ActivityHeatmap } from "@/components/parent/ActivityHeatmap";
-
-const menuItems = [
-  {
-    label: "Content Creator",
-    icon: BookOpen,
-    href: "/parent/content",
-    color: "bg-indigo-100 text-indigo-600",
-    description: "Create flashcards and quizzes",
-  },
-  {
-    label: "AI Generator",
-    icon: Sparkles,
-    href: "/parent/ai-generator",
-    color: "bg-purple-100 text-purple-600",
-    description: "Generate content with AI",
-  },
-  {
-    label: "Analytics",
-    icon: BarChart3,
-    href: "/parent/analytics",
-    color: "bg-green-100 text-green-600",
-    description: "Track learning progress",
-  },
-  {
-    label: "Rewards",
-    icon: Gift,
-    href: "/parent/rewards",
-    color: "bg-amber-100 text-amber-600",
-    description: "Manage reward shop",
-  },
-  {
-    label: "Settings",
-    icon: Settings,
-    href: "/parent/settings",
-    color: "bg-gray-100 text-gray-600",
-    description: "Account settings",
-  },
-];
 
 const statusColors: Record<string, string> = {
   pending: "bg-gray-100 text-gray-600",
@@ -89,7 +52,46 @@ function formatTimeAgo(dateStr: string): string {
 
 export default function ParentDashboardPage() {
   const router = useRouter();
+  const { t } = useTranslation("parent");
   const { user, logout, childProfiles, selectChildProfile } = useAuthStore();
+
+  const menuItems = [
+    {
+      label: t("dashboard.contentCreator"),
+      icon: BookOpen,
+      href: "/parent/content",
+      color: "bg-indigo-100 text-indigo-600",
+      description: t("dashboard.createFlashcardsAndQuizzes"),
+    },
+    {
+      label: t("dashboard.aiGenerator"),
+      icon: Sparkles,
+      href: "/parent/ai-generator",
+      color: "bg-purple-100 text-purple-600",
+      description: t("dashboard.generateContentWithAI"),
+    },
+    {
+      label: t("dashboard.analytics"),
+      icon: BarChart3,
+      href: "/parent/analytics",
+      color: "bg-green-100 text-green-600",
+      description: t("dashboard.trackProgress"),
+    },
+    {
+      label: t("dashboard.rewards"),
+      icon: Gift,
+      href: "/parent/rewards",
+      color: "bg-amber-100 text-amber-600",
+      description: t("dashboard.manageRewardShop"),
+    },
+    {
+      label: t("dashboard.settings"),
+      icon: Settings,
+      href: "/parent/settings",
+      color: "bg-gray-100 text-gray-600",
+      description: t("dashboard.accountSettings"),
+    },
+  ];
 
   const defaultChildId = useMemo(() => {
     if (childProfiles.length === 0) return "";
@@ -165,7 +167,7 @@ export default function ParentDashboardPage() {
 
   const stats = [
     {
-      label: "Accuracy",
+      label: t("dashboard.accuracy"),
       value: `${summary?.accuracy ?? 0}%`,
       change:
         summary && summary.accuracy_change !== 0
@@ -182,26 +184,26 @@ export default function ParentDashboardPage() {
       iconBg: "bg-green-100",
     },
     {
-      label: "Time Today",
-      value: `${summary?.daily_avg_minutes ?? 0} min`,
+      label: t("dashboard.timeToday"),
+      value: `${summary?.daily_avg_minutes ?? 0} ${t("dashboard.minutes")}`,
       icon: Clock,
       iconColor: "text-blue-600",
       iconBg: "bg-blue-100",
     },
     {
-      label: "Cards Due",
+      label: t("dashboard.cardsDue"),
       value: `${cardsDue}`,
       icon: BarChart3,
       iconColor: "text-purple-600",
       iconBg: "bg-purple-100",
     },
     {
-      label: "Streak",
-      value: `${summary?.streak_days ?? 0} days`,
+      label: t("dashboard.streak"),
+      value: t("dashboard.streakDays", { count: summary?.streak_days ?? 0 }),
       change:
         summary && summary.streak_days > 0
           ? summary.streak_days === summary.streak_longest
-            ? "Record!"
+            ? t("dashboard.record")
             : `${summary.streak_days}d`
           : undefined,
       trend:
@@ -220,10 +222,10 @@ export default function ParentDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-800">
-                Parent Dashboard
+                {t("dashboard.title")}
               </h1>
               <p className="text-sm text-gray-500 mt-0.5">
-                Welcome back, {user?.name}
+                {t("dashboard.welcomeName", { name: user?.name })}
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -264,10 +266,10 @@ export default function ParentDashboardPage() {
               className="font-bold text-lg"
               style={{ fontFamily: "Nunito, sans-serif" }}
             >
-              Upload Worksheet
+              {t("dashboard.uploadWorksheet")}
             </h3>
             <p className="text-sm text-white/80 mt-0.5">
-              Snap a photo and AI creates practice exercises
+              {t("dashboard.uploadWorksheetDesc")}
             </p>
           </div>
           <ChevronRight size={20} className="text-white/60" />
@@ -308,13 +310,13 @@ export default function ParentDashboardPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-800">
-                  Recent Activity
+                  {t("dashboard.recentActivity")}
                 </h2>
                 <button
                   onClick={() => router.push("/parent/analytics")}
                   className="text-sm font-semibold text-indigo-600 hover:text-indigo-700"
                 >
-                  View All
+                  {t("dashboard.viewAll")}
                 </button>
               </div>
 
@@ -346,14 +348,16 @@ export default function ParentDashboardPage() {
                         <div className="text-lg font-bold text-gray-800">
                           {activity.score}%
                         </div>
-                        <div className="text-xs text-gray-500">Score</div>
+                        <div className="text-xs text-gray-500">{t("dashboard.score")}</div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <p className="text-gray-400 text-sm text-center py-8">
-                  No recent activity for {selectedChild?.name || "this child"}
+                  {selectedChild?.name
+                    ? t("dashboard.noActivityFor", { name: selectedChild.name })
+                    : t("dashboard.noActivity")}
                 </p>
               )}
             </motion.div>
@@ -370,9 +374,9 @@ export default function ParentDashboardPage() {
                 className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow text-left"
               >
                 <Plus className="w-8 h-8 mb-3" />
-                <h3 className="font-bold text-lg mb-1">Create Content</h3>
+                <h3 className="font-bold text-lg mb-1">{t("dashboard.createContent")}</h3>
                 <p className="text-sm text-white/80">
-                  Add flashcards or quizzes
+                  {t("dashboard.addFlashcardsOrQuizzes")}
                 </p>
               </button>
 
@@ -381,8 +385,8 @@ export default function ParentDashboardPage() {
                 className="bg-gradient-to-br from-purple-500 to-pink-600 text-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow text-left"
               >
                 <Sparkles className="w-8 h-8 mb-3" />
-                <h3 className="font-bold text-lg mb-1">AI Generator</h3>
-                <p className="text-sm text-white/80">Generate with AI</p>
+                <h3 className="font-bold text-lg mb-1">{t("dashboard.aiGenerator")}</h3>
+                <p className="text-sm text-white/80">{t("dashboard.generateWithAI")}</p>
               </button>
             </motion.div>
 
@@ -395,13 +399,13 @@ export default function ParentDashboardPage() {
               >
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="font-bold text-gray-800">
-                    Recent Worksheets
+                    {t("dashboard.recentWorksheets")}
                   </h2>
                   <button
                     onClick={() => router.push("/parent/worksheets")}
                     className="text-sm text-indigo-600 font-semibold hover:text-indigo-700"
                   >
-                    View all
+                    {t("dashboard.viewAll")}
                   </button>
                 </div>
                 <div className="flex gap-3 overflow-x-auto pb-2">
@@ -430,10 +434,10 @@ export default function ParentDashboardPage() {
                         </span>
                       </div>
                       <p className="text-sm font-semibold text-gray-800 truncate">
-                        {ws.title || "Untitled"}
+                        {ws.title || t("dashboard.worksheets")}
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
-                        {ws.questions_count} questions
+                        {t("dashboard.questionsCount", { count: ws.questions_count })}
                       </p>
                     </button>
                   ))}
@@ -475,22 +479,22 @@ export default function ParentDashboardPage() {
               <div className="flex items-center gap-2 mb-4">
                 <AlertCircle className="w-5 h-5 text-orange-500" />
                 <h2 className="text-lg font-bold text-gray-800">
-                  Notifications
+                  {t("dashboard.notifications")}
                 </h2>
               </div>
 
               <div className="space-y-3">
                 <div className="p-3 bg-orange-50 rounded-lg border border-orange-100">
                   <p className="text-sm font-medium text-gray-800 mb-1">
-                    {selectedChild?.name || "Your child"} completed a new lesson
+                    {t("dashboard.completedLesson", { name: selectedChild?.name || "Your child" })}
                   </p>
-                  <p className="text-xs text-gray-500">Just now</p>
+                  <p className="text-xs text-gray-500">{t("dashboard.justNow")}</p>
                 </div>
                 <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                   <p className="text-sm font-medium text-gray-800 mb-1">
-                    Weekly progress report is ready
+                    {t("dashboard.weeklyReportReady")}
                   </p>
-                  <p className="text-xs text-gray-500">Today</p>
+                  <p className="text-xs text-gray-500">{t("dashboard.today")}</p>
                 </div>
               </div>
             </motion.div>
@@ -503,7 +507,7 @@ export default function ParentDashboardPage() {
               className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
             >
               <h2 className="text-lg font-bold text-gray-800 mb-4">
-                Quick Links
+                {t("dashboard.quickLinks")}
               </h2>
               <div className="space-y-2">
                 <button
@@ -511,21 +515,21 @@ export default function ParentDashboardPage() {
                   className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition-colors flex items-center gap-2"
                 >
                   <BarChart3 className="w-4 h-4 text-indigo-500" />
-                  View Analytics
+                  {t("dashboard.viewAnalytics")}
                 </button>
                 <button
                   onClick={() => router.push("/parent/rewards")}
                   className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition-colors flex items-center gap-2"
                 >
                   <Gift className="w-4 h-4 text-amber-500" />
-                  Manage Rewards
+                  {t("dashboard.manageRewards")}
                 </button>
                 <button
                   onClick={() => router.push("/parent/settings")}
                   className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition-colors flex items-center gap-2"
                 >
                   <Settings className="w-4 h-4 text-gray-500" />
-                  Settings
+                  {t("dashboard.settings")}
                 </button>
               </div>
             </motion.div>

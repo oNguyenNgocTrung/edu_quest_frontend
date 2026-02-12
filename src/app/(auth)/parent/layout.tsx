@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
+import { useTranslation } from "react-i18next";
 import type { ChildProfile } from "@/types";
 
 const avatarEmojis: Record<string, string> = {
@@ -27,6 +28,7 @@ export default function ParentLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const { t } = useTranslation("common");
   const { childProfiles, selectChildProfile } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -87,7 +89,7 @@ export default function ParentLayout({
                   fontWeight: 600,
                 }}
               >
-                Child Mode
+                {t("parentLayout.childMode")}
               </div>
             </div>
           )}
@@ -105,7 +107,7 @@ export default function ParentLayout({
             >
               <div className="px-3 py-2 border-b border-gray-100">
                 <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                  Play as
+                  {t("parentLayout.playAs")}
                 </p>
               </div>
               {childProfiles.map((profile) => (

@@ -2,12 +2,15 @@
 
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface ParentModeButtonProps {
   onClick: () => void;
 }
 
 export function ParentModeButton({ onClick }: ParentModeButtonProps) {
+  const { t } = useTranslation('common');
+
   return (
     <div className="fixed bottom-20 right-4 lg:bottom-4 z-50">
       <motion.button
@@ -51,7 +54,7 @@ export function ParentModeButton({ onClick }: ParentModeButtonProps) {
               fontWeight: 600,
             }}
           >
-            Parent Mode
+            {t('parentAccess')}
           </div>
         </div>
       </motion.button>

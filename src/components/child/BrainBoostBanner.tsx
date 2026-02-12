@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface BrainBoostBannerProps {
   cardsDue: number;
@@ -15,6 +16,7 @@ export function BrainBoostBanner({
   onReviewClick,
   onDismiss,
 }: BrainBoostBannerProps) {
+  const { t } = useTranslation('child');
   const [isDismissed, setIsDismissed] = useState(false);
 
   const shouldShow = cardsDue >= 5 && !isDismissed;
@@ -93,7 +95,7 @@ export function BrainBoostBanner({
                   className="font-bold leading-tight"
                   style={{ fontSize: "14px", color: "#EA580C" }}
                 >
-                  {cardsDue} card{cardsDue !== 1 ? "s" : ""} ready for review!
+                  {cardsDue} {t('brainBoost.cardsReady')}
                 </h3>
                 <p
                   className="font-medium leading-tight"

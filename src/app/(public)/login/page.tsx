@@ -7,8 +7,11 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Sparkles, Eye, EyeOff } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export default function LoginPage() {
+  const { t } = useTranslation('auth');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -22,17 +25,17 @@ export default function LoginPage() {
     setError("");
 
     if (!email || !password) {
-      setError("Please fill in all fields");
+      setError(t('login.fillAllFields'));
       return;
     }
 
     setLoading(true);
     try {
       await login(email, password);
-      toast.success("Welcome back!");
+      toast.success(t('login.welcomeBack'));
       router.push("/onboarding");
     } catch {
-      setError("Invalid email or password");
+      setError(t('login.error'));
     } finally {
       setLoading(false);
     }
@@ -48,7 +51,8 @@ export default function LoginPage() {
         >
           <ArrowLeft className="w-6 h-6 text-gray-700" />
         </Link>
-        <h2 className="text-xl font-bold text-gray-800">Welcome Back</h2>
+        <h2 className="text-xl font-bold text-gray-800 flex-1">{t('login.mobileHeader')}</h2>
+        <LanguageSwitcher />
       </div>
 
       {/* Mobile Content */}
@@ -67,7 +71,7 @@ export default function LoginPage() {
             className="mb-4 px-4 py-2 bg-purple-50 border-2 border-purple-200 rounded-full"
           >
             <p className="text-xs font-semibold text-purple-600 text-center">
-              Parent Account Login
+              {t('login.parentAccountLogin')}
             </p>
           </motion.div>
 
@@ -80,7 +84,7 @@ export default function LoginPage() {
             >
               <div className="bg-white rounded-2xl px-4 py-2 shadow-lg border-2 border-purple-600">
                 <p className="text-sm font-semibold text-purple-600">
-                  Welcome back, Parent!
+                  {t('login.welcomeBackParent')}
                 </p>
               </div>
               <div
@@ -124,11 +128,10 @@ export default function LoginPage() {
             <span className="text-xl">ℹ️</span>
             <div>
               <p className="text-sm font-semibold text-blue-800 mb-1">
-                Parent Login Only
+                {t('login.parentLoginOnly')}
               </p>
               <p className="text-xs text-blue-500 leading-relaxed">
-                Children access the app by selecting their profile. This login
-                is for parents to manage content and view progress.
+                {t('login.parentLoginInfoFull')}
               </p>
             </div>
           </div>
@@ -144,27 +147,27 @@ export default function LoginPage() {
         >
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              Email Address
+              {t('login.emailLabel')}
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              placeholder={t('login.emailPlaceholder')}
               className="w-full h-12 px-4 border-2 border-gray-200 rounded-2xl text-base text-gray-800 bg-white outline-none focus:border-purple-600 transition-colors"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-800 mb-2">
-              Password
+              {t('login.password')}
             </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder={t('login.passwordPlaceholder')}
                 className="w-full h-12 px-4 pr-12 border-2 border-gray-200 rounded-2xl text-base text-gray-800 bg-white outline-none focus:border-purple-600 transition-colors"
               />
               <button
@@ -224,7 +227,7 @@ export default function LoginPage() {
                 />
               )}
               <span className="relative z-10">
-                {loading ? "Signing in..." : "Log In"}
+                {loading ? t('login.submitting') : t('login.submit')}
               </span>
             </motion.button>
           </div>
@@ -232,7 +235,7 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="flex items-center gap-4 py-4">
             <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-sm text-gray-400">or continue with</span>
+            <span className="text-sm text-gray-400">{t('login.orContinueWith')}</span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
 
@@ -263,7 +266,7 @@ export default function LoginPage() {
               href="/register"
               className="text-sm text-purple-600 underline"
             >
-              New to LearnNest? Create Account
+              {t('login.newToLearnNest')}
             </Link>
           </div>
         </motion.form>
@@ -433,7 +436,7 @@ export default function LoginPage() {
             className="text-4xl font-black text-white mb-4"
             style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}
           >
-            Welcome Back!
+            {t('login.title')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -442,7 +445,7 @@ export default function LoginPage() {
             className="text-xl text-white/85"
             style={{ textShadow: "0 1px 5px rgba(0,0,0,0.2)" }}
           >
-            Manage your child&apos;s learning journey
+            {t('login.tagline')}
           </motion.p>
         </div>
       </div>
@@ -454,22 +457,25 @@ export default function LoginPage() {
           animate={{ opacity: 1, x: 0 }}
           className="w-full max-w-md"
         >
-          {/* Back Button */}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link
-              href="/"
-              className="mb-6 w-11 h-11 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-            >
-              <ArrowLeft className="w-6 h-6 text-gray-700" />
-            </Link>
-          </motion.div>
+          {/* Back Button + Language Switcher */}
+          <div className="flex items-center justify-between mb-6">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                href="/"
+                className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+              >
+                <ArrowLeft className="w-6 h-6 text-gray-700" />
+              </Link>
+            </motion.div>
+            <LanguageSwitcher />
+          </div>
 
           {/* Form Header */}
           <div className="mb-8">
             <h2 className="text-3xl font-black text-gray-800 mb-2">
-              Parent Login
+              {t('login.parentLogin')}
             </h2>
-            <p className="text-sm text-gray-600">Access your dashboard</p>
+            <p className="text-sm text-gray-600">{t('login.accessDashboard')}</p>
           </div>
 
           {/* Info Banner */}
@@ -478,10 +484,10 @@ export default function LoginPage() {
               <span className="text-xl">ℹ️</span>
               <div>
                 <p className="text-sm font-semibold text-blue-800 mb-1">
-                  Parent Login Only
+                  {t('login.parentLoginOnly')}
                 </p>
                 <p className="text-xs text-blue-500 leading-relaxed">
-                  Children access the app by selecting their profile.
+                  {t('login.parentLoginInfoShort')}
                 </p>
               </div>
             </div>
@@ -491,27 +497,27 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Email Address
+                {t('login.emailLabel')}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t('login.emailPlaceholder')}
                 className="w-full h-12 px-4 border-2 border-gray-200 rounded-2xl text-base text-gray-800 bg-white outline-none focus:border-purple-600 transition-colors"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Password
+                {t('login.password')}
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
+                  placeholder={t('login.passwordPlaceholder')}
                   className="w-full h-12 px-4 pr-12 border-2 border-gray-200 rounded-2xl text-base text-gray-800 bg-white outline-none focus:border-purple-600 transition-colors"
                 />
                 <button
@@ -571,7 +577,7 @@ export default function LoginPage() {
                   />
                 )}
                 <span className="relative z-10">
-                  {loading ? "Signing in..." : "Log In"}
+                  {loading ? t('login.submitting') : t('login.submit')}
                 </span>
               </motion.button>
             </div>
@@ -579,7 +585,7 @@ export default function LoginPage() {
             {/* Divider */}
             <div className="flex items-center gap-4 py-4">
               <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-sm text-gray-400">or continue with</span>
+              <span className="text-sm text-gray-400">{t('login.orContinueWith')}</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
@@ -610,7 +616,7 @@ export default function LoginPage() {
                 href="/register"
                 className="text-sm text-purple-600 underline"
               >
-                New to LearnNest? Create Account
+                {t('login.newToLearnNest')}
               </Link>
             </div>
           </form>

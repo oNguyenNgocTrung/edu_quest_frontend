@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Target } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { PracticeItem } from "@/types";
 
 interface ReviewDueCardProps {
@@ -10,6 +11,8 @@ interface ReviewDueCardProps {
 }
 
 export function ReviewDueCard({ items, onStartReview }: ReviewDueCardProps) {
+  const { t } = useTranslation('child');
+
   if (items.length === 0) return null;
 
   const totalQuestions = items.reduce((sum, item) => sum + item.questions_count, 0);
@@ -30,14 +33,14 @@ export function ReviewDueCard({ items, onStartReview }: ReviewDueCardProps) {
               className="text-lg font-black text-blue-900"
               style={{ fontFamily: "Nunito, sans-serif" }}
             >
-              Review Due
+              {t('reviewDue.title')}
             </h3>
           </div>
           <p
             className="text-sm text-blue-700"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            {totalQuestions} questions need review from {items.length} worksheet{items.length > 1 ? "s" : ""}
+            {t('reviewDue.cardsToReview', { count: totalQuestions })}
           </p>
         </div>
         <div className="text-right">
@@ -75,7 +78,7 @@ export function ReviewDueCard({ items, onStartReview }: ReviewDueCardProps) {
         className="w-full bg-blue-500 text-white py-3 rounded-2xl font-bold hover:bg-blue-600 transition-colors"
         style={{ fontFamily: "Nunito, sans-serif" }}
       >
-        Start Review
+        {t('reviewDue.startReview')}
       </motion.button>
     </motion.div>
   );

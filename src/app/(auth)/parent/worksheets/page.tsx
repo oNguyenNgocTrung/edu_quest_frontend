@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import apiClient from "@/lib/api-client";
 import type { Worksheet } from "@/types";
+import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
   Plus,
@@ -17,30 +18,30 @@ import {
 
 const statusConfig: Record<
   string,
-  { label: string; color: string; icon: typeof CheckCircle }
+  { labelKey: string; color: string; icon: typeof CheckCircle }
 > = {
   approved: {
-    label: "Approved",
+    labelKey: "worksheets.approved",
     color: "bg-green-100 text-green-700",
     icon: CheckCircle,
   },
   extracted: {
-    label: "Ready for Review",
+    labelKey: "worksheets.readyForReview",
     color: "bg-amber-100 text-amber-700",
     icon: AlertTriangle,
   },
   processing: {
-    label: "Processing",
+    labelKey: "worksheets.processing",
     color: "bg-purple-100 text-purple-700",
     icon: Loader2,
   },
   pending: {
-    label: "Pending",
+    labelKey: "worksheets.pending",
     color: "bg-gray-100 text-gray-600",
     icon: Clock,
   },
   failed: {
-    label: "Failed",
+    labelKey: "worksheets.failed",
     color: "bg-red-100 text-red-700",
     icon: AlertTriangle,
   },
@@ -48,6 +49,7 @@ const statusConfig: Record<
 
 export default function WorksheetsListPage() {
   const router = useRouter();
+  const { t } = useTranslation("parent");
 
   const { data: worksheets, isLoading } = useQuery({
     queryKey: ["worksheets"],
@@ -85,16 +87,16 @@ export default function WorksheetsListPage() {
             className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-3"
           >
             <ArrowLeft size={20} />
-            Dashboard
+            {t("worksheets.dashboard")}
           </button>
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-800">Worksheets</h1>
+            <h1 className="text-2xl font-bold text-gray-800">{t("worksheets.title")}</h1>
             <button
               onClick={() => router.push("/parent/worksheets/upload")}
               className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
             >
               <Plus size={18} />
-              Upload
+              {t("worksheets.upload")}
             </button>
           </div>
         </div>
@@ -124,18 +126,18 @@ export default function WorksheetsListPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-800 truncate">
-                      {ws.title || "Untitled Worksheet"}
+                      {ws.title || t("worksheets.untitled")}
                     </h3>
                     <div className="flex items-center gap-3 mt-1">
                       <span
                         className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${config.color}`}
                       >
                         <StatusIcon size={12} />
-                        {config.label}
+                        {t(config.labelKey)}
                       </span>
                       {ws.questions_count > 0 && (
                         <span className="text-xs text-gray-400">
-                          {ws.questions_count} questions
+                          {t("worksheets.questionsCount", { count: ws.questions_count })}
                         </span>
                       )}
                       <span className="text-xs text-gray-400">
@@ -150,15 +152,15 @@ export default function WorksheetsListPage() {
         ) : (
           <div className="text-center py-20">
             <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 mb-2">No worksheets yet</p>
+            <p className="text-gray-500 mb-2">{t("worksheets.noWorksheets")}</p>
             <p className="text-sm text-gray-400 mb-6">
-              Upload a worksheet photo to get started
+              {t("worksheets.uploadFirst")}
             </p>
             <button
               onClick={() => router.push("/parent/worksheets/upload")}
               className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition"
             >
-              Upload Worksheet
+              {t("worksheets.uploadWorksheet")}
             </button>
           </div>
         )}

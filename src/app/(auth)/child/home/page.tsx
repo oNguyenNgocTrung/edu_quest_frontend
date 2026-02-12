@@ -30,7 +30,9 @@ import {
   Music,
   Palette,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Mascot } from "@/components/Mascot";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { BrainBoostBanner } from "@/components/child/BrainBoostBanner";
 import { YourSubjects } from "@/components/child/YourSubjects";
 import { BottomNav } from "@/components/child/BottomNav";
@@ -49,14 +51,7 @@ const iconMap: Record<string, React.ElementType> = {
   palette: Palette,
 };
 
-// Desktop sidebar nav items
-const sidebarNavItems = [
-  { path: "/child/home", icon: Home, label: "Home" },
-  { path: "/child/learn", icon: BookOpen, label: "Learn" },
-  { path: "/child/rewards", icon: Gift, label: "Rewards" },
-  { path: "/child/leaderboard", icon: Award, label: "Ranks" },
-  { path: "/child/profile", icon: User, label: "Profile" },
-];
+// Desktop sidebar nav items - moved inside component for i18n
 
 // ─── Desktop Local Components ─────────────────────────────────────
 
@@ -69,6 +64,7 @@ function SubjectCardDesktop({
   onClick: () => void;
   delay: number;
 }) {
+  const { t } = useTranslation('common');
   const Icon = iconMap[subject.icon_name] || BookOpen;
   const mastery = subject.enrollment?.mastery_level ?? 0;
   const level = subject.enrollment?.current_level ?? 1;
@@ -93,7 +89,7 @@ function SubjectCardDesktop({
         </div>
         <h3 className="font-bold text-gray-800 mb-2 text-lg">{subject.name}</h3>
         <div className="flex items-center gap-2 text-xs text-gray-600 mb-3">
-          <span className="px-2 py-1 bg-white/60 rounded-full">Level {level}</span>
+          <span className="px-2 py-1 bg-white/60 rounded-full">{t('level')} {level}</span>
           <span className="px-2 py-1 bg-white/60 rounded-full">{mastery}%</span>
         </div>
         <div className="w-full h-2 bg-white/50 rounded-full overflow-hidden">
@@ -200,7 +196,16 @@ export default function ChildHomePage() {
   } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
+  const { t } = useTranslation(['child', 'common']);
   const [showConfetti, setShowConfetti] = useState(false);
+
+  const sidebarNavItems = [
+    { path: "/child/home", icon: Home, label: t('common:nav.home') },
+    { path: "/child/learn", icon: BookOpen, label: t('common:nav.learn') },
+    { path: "/child/rewards", icon: Gift, label: t('common:nav.rewards') },
+    { path: "/child/leaderboard", icon: Award, label: t('common:nav.ranks') },
+    { path: "/child/profile", icon: User, label: t('common:nav.profile') },
+  ];
 
   useEffect(() => {
     fetchChildProfiles();
@@ -250,10 +255,10 @@ export default function ChildHomePage() {
       <div className="min-h-screen bg-gradient-to-b from-purple-100 via-pink-50 to-orange-50 p-6">
         <div className="max-w-md mx-auto pt-12">
           <h1 className="text-2xl font-black text-center text-gray-800 mb-2">
-            Who&apos;s learning today?
+            {t('home.whoIsLearning')}
           </h1>
           <p className="text-center text-gray-500 mb-8">
-            Select a profile to get started
+            {t('home.selectProfile')}
           </p>
 
           <div className="grid grid-cols-2 gap-4">
@@ -273,7 +278,7 @@ export default function ChildHomePage() {
                   />
                 </div>
                 <h3 className="font-bold text-gray-800">{profile.name}</h3>
-                <p className="text-sm text-gray-500">Level {profile.level}</p>
+                <p className="text-sm text-gray-500">{t('common:level')} {profile.level}</p>
               </motion.button>
             ))}
           </div>
@@ -283,7 +288,7 @@ export default function ChildHomePage() {
             className="mt-8 w-full py-3 text-gray-500 hover:text-gray-700 flex items-center justify-center gap-2"
           >
             <LogOut size={18} />
-            Sign Out
+            {t('common:signOut')}
           </button>
         </div>
       </div>
@@ -353,7 +358,7 @@ export default function ChildHomePage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search lessons..."
+                placeholder={t('home.searchLessons')}
                 className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
             </div>
@@ -370,7 +375,7 @@ export default function ChildHomePage() {
             >
               <Flame className="w-5 h-5 text-orange-500" />
               <span className="font-bold text-orange-700">
-                {streakDays} day{streakDays !== 1 ? "s" : ""}
+                {t('common:day', { count: streakDays })}
               </span>
             </motion.div>
 
@@ -384,6 +389,9 @@ export default function ChildHomePage() {
               <Coins className="w-5 h-5 text-yellow-600" />
               <span className="font-bold text-yellow-700">{profile.coins}</span>
             </motion.div>
+
+            {/* Language Switcher */}
+            <LanguageSwitcher />
 
             {/* Profile Avatar */}
             <motion.div
@@ -404,8 +412,8 @@ export default function ChildHomePage() {
           <div className="mb-6 flex items-center gap-3 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl">
             <Mascot mood={getMascotMood()} size="md" showSpeechBubble={false} />
             <div>
-              <p className="font-bold text-gray-800">Hey {profile.name}!</p>
-              <p className="text-xs text-gray-600">Level {profile.level}</p>
+              <p className="font-bold text-gray-800">{t('home.greeting', { name: profile.name })}</p>
+              <p className="text-xs text-gray-600">{t('common:level')} {profile.level}</p>
             </div>
           </div>
 
@@ -470,7 +478,7 @@ export default function ChildHomePage() {
                     <Star className="w-8 h-8 text-white fill-white" />
                   </div>
                   <div>
-                    <p className="text-gray-500 font-medium">Level {profile.level}</p>
+                    <p className="text-gray-500 font-medium">{t('common:level')} {profile.level}</p>
                     <p className="text-2xl font-black text-gray-800">
                       {currentXP} / {levelUpXP} XP
                     </p>
@@ -510,12 +518,12 @@ export default function ChildHomePage() {
               >
                 <div className="relative z-10 h-full flex flex-col justify-between">
                   <div className="flex items-start justify-between">
-                    <h3 className="text-xl font-bold text-white">Daily Quest</h3>
+                    <h3 className="text-xl font-bold text-white">{t('home.dailyQuest')}</h3>
                     <Star className="w-7 h-7 text-yellow-300 fill-yellow-300" />
                   </div>
                   <div>
                     <p className="text-white text-sm mb-4">
-                      Complete {questTotal} lessons today!
+                      {t('home.completeLessonsToday', { count: questTotal })}
                     </p>
                     <div className="flex items-center gap-3">
                       <div className="flex-1 h-3 rounded-full bg-white/30">
@@ -558,12 +566,12 @@ export default function ChildHomePage() {
           {subjects && subjects.length > 0 && (
             <div className="mb-8">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-black text-gray-800">Your Subjects</h2>
+                <h2 className="text-2xl font-black text-gray-800">{t('home.yourSubjects')}</h2>
                 <button
                   onClick={() => router.push("/child/learn")}
                   className="flex items-center gap-2 text-purple-600 hover:text-purple-700 font-semibold"
                 >
-                  See All
+                  {t('common:seeAll')}
                   <ArrowRight className="w-5 h-5" />
                 </button>
               </div>
@@ -587,7 +595,7 @@ export default function ChildHomePage() {
             <div>
               <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <Zap className="w-5 h-5 text-purple-600" />
-                Quick Actions
+                {t('home.quickActions')}
               </h3>
               <div className="space-y-4">
                 <QuickActionCardDesktop
@@ -609,8 +617,8 @@ export default function ChildHomePage() {
                 />
                 <QuickActionCardDesktop
                   icon="🏆"
-                  title="Achievements"
-                  subtitle="View your trophies and badges"
+                  title={t('home.achievements')}
+                  subtitle={t('home.viewTrophies')}
                   gradient="from-pink-500 to-purple-500"
                   onClick={() => router.push("/child/profile")}
                 />
@@ -620,7 +628,7 @@ export default function ChildHomePage() {
             {/* Continue Learning */}
             <div>
               <h3 className="text-xl font-bold text-gray-800 mb-4">
-                Continue Learning
+                {t('home.continueLearning')}
               </h3>
               <div className="space-y-3">
                 <ContinueLearningCard
@@ -772,7 +780,7 @@ export default function ChildHomePage() {
                   </span>
                 </div>
                 <span className="text-sm font-medium text-gray-600">
-                  day{streakDays !== 1 ? "s" : ""}
+                  {t('common:day', { count: streakDays })}
                 </span>
               </div>
             </div>
@@ -787,6 +795,9 @@ export default function ChildHomePage() {
             <Coins className="w-5 h-5 text-yellow-600" />
             <span className="font-bold text-yellow-700">{profile.coins}</span>
           </motion.div>
+
+          {/* Language Switcher */}
+          <LanguageSwitcher />
         </div>
       </div>
 
@@ -801,9 +812,9 @@ export default function ChildHomePage() {
           <Mascot mood={getMascotMood()} size="lg" showSpeechBubble={true} />
           <div>
             <h1 className="text-2xl font-black text-gray-800">
-              Hey {profile.name}! 👋
+              {t('home.greeting', { name: profile.name })} 👋
             </h1>
-            <p className="text-gray-600">Ready to learn today?</p>
+            <p className="text-gray-600">{t('home.readyToLearn')}</p>
           </div>
         </motion.div>
 
@@ -820,7 +831,7 @@ export default function ChildHomePage() {
                 <Star className="w-5 h-5 text-white fill-white" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Level {profile.level}</p>
+                <p className="text-sm text-gray-500">{t('common:level')} {profile.level}</p>
                 <p className="font-bold text-gray-800">
                   {currentXP} / {levelUpXP} XP
                 </p>
@@ -939,7 +950,7 @@ export default function ChildHomePage() {
               <div className="relative z-20">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-bold text-white" style={{ fontSize: "20px" }}>
-                    Daily Quest
+                    {t('home.dailyQuest')}
                   </h3>
                   <div className="relative">
                     <motion.div
@@ -980,7 +991,7 @@ export default function ChildHomePage() {
                   </div>
                 </div>
                 <p className="text-white text-left mb-3" style={{ fontSize: "14px" }}>
-                  Complete {questTotal} lessons to earn bonus XP!
+                  {t('home.completeLessonsForXp', { count: questTotal })}
                 </p>
                 <div className="flex items-center gap-2">
                   <div
@@ -1028,7 +1039,7 @@ export default function ChildHomePage() {
               className="font-bold tracking-wider uppercase"
               style={{ fontSize: "12px", color: "#6B7280", letterSpacing: "0.05em" }}
             >
-              Quick Actions
+              {t('home.quickActions')}
             </h3>
           </div>
 
@@ -1158,13 +1169,13 @@ export default function ChildHomePage() {
                       className="font-bold text-white text-left leading-tight"
                       style={{ fontSize: "15px" }}
                     >
-                      Achievements
+                      {t('home.achievements')}
                     </h3>
                     <p
                       className="text-left font-medium"
                       style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}
                     >
-                      View your trophies
+                      {t('home.viewTrophies')}
                     </p>
                   </div>
                 </div>

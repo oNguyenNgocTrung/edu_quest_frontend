@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Lock, Star, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   Calculator,
   FlaskConical,
@@ -47,6 +48,7 @@ export function SubjectBrowserCard({
   onClick,
   index,
 }: SubjectBrowserCardProps) {
+  const { t } = useTranslation('child');
   const Icon = iconMap[subject.icon_name] || BookOpen;
   const mastery = subject.enrollment?.mastery_level ?? 0;
   const level = subject.enrollment?.current_level ?? 1;
@@ -130,7 +132,7 @@ export function SubjectBrowserCard({
           <div className="mb-3">
             <div className="flex items-center justify-between text-xs mb-1.5">
               <span className="font-semibold text-gray-600">
-                {completedNodes}/{totalNodes} lessons
+                {completedNodes}/{totalNodes} {t('subjectBrowser.decks', { count: totalNodes })}
               </span>
               <span
                 className="font-bold"
@@ -176,7 +178,7 @@ export function SubjectBrowserCard({
                 className="px-4 py-2 rounded-full text-white text-sm font-bold shadow-md"
                 style={{ backgroundColor: subject.display_color }}
               >
-                {progress > 0 ? "Continue" : "Start"}
+                {progress > 0 ? t('subjectBrowser.explore') : t('subjectBrowser.explore')}
               </div>
             </div>
           )}

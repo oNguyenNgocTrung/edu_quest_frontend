@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface MascotProps {
   mood?: "waving" | "pointing" | "celebrating" | "encouraging" | "excited";
@@ -18,6 +19,7 @@ export function Mascot({
   showSpeechBubble = false,
   message,
 }: MascotProps) {
+  const { t } = useTranslation("child");
   const [isBlinking, setIsBlinking] = useState(false);
   const [isBubbleVisible, setIsBubbleVisible] = useState(showSpeechBubble);
 
@@ -45,15 +47,15 @@ export function Mascot({
     xl: "w-40 h-40",
   };
 
-  const messages: Record<string, string> = {
-    waving: "Hey there! Ready to learn?",
-    pointing: "Let's complete your Daily Quest!",
-    celebrating: "Amazing! You did it!",
-    encouraging: "You're so close to leveling up!",
-    excited: "You're about to level up! Keep going!",
+  const moodToTranslationKey: Record<string, string> = {
+    waving: "mascot.waving",
+    pointing: "mascot.pointing",
+    celebrating: "mascot.celebrating",
+    encouraging: "mascot.encouraging",
+    excited: "mascot.excited",
   };
 
-  const currentMessage = message || messages[mood];
+  const currentMessage = message || t(moodToTranslationKey[mood]);
 
   const mascotVariants = {
     waving: {

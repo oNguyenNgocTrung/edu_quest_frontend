@@ -7,8 +7,11 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Sparkles, Eye, EyeOff, Check } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export default function RegisterPage() {
+  const { t } = useTranslation('auth');
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,27 +28,27 @@ export default function RegisterPage() {
     const newErrors: Record<string, string> = {};
 
     if (!name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = t('register.nameRequired');
     }
 
     if (!email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t('register.emailRequired');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Please enter a valid email";
+      newErrors.email = t('register.emailInvalid');
     }
 
     if (!password) {
-      newErrors.password = "Password is required";
+      newErrors.password = t('register.passwordRequired');
     } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
+      newErrors.password = t('register.passwordMinLength');
     }
 
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = t('register.passwordMismatch');
     }
 
     if (!agreedToTerms) {
-      newErrors.terms = "You must agree to the terms";
+      newErrors.terms = t('register.termsRequired');
     }
 
     setErrors(newErrors);
@@ -59,10 +62,10 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(name, email, password);
-      toast.success("Account created! Welcome to LearnNest!");
+      toast.success(t('register.success'));
       router.push("/onboarding");
     } catch {
-      toast.error("Registration failed. Please try again.");
+      toast.error(t('register.failed'));
     } finally {
       setLoading(false);
     }
@@ -85,7 +88,8 @@ export default function RegisterPage() {
         >
           <ArrowLeft className="w-6 h-6 text-gray-700" />
         </Link>
-        <h2 className="text-xl font-bold text-gray-800">Create Account</h2>
+        <h2 className="text-xl font-bold text-gray-800 flex-1">{t('register.title')}</h2>
+        <LanguageSwitcher />
       </div>
 
       {/* Mobile Content */}
@@ -116,7 +120,7 @@ export default function RegisterPage() {
         >
           <div className="px-4 py-2 bg-purple-50 border-2 border-purple-200 rounded-full">
             <p className="text-xs font-semibold text-purple-600 text-center">
-              Creating Parent Account
+              {t('register.creatingParentAccount')}
             </p>
           </div>
         </motion.div>
@@ -131,13 +135,13 @@ export default function RegisterPage() {
           >
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Full Name
+                {t('register.name')}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your full name"
+                placeholder={t('register.namePlaceholder')}
                 className={inputClass("name")}
               />
               {errors.name && (
@@ -149,13 +153,13 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Email Address
+                {t('register.emailLabel')}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t('register.emailPlaceholder')}
                 className={inputClass("email")}
               />
               {errors.email && (
@@ -167,14 +171,14 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Password
+                {t('register.password')}
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 6 characters"
+                  placeholder={t('register.passwordPlaceholder')}
                   className={`${inputClass("password")} pr-12`}
                 />
                 <button
@@ -198,14 +202,14 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Confirm Password
+                {t('register.confirmPassword')}
               </label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-enter your password"
+                  placeholder={t('register.confirmPasswordPlaceholder')}
                   className={`${inputClass("confirmPassword")} pr-12`}
                 />
                 <button
@@ -244,13 +248,13 @@ export default function RegisterPage() {
                   {agreedToTerms && <Check className="w-3 h-3 text-white" />}
                 </div>
                 <span className="text-sm text-gray-800 leading-relaxed">
-                  I agree to the{" "}
+                  {t('register.terms')}{" "}
                   <span className="text-purple-600 underline">
-                    Terms of Service
+                    {t('register.termsLink')}
                   </span>{" "}
-                  and{" "}
+                  {t('register.and')}{" "}
                   <span className="text-purple-600 underline">
-                    Privacy Policy
+                    {t('register.privacyLink')}
                   </span>
                 </span>
               </label>
@@ -294,7 +298,7 @@ export default function RegisterPage() {
                   />
                 )}
                 <span className="relative z-10">
-                  {loading ? "Creating account..." : "Continue"}
+                  {loading ? t('register.submitting') : t('register.submit')}
                 </span>
               </motion.button>
             </div>
@@ -302,7 +306,7 @@ export default function RegisterPage() {
             {/* Divider */}
             <div className="flex items-center gap-4 py-4">
               <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-sm text-gray-400">or continue with</span>
+              <span className="text-sm text-gray-400">{t('register.orContinueWith')}</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
@@ -333,7 +337,7 @@ export default function RegisterPage() {
                 href="/login"
                 className="text-sm text-purple-600 underline"
               >
-                Already have an account? Log in
+                {t('register.alreadyHaveAccount')}
               </Link>
             </div>
           </motion.form>
@@ -504,7 +508,7 @@ export default function RegisterPage() {
             className="text-4xl font-black text-white mb-4"
             style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}
           >
-            Join LearnNest!
+            {t('register.joinLearnNest')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -513,8 +517,7 @@ export default function RegisterPage() {
             className="text-xl text-white/85"
             style={{ textShadow: "0 1px 5px rgba(0,0,0,0.2)" }}
           >
-            Create your parent account and start your child&apos;s learning
-            adventure
+            {t('register.joinSubtitle')}
           </motion.p>
         </div>
       </div>
@@ -526,22 +529,25 @@ export default function RegisterPage() {
           animate={{ opacity: 1, x: 0 }}
           className="w-full max-w-md"
         >
-          {/* Back Button */}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link
-              href="/login"
-              className="mb-6 w-11 h-11 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
-            >
+          {/* Back Button + Language Switcher */}
+          <div className="flex items-center justify-between mb-6">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                href="/login"
+                className="w-11 h-11 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+              >
               <ArrowLeft className="w-6 h-6 text-gray-700" />
             </Link>
           </motion.div>
+            <LanguageSwitcher />
+          </div>
 
           {/* Form Header */}
           <div className="mb-8">
             <h2 className="text-3xl font-black text-gray-800 mb-2">
-              Create Account
+              {t('register.title')}
             </h2>
-            <p className="text-sm text-gray-600">Set up your parent account</p>
+            <p className="text-sm text-gray-600">{t('register.setupParentAccount')}</p>
           </div>
 
           {/* Progress Indicator */}
@@ -565,13 +571,13 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Full Name
+                {t('register.name')}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your full name"
+                placeholder={t('register.namePlaceholder')}
                 className={inputClass("name")}
               />
               {errors.name && (
@@ -583,13 +589,13 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Email Address
+                {t('register.emailLabel')}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t('register.emailPlaceholder')}
                 className={inputClass("email")}
               />
               {errors.email && (
@@ -601,14 +607,14 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Password
+                {t('register.password')}
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 6 characters"
+                  placeholder={t('register.passwordPlaceholder')}
                   className={`${inputClass("password")} pr-12`}
                 />
                 <button
@@ -632,14 +638,14 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-sm font-medium text-gray-800 mb-2">
-                Confirm Password
+                {t('register.confirmPassword')}
               </label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-enter your password"
+                  placeholder={t('register.confirmPasswordPlaceholder')}
                   className={`${inputClass("confirmPassword")} pr-12`}
                 />
                 <button
@@ -678,13 +684,13 @@ export default function RegisterPage() {
                   {agreedToTerms && <Check className="w-3 h-3 text-white" />}
                 </div>
                 <span className="text-sm text-gray-800 leading-relaxed">
-                  I agree to the{" "}
+                  {t('register.terms')}{" "}
                   <span className="text-purple-600 underline">
-                    Terms of Service
+                    {t('register.termsLink')}
                   </span>{" "}
-                  and{" "}
+                  {t('register.and')}{" "}
                   <span className="text-purple-600 underline">
-                    Privacy Policy
+                    {t('register.privacyLink')}
                   </span>
                 </span>
               </label>
@@ -728,7 +734,7 @@ export default function RegisterPage() {
                   />
                 )}
                 <span className="relative z-10">
-                  {loading ? "Creating account..." : "Continue"}
+                  {loading ? t('register.submitting') : t('register.submit')}
                 </span>
               </motion.button>
             </div>
@@ -736,7 +742,7 @@ export default function RegisterPage() {
             {/* Divider */}
             <div className="flex items-center gap-4 py-4">
               <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-sm text-gray-400">or continue with</span>
+              <span className="text-sm text-gray-400">{t('register.orContinueWith')}</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
@@ -767,7 +773,7 @@ export default function RegisterPage() {
                 href="/login"
                 className="text-sm text-purple-600 underline"
               >
-                Already have an account? Log in
+                {t('register.alreadyHaveAccount')}
               </Link>
             </div>
           </form>

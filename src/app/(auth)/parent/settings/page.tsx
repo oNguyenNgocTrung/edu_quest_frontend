@@ -2,28 +2,30 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/auth-store";
 import { ArrowLeft, Shield, LogOut } from "lucide-react";
 import { toast } from "sonner";
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { t } = useTranslation('parent');
   const { user, setPin, logout } = useAuthStore();
   const [pin, setPinValue] = useState("");
   const [showPinForm, setShowPinForm] = useState(false);
 
   const handleSetPin = async () => {
     if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
-      toast.error("PIN must be exactly 4 digits");
+      toast.error(t('settings.pinMustBe4Digits'));
       return;
     }
     try {
       await setPin(pin);
-      toast.success("PIN updated successfully");
+      toast.success(t('settings.pinUpdated'));
       setShowPinForm(false);
       setPinValue("");
     } catch {
-      toast.error("Failed to set PIN");
+      toast.error(t('settings.pinError'));
     }
   };
 
@@ -36,23 +38,23 @@ export default function SettingsPage() {
             className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-3"
           >
             <ArrowLeft size={20} />
-            Dashboard
+            {t('settings.dashboard')}
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-800">{t('settings.title')}</h1>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto p-4 space-y-4">
         {/* Account info */}
         <div className="bg-white rounded-xl p-4 shadow-sm">
-          <h3 className="font-semibold text-gray-800 mb-3">Account</h3>
+          <h3 className="font-semibold text-gray-800 mb-3">{t('settings.account')}</h3>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-500">Name</span>
+              <span className="text-gray-500">{t('settings.name')}</span>
               <span className="text-gray-800">{user?.name}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Email</span>
+              <span className="text-gray-500">{t('settings.email')}</span>
               <span className="text-gray-800">{user?.email}</span>
             </div>
           </div>
@@ -63,7 +65,7 @@ export default function SettingsPage() {
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-semibold text-gray-800 flex items-center gap-2">
               <Shield size={18} className="text-indigo-500" />
-              Parental PIN
+              {t('settings.pin')}
             </h3>
             <span
               className={`text-xs px-2 py-1 rounded-full ${
@@ -72,7 +74,7 @@ export default function SettingsPage() {
                   : "bg-gray-100 text-gray-500"
               }`}
             >
-              {user?.has_pin ? "Set" : "Not set"}
+              {user?.has_pin ? t('settings.pinSet') : t('settings.pinNotSet')}
             </span>
           </div>
 
@@ -85,7 +87,7 @@ export default function SettingsPage() {
                 onChange={(e) =>
                   setPinValue(e.target.value.replace(/\D/g, "").slice(0, 4))
                 }
-                placeholder="Enter 4-digit PIN"
+                placeholder={t('settings.enterPin')}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 text-center tracking-widest text-2xl"
               />
               <div className="flex gap-2">
@@ -93,7 +95,7 @@ export default function SettingsPage() {
                   onClick={handleSetPin}
                   className="flex-1 py-2 bg-indigo-600 text-white rounded-lg font-medium"
                 >
-                  Save PIN
+                  {t('settings.savePin')}
                 </button>
                 <button
                   onClick={() => {
@@ -102,7 +104,7 @@ export default function SettingsPage() {
                   }}
                   className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg"
                 >
-                  Cancel
+                  {t('settings.cancel')}
                 </button>
               </div>
             </div>
@@ -111,7 +113,7 @@ export default function SettingsPage() {
               onClick={() => setShowPinForm(true)}
               className="w-full py-2 bg-indigo-50 text-indigo-600 rounded-lg font-medium hover:bg-indigo-100 transition"
             >
-              {user?.has_pin ? "Change PIN" : "Set PIN"}
+              {user?.has_pin ? t('settings.changePin') : t('settings.setPin')}
             </button>
           )}
         </div>
@@ -125,7 +127,7 @@ export default function SettingsPage() {
           className="w-full bg-white rounded-xl p-4 shadow-sm flex items-center justify-center gap-2 text-red-500 hover:bg-red-50 transition"
         >
           <LogOut size={18} />
-          Sign Out
+          {t('settings.signOut')}
         </button>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "@/lib/api-client";
 import type { Reward } from "@/types";
@@ -10,6 +11,7 @@ import { toast } from "sonner";
 
 export default function ParentRewardsPage() {
   const router = useRouter();
+  const { t } = useTranslation('parent');
   const queryClient = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
   const [newReward, setNewReward] = useState({
@@ -33,7 +35,7 @@ export default function ParentRewardsPage() {
       await apiClient.post("/rewards", params);
     },
     onSuccess: () => {
-      toast.success("Reward created!");
+      toast.success(t('rewards.rewardCreated'));
       queryClient.invalidateQueries({ queryKey: ["rewards"] });
       setShowCreate(false);
       setNewReward({ name: "", icon: "🎁", cost_coins: 100 });
@@ -45,7 +47,7 @@ export default function ParentRewardsPage() {
       await apiClient.delete(`/rewards/${id}`);
     },
     onSuccess: () => {
-      toast.success("Reward removed");
+      toast.success(t('rewards.rewardRemoved'));
       queryClient.invalidateQueries({ queryKey: ["rewards"] });
     },
   });
@@ -61,14 +63,14 @@ export default function ParentRewardsPage() {
             className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-3"
           >
             <ArrowLeft size={20} />
-            Dashboard
+            {t('rewards.dashboard')}
           </button>
           <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
             <Gift className="text-amber-500" size={24} />
-            Manage Rewards
+            {t('rewards.title')}
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Create rewards your child can redeem with coins
+            {t('rewards.description')}
           </p>
         </div>
       </div>
@@ -79,7 +81,7 @@ export default function ParentRewardsPage() {
           className="w-full bg-white border-2 border-dashed border-gray-200 rounded-xl p-4 text-gray-500 hover:border-amber-300 hover:text-amber-500 transition flex items-center justify-center gap-2"
         >
           <Plus size={20} />
-          Add New Reward
+          {t('rewards.addNewReward')}
         </button>
 
         {showCreate && (
@@ -101,7 +103,7 @@ export default function ParentRewardsPage() {
             </div>
             <input
               type="text"
-              placeholder="Reward name (e.g., Ice Cream Treat)"
+              placeholder={t('rewards.rewardNamePlaceholder')}
               value={newReward.name}
               onChange={(e) =>
                 setNewReward((r) => ({ ...r, name: e.target.value }))
@@ -109,7 +111,7 @@ export default function ParentRewardsPage() {
               className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-amber-500"
             />
             <div>
-              <label className="text-sm text-gray-500">Cost (coins)</label>
+              <label className="text-sm text-gray-500">{t('rewards.cost')}</label>
               <input
                 type="number"
                 value={newReward.cost_coins}
@@ -128,13 +130,13 @@ export default function ParentRewardsPage() {
                 disabled={!newReward.name || createReward.isPending}
                 className="flex-1 py-2 bg-amber-500 text-white rounded-lg font-medium disabled:opacity-50"
               >
-                Create Reward
+                {t('rewards.createReward')}
               </button>
               <button
                 onClick={() => setShowCreate(false)}
                 className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg"
               >
-                Cancel
+                {t('rewards.cancel')}
               </button>
             </div>
           </div>
@@ -150,7 +152,7 @@ export default function ParentRewardsPage() {
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-800">{reward.name}</h3>
                 <p className="text-sm text-amber-600 font-medium">
-                  {reward.cost_coins} coins
+                  {t('rewards.coins', { count: reward.cost_coins })}
                 </p>
               </div>
               <button

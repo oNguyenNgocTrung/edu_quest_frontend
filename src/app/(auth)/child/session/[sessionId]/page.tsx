@@ -8,11 +8,13 @@ import { useAuthStore } from "@/stores/auth-store";
 import type { Question, LearningSession, SubmitAnswerResponse } from "@/types";
 import { X, Heart, Star, ArrowRight, Trophy, Lightbulb, SkipForward } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { Mascot } from "@/components/Mascot";
 
 const LETTER_PREFIX = ["A", "B", "C", "D", "E", "F"];
 
 export default function SessionPage() {
+  const { t } = useTranslation('child');
   const { sessionId } = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -219,9 +221,9 @@ export default function SessionPage() {
           </motion.div>
 
           <h2 className="text-3xl font-black text-gray-800 mt-6 mb-2">
-            {session.status === "completed" ? "Awesome Job!" : "Game Over"}
+            {session.status === "completed" ? t('session.awesomeJob') : t('session.gameOver')}
           </h2>
-          <p className="text-gray-600 mb-6">You completed the lesson!</p>
+          <p className="text-gray-600 mb-6">{t('session.completedLesson')}</p>
 
           {/* Stars */}
           <div className="flex justify-center gap-1 mb-4">
@@ -249,10 +251,10 @@ export default function SessionPage() {
             </div>
             <div className="flex items-center justify-center gap-4 text-sm text-gray-600">
               <div>
-                {session.correct_count}/{session.total_questions} Correct
+                {t('session.correctCount', { correct: session.correct_count, total: session.total_questions })}
               </div>
               <div>-</div>
-              <div>{session.lives_remaining} Lives Left</div>
+              <div>{t('session.livesLeft', { lives: session.lives_remaining })}</div>
             </div>
           </div>
 
@@ -262,7 +264,7 @@ export default function SessionPage() {
             onClick={() => router.push("/child/home")}
             className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 rounded-2xl shadow-lg"
           >
-            Continue
+            {t('session.continue')}
           </motion.button>
         </motion.div>
       </div>
@@ -294,7 +296,7 @@ export default function SessionPage() {
             {/* Source badge */}
             {isWorksheetSession && (
               <span className="text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700">
-                {question.is_ai_generated ? "Practice Problem" : "From Worksheet"}
+                {question.is_ai_generated ? t('session.practiceProblem') : t('session.fromWorksheet')}
               </span>
             )}
 
@@ -322,7 +324,7 @@ export default function SessionPage() {
             />
           </div>
           <p className="text-xs text-gray-500 mt-1 text-center">
-            Question {currentIndex + 1} of {questions.length}
+            {t('session.questionOf', { current: currentIndex + 1, total: questions.length })}
           </p>
         </div>
       </div>
@@ -354,11 +356,11 @@ export default function SessionPage() {
                 <p className="text-gray-700">
                   {feedback
                     ? feedback.is_correct
-                      ? "Perfect! You got it right!"
-                      : "Not quite, but keep trying!"
+                      ? t('session.correct')
+                      : t('session.incorrect')
                     : question.question_type === "fill_blank"
-                      ? "Type your answer below!"
-                      : "Take your time and think it through!"}
+                      ? t('session.fillBlankHint')
+                      : t('session.thinkItThrough')}
                 </p>
               </div>
             </div>
@@ -383,7 +385,7 @@ export default function SessionPage() {
                       }
                     }}
                     disabled={!!feedback}
-                    placeholder="Type your answer..."
+                    placeholder={t('session.typeAnswer')}
                     className={`w-full p-5 rounded-2xl font-bold text-lg text-center transition-all border-2 outline-none ${
                       feedback
                         ? feedback.is_correct
@@ -398,7 +400,7 @@ export default function SessionPage() {
                       animate={{ opacity: 1, y: 0 }}
                       className="text-center mt-3 text-sm text-gray-600"
                     >
-                      Correct answer:{" "}
+                      {t('session.correctAnswer')}{" "}
                       <span className="font-bold text-green-600">{feedback.correct_answer}</span>
                     </motion.p>
                   )}
@@ -504,7 +506,7 @@ export default function SessionPage() {
                   <div className="p-4 rounded-xl bg-amber-50 border border-amber-200">
                     <div className="flex items-center gap-2 mb-2">
                       <Lightbulb className="w-4 h-4 text-amber-600" />
-                      <span className="text-sm font-bold text-amber-800">Hint</span>
+                      <span className="text-sm font-bold text-amber-800">{t('session.hint')}</span>
                     </div>
                     <p className="text-sm text-amber-700">{question.explanation}</p>
                   </div>
@@ -526,7 +528,7 @@ export default function SessionPage() {
                 <div className="flex items-center gap-3 mb-2">
                   <span className="text-2xl">{feedback.is_correct ? "✅" : "❌"}</span>
                   <span className={`font-bold ${feedback.is_correct ? "text-green-700" : "text-red-700"}`}>
-                    {feedback.is_correct ? "Correct!" : "Incorrect"}
+                    {feedback.is_correct ? t('session.correctLabel') : t('session.incorrectLabel')}
                   </span>
                 </div>
                 {!feedback.is_correct && feedback.correct_answer && question.question_type !== "fill_blank" && (
@@ -553,7 +555,7 @@ export default function SessionPage() {
                     className="px-6 py-4 bg-gray-200 text-gray-600 rounded-2xl font-bold hover:bg-gray-300 transition disabled:opacity-50 flex items-center gap-2"
                   >
                     <SkipForward size={18} />
-                    Skip
+                    {t('session.skip')}
                   </motion.button>
 
                   {/* Hint button */}
@@ -565,7 +567,7 @@ export default function SessionPage() {
                       className="px-6 py-4 bg-amber-100 text-amber-700 rounded-2xl font-bold hover:bg-amber-200 transition flex items-center gap-2"
                     >
                       <Lightbulb size={18} />
-                      Hint
+                      {t('session.hint')}
                     </motion.button>
                   )}
 
@@ -577,7 +579,7 @@ export default function SessionPage() {
                     onClick={handleSubmit}
                     className="flex-1 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition disabled:opacity-50"
                   >
-                    {submitAnswer.isPending ? "Checking..." : "Check Answer"}
+                    {submitAnswer.isPending ? t('session.checking') : t('session.checkAnswer')}
                   </motion.button>
                 </div>
               ) : (
@@ -589,8 +591,8 @@ export default function SessionPage() {
                 >
                   {session.lives_remaining <= 0 ||
                   currentIndex >= questions.length - 1
-                    ? "See Results"
-                    : "Next Question"}
+                    ? t('session.seeResults')
+                    : t('session.nextQuestion')}
                   <ArrowRight size={18} />
                 </motion.button>
               )}

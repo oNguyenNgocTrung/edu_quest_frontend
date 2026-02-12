@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/auth-store";
 import {
   ArrowLeft,
@@ -25,25 +26,10 @@ const avatarMap: Record<string, string> = {
   frog: "🐸",
 };
 
-// Hardcoded achievements (would come from API)
-const achievements = [
-  { id: 1, name: "First Steps", icon: "👣", description: "Complete your first lesson", unlocked: true },
-  { id: 2, name: "Week Warrior", icon: "🔥", description: "7-day streak", unlocked: true },
-  { id: 3, name: "Quick Learner", icon: "⚡", description: "Answer 10 questions in a row", unlocked: true },
-  { id: 4, name: "Math Master", icon: "🧮", description: "Complete all Math basics", unlocked: true },
-  { id: 5, name: "Perfect Score", icon: "💯", description: "Get 100% on a lesson", unlocked: true },
-  { id: 6, name: "Coin Collector", icon: "💰", description: "Earn 1000 coins", unlocked: true },
-  { id: 7, name: "Night Owl", icon: "🦉", description: "Study in the evening", unlocked: true },
-  { id: 8, name: "Early Bird", icon: "🌅", description: "Study before 8am", unlocked: true },
-  { id: 9, name: "Boss Slayer", icon: "⚔️", description: "Beat a boss level", unlocked: false },
-  { id: 10, name: "Month Master", icon: "📅", description: "30-day streak", unlocked: false },
-  { id: 11, name: "Speed Demon", icon: "🚀", description: "Complete lesson in under 2 min", unlocked: false },
-  { id: 12, name: "Champion", icon: "👑", description: "Reach level 20", unlocked: false },
-];
-
 export default function ChildProfilePage() {
   const router = useRouter();
   const { currentChildProfile, logout } = useAuthStore();
+  const { t } = useTranslation('child');
 
   if (!currentChildProfile) {
     router.push("/child/home");
@@ -53,11 +39,27 @@ export default function ChildProfilePage() {
   const profile = currentChildProfile;
   const emoji = avatarMap[profile.avatar ?? ""] ?? "👤";
 
+  // Hardcoded achievements (would come from API)
+  const achievements = [
+    { id: 1, name: t('profile.achievementNames.firstSteps'), icon: "👣", description: t('profile.achievementNames.firstStepsDesc'), unlocked: true },
+    { id: 2, name: t('profile.achievementNames.weekWarrior'), icon: "🔥", description: t('profile.achievementNames.weekWarriorDesc'), unlocked: true },
+    { id: 3, name: t('profile.achievementNames.quickLearner'), icon: "⚡", description: t('profile.achievementNames.quickLearnerDesc'), unlocked: true },
+    { id: 4, name: t('profile.achievementNames.mathMaster'), icon: "🧮", description: t('profile.achievementNames.mathMasterDesc'), unlocked: true },
+    { id: 5, name: t('profile.achievementNames.perfectScore'), icon: "💯", description: t('profile.achievementNames.perfectScoreDesc'), unlocked: true },
+    { id: 6, name: t('profile.achievementNames.coinCollector'), icon: "💰", description: t('profile.achievementNames.coinCollectorDesc'), unlocked: true },
+    { id: 7, name: t('profile.achievementNames.nightOwl'), icon: "🦉", description: t('profile.achievementNames.nightOwlDesc'), unlocked: true },
+    { id: 8, name: t('profile.achievementNames.earlyBird'), icon: "🌅", description: t('profile.achievementNames.earlyBirdDesc'), unlocked: true },
+    { id: 9, name: t('profile.achievementNames.bossSlayer'), icon: "⚔️", description: t('profile.achievementNames.bossSlayerDesc'), unlocked: false },
+    { id: 10, name: t('profile.achievementNames.monthMaster'), icon: "📅", description: t('profile.achievementNames.monthMasterDesc'), unlocked: false },
+    { id: 11, name: t('profile.achievementNames.speedDemon'), icon: "🚀", description: t('profile.achievementNames.speedDemonDesc'), unlocked: false },
+    { id: 12, name: t('profile.achievementNames.champion'), icon: "👑", description: t('profile.achievementNames.championDesc'), unlocked: false },
+  ];
+
   const stats = [
-    { label: "Total XP", value: profile.total_xp.toLocaleString(), icon: Star, color: "text-yellow-500" },
-    { label: "Current Streak", value: "12 days", icon: Flame, color: "text-orange-500" },
-    { label: "Longest Streak", value: "18 days", icon: Trophy, color: "text-purple-500" },
-    { label: "Cards Mastered", value: "87", icon: Target, color: "text-green-500" },
+    { label: t('profile.totalXp'), value: profile.total_xp.toLocaleString(), icon: Star, color: "text-yellow-500" },
+    { label: t('profile.currentStreak'), value: "12 days", icon: Flame, color: "text-orange-500" },
+    { label: t('profile.longestStreak'), value: "18 days", icon: Trophy, color: "text-purple-500" },
+    { label: t('profile.cardsMastered'), value: "87", icon: Target, color: "text-green-500" },
   ];
 
   return (
@@ -89,7 +91,7 @@ export default function ChildProfilePage() {
             </motion.div>
 
             <h1 className="text-2xl font-black mb-1">{profile.name}</h1>
-            <p className="text-white/90">Level {profile.level} Explorer</p>
+            <p className="text-white/90">{t('profile.levelExplorer', { level: profile.level })}</p>
           </div>
         </div>
       </div>
@@ -117,7 +119,7 @@ export default function ChildProfilePage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-black text-gray-800 flex items-center gap-2">
               <Award className="w-6 h-6 text-purple-500" />
-              Achievements
+              {t('profile.achievements')}
             </h2>
             <span className="text-sm font-bold text-gray-500">
               {achievements.filter((a) => a.unlocked).length}/{achievements.length}
@@ -169,12 +171,11 @@ export default function ChildProfilePage() {
           className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-3xl p-6 text-white cursor-pointer hover:shadow-2xl transition-shadow"
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-black">Customize Mascot</h3>
+            <h3 className="text-lg font-black">{t('profile.customizeMascot')}</h3>
             <Palette className="w-6 h-6" />
           </div>
           <p className="text-white/90 mb-4 text-sm">
-            Use your coins to unlock cool accessories, colors, and effects for
-            your learning buddy!
+            {t('profile.customizeMascotDesc')}
           </p>
 
           <div className="flex items-center gap-3">
@@ -190,7 +191,7 @@ export default function ChildProfilePage() {
             </div>
             <div className="flex-1 text-right">
               <span className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 font-bold">
-                Customize Now
+                {t('profile.customizeNow')}
                 <ArrowLeft className="w-4 h-4 rotate-180" />
               </span>
             </div>
@@ -204,9 +205,9 @@ export default function ChildProfilePage() {
           transition={{ delay: 0.7 }}
           className="bg-white rounded-2xl p-6 shadow-lg mt-6"
         >
-          <h3 className="text-lg font-black text-gray-800 mb-3">Your Avatars</h3>
+          <h3 className="text-lg font-black text-gray-800 mb-3">{t('profile.yourAvatars')}</h3>
           <p className="text-gray-600 text-sm mb-4">
-            Unlock new avatars by completing achievements!
+            {t('profile.unlockAvatarsDesc')}
           </p>
 
           <div className="grid grid-cols-4 gap-3">
@@ -246,8 +247,8 @@ export default function ChildProfilePage() {
               <Trophy className="w-6 h-6 text-white" />
             </div>
             <div className="text-left">
-              <p className="font-bold text-gray-800">Family Leaderboard</p>
-              <p className="text-sm text-gray-500">See your ranking!</p>
+              <p className="font-bold text-gray-800">{t('profile.familyLeaderboard')}</p>
+              <p className="text-sm text-gray-500">{t('profile.seeRanking')}</p>
             </div>
           </div>
           <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
@@ -264,7 +265,7 @@ export default function ChildProfilePage() {
           className="w-full mt-6 mb-20 bg-red-50 border-2 border-red-200 rounded-2xl p-5 shadow-md flex items-center justify-center gap-3 hover:bg-red-100 transition-colors"
         >
           <LogOut className="w-5 h-5 text-red-600" />
-          <span className="font-bold text-red-600">Logout</span>
+          <span className="font-bold text-red-600">{t('profile.logout')}</span>
         </motion.button>
       </div>
 

@@ -7,6 +7,7 @@ import { Check, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import apiClient from "@/lib/api-client";
 import type { Worksheet, WorksheetProcessingStep } from "@/types";
+import { useTranslation } from "react-i18next";
 
 export default function ProcessingStatusPage({
   params,
@@ -15,6 +16,7 @@ export default function ProcessingStatusPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const { t } = useTranslation("parent");
   const [worksheet, setWorksheet] = useState<Worksheet | null>(null);
   const [overallProgress, setOverallProgress] = useState(0);
 
@@ -48,12 +50,12 @@ export default function ProcessingStatusPage({
           setOverallProgress(calculateProgress(ws.processing_steps));
 
           if (ws.status === "extracted") {
-            toast.success("Questions extracted successfully!");
+            toast.success(t("worksheetProcessing.extractionSuccess"));
             router.push(`/parent/worksheets/${id}/review`);
             return;
           }
           if (ws.status === "failed") {
-            toast.error(ws.error_message || "Processing failed");
+            toast.error(t("worksheetProcessing.processingFailed", { error: ws.error_message || t("worksheetProcessing.unknownError") }));
             return;
           }
           if (ws.status === "approved") {
@@ -61,7 +63,7 @@ export default function ProcessingStatusPage({
             return;
           }
         } catch {
-          if (!cancelled) toast.error("Failed to fetch worksheet status");
+          if (!cancelled) toast.error(t("worksheetProcessing.failed"));
           return;
         }
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -72,7 +74,7 @@ export default function ProcessingStatusPage({
     return () => {
       cancelled = true;
     };
-  }, [id, router, calculateProgress]);
+  }, [id, router, calculateProgress, t]);
 
   const steps: WorksheetProcessingStep[] = worksheet?.processing_steps || [
     { id: "1", label: "Image uploaded", status: "pending", progress: 0 },
@@ -97,19 +99,19 @@ export default function ProcessingStatusPage({
             className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-2 text-sm"
           >
             <ArrowLeft size={16} />
-            Dashboard
+            {t("worksheetProcessing.dashboard")}
           </button>
           <h1
             className="text-2xl font-black text-gray-800"
             style={{ fontFamily: "Nunito, sans-serif" }}
           >
-            Processing Worksheet
+            {t("worksheetProcessing.title")}
           </h1>
           <p
             className="text-sm text-gray-600 mt-1"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            AI is analyzing your worksheet...
+            {t("worksheetProcessing.analyzing")}
           </p>
         </div>
       </div>
@@ -126,7 +128,7 @@ export default function ProcessingStatusPage({
               className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4"
               style={{ fontFamily: "Inter, sans-serif" }}
             >
-              Uploaded Worksheet
+              {t("worksheetProcessing.uploadedWorksheet")}
             </h3>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -139,7 +141,7 @@ export default function ProcessingStatusPage({
                 className="text-xs text-gray-500"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-                Page 1 of 1
+                {t("worksheetProcessing.pageInfo")}
               </p>
             </div>
           </motion.div>
@@ -156,7 +158,7 @@ export default function ProcessingStatusPage({
               className="text-lg font-bold text-gray-800"
               style={{ fontFamily: "Nunito, sans-serif" }}
             >
-              Overall Progress
+              {t("worksheetProcessing.overallProgress")}
             </h3>
             <span
               className="text-2xl font-black text-purple-600"
@@ -186,7 +188,7 @@ export default function ProcessingStatusPage({
             className="text-lg font-bold text-gray-800 mb-6"
             style={{ fontFamily: "Nunito, sans-serif" }}
           >
-            Processing Steps
+            {t("worksheetProcessing.processingSteps")}
           </h3>
 
           <div className="space-y-4">
@@ -284,15 +286,13 @@ export default function ProcessingStatusPage({
                 className="text-base font-bold text-blue-900 mb-2"
                 style={{ fontFamily: "Nunito, sans-serif" }}
               >
-                {"What's Happening?"}
+                {t("worksheetProcessing.whatsHappening")}
               </h4>
               <p
                 className="text-sm text-blue-700 leading-relaxed mb-3"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-                Our AI is extracting all questions from your worksheet and
-                creating extra practice problems on the same topics to help your
-                child master each concept.
+                {t("worksheetProcessing.whatsHappeningDesc")}
               </p>
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-1 bg-blue-200 rounded-full overflow-hidden">
@@ -307,7 +307,7 @@ export default function ProcessingStatusPage({
                   className="text-xs font-semibold text-blue-600"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
-                  ~30s
+                  {t("worksheetProcessing.estimatedTime")}
                 </span>
               </div>
             </div>
@@ -321,7 +321,7 @@ export default function ProcessingStatusPage({
             className="text-sm font-semibold text-gray-500 hover:text-gray-700 transition-colors"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            Cancel Processing
+            {t("worksheetProcessing.cancelProcessing")}
           </button>
         </div>
 
@@ -333,13 +333,13 @@ export default function ProcessingStatusPage({
             className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl"
           >
             <p className="text-sm text-red-700 font-medium">
-              Processing failed: {worksheet.error_message || "Unknown error"}
+              {t("worksheetProcessing.processingFailed", { error: worksheet.error_message || t("worksheetProcessing.unknownError") })}
             </p>
             <button
               onClick={() => router.push("/parent/worksheets/upload")}
               className="mt-2 text-sm text-red-600 font-semibold hover:text-red-700"
             >
-              Try Again
+              {t("worksheetProcessing.retry")}
             </button>
           </motion.div>
         )}

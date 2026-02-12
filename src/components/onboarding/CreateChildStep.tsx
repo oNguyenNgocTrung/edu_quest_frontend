@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/auth-store";
 import { avatars } from "@/lib/avatars";
 import { AvatarSelector } from "./AvatarSelector";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface CreateChildStepProps {
   stepLabel: string;
@@ -19,6 +20,7 @@ export function CreateChildStep({
   stepLabel,
   onComplete,
 }: CreateChildStepProps) {
+  const { t } = useTranslation("onboarding");
   const createChildProfile = useAuthStore((s) => s.createChildProfile);
   const selectChildProfile = useAuthStore((s) => s.selectChildProfile);
   const [name, setName] = useState("");
@@ -36,12 +38,12 @@ export function CreateChildStep({
     setError("");
 
     if (!name.trim()) {
-      setError("Please enter a name");
+      setError(t("child.nameRequired"));
       return;
     }
 
     if (!avatar) {
-      setError("Please select an avatar");
+      setError(t("child.avatarRequired"));
       return;
     }
 
@@ -53,10 +55,10 @@ export function CreateChildStep({
         avatar,
       });
       selectChildProfile(profile);
-      toast.success(`${profile.name}'s profile created!`);
+      toast.success(t("child.profileCreated", { name: profile.name }));
       onComplete();
     } catch {
-      setError("Failed to create profile. Please try again.");
+      setError(t("child.createFailed"));
     } finally {
       setLoading(false);
     }
@@ -116,10 +118,10 @@ export function CreateChildStep({
 
       {/* Header */}
       <h3 className="mb-2 text-xl font-bold text-gray-800 font-[Nunito]">
-        Add Your First Learner
+        {t("child.title")}
       </h3>
       <p className="text-sm text-gray-500 mb-8">
-        Let&apos;s set up a profile for your child
+        {t("child.subtitle")}
       </p>
 
       {/* Form Card */}
@@ -151,20 +153,20 @@ export function CreateChildStep({
             {avatar || <Plus className="w-8 h-8 text-gray-400" />}
           </button>
           <p className="mt-2 text-sm font-medium text-purple-600">
-            {avatar ? "Change Avatar" : "Tap to select avatar"}
+            {avatar ? t("child.changeAvatar") : t("child.tapToSelectAvatar")}
           </p>
         </div>
 
         {/* Name Input */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-800 mb-2">
-            Child&apos;s Name
+            {t("child.name")}
           </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter name"
+            placeholder={t("child.namePlaceholder")}
             className="w-full h-12 px-4 border-2 border-gray-200 rounded-2xl text-base text-gray-800 bg-white outline-none focus:border-purple-600 transition-colors"
           />
         </div>
@@ -172,7 +174,7 @@ export function CreateChildStep({
         {/* Age Range Selector */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-800 mb-2">
-            Age Range
+            {t("child.ageRange")}
           </label>
           <div className="flex gap-2">
             {ageRanges.map((range) => (
@@ -237,7 +239,7 @@ export function CreateChildStep({
             />
           )}
           <span className="relative z-10">
-            {loading ? "Creating..." : "Create Profile"}
+            {loading ? t("child.creating") : t("child.continue")}
           </span>
         </motion.button>
       </motion.div>

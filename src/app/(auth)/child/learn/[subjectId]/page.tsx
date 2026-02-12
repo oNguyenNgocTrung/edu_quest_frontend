@@ -21,6 +21,7 @@ import {
   Coins,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { BottomNav } from "@/components/child/BottomNav";
 import { Mascot } from "@/components/Mascot";
 import { useAuthStore } from "@/stores/auth-store";
@@ -76,6 +77,7 @@ function DesktopPathNode({
   prevPosition: "left" | "center" | "right";
   onNavigate: (nodeId: string, subjectId: string) => void;
 }) {
+  const { t } = useTranslation('child');
   const status = getNodeStatus(node);
   const position = getNodePosition(index);
   const showPath = index > 0;
@@ -219,10 +221,10 @@ function DesktopPathNode({
               {node.title}
             </p>
             {status === "current" && (
-              <p className="text-sm font-semibold text-purple-600">~5 min</p>
+              <p className="text-sm font-semibold text-purple-600">{t('subject.fiveMin')}</p>
             )}
             {status === "locked" && (
-              <p className="text-xs text-gray-500">Complete previous</p>
+              <p className="text-xs text-gray-500">{t('subject.completePrevious')}</p>
             )}
           </div>
         )}
@@ -260,11 +262,11 @@ function DesktopPathNode({
             }}
             title={
               status === "completed"
-                ? "Review this lesson"
+                ? t('subject.reviewLesson')
                 : status === "current"
-                  ? "Continue learning"
+                  ? t('subject.continueLearning')
                   : status === "locked"
-                    ? "Complete previous lesson to unlock"
+                    ? t('subject.completePreviousToUnlock')
                     : node.title
             }
           >
@@ -328,7 +330,7 @@ function DesktopPathNode({
                 </div>
                 <div className="absolute inset-0 rounded-full bg-orange-400 opacity-40 blur-2xl group-hover:opacity-50 transition-opacity duration-200" />
                 <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-sm font-black px-4 py-1 rounded-full shadow-lg">
-                  BOSS
+                  {t('subject.bossLabel')}
                 </div>
               </>
             )}
@@ -340,7 +342,7 @@ function DesktopPathNode({
               onClick={() => onNavigate(node.id, "")}
               className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-purple-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl hover:bg-purple-700 transition-all opacity-0 group-hover:opacity-100 duration-200"
             >
-              Continue
+              {t('subject.continue')}
             </button>
           )}
           {status === "completed" && (
@@ -348,7 +350,7 @@ function DesktopPathNode({
               onClick={() => onNavigate(node.id, "")}
               className="absolute top-full left-1/2 -translate-x-1/2 mt-4 bg-green-600 text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl hover:bg-green-700 transition-all opacity-0 group-hover:opacity-100 duration-200"
             >
-              Review
+              {t('subject.review')}
             </button>
           )}
 
@@ -383,10 +385,10 @@ function DesktopPathNode({
               {node.title}
             </p>
             {status === "current" && (
-              <p className="text-sm font-semibold text-purple-600">~5 min</p>
+              <p className="text-sm font-semibold text-purple-600">{t('subject.fiveMin')}</p>
             )}
             {status === "locked" && (
-              <p className="text-xs text-gray-500">Complete previous</p>
+              <p className="text-xs text-gray-500">{t('subject.completePrevious')}</p>
             )}
           </div>
         )}
@@ -411,6 +413,7 @@ function DesktopPathNode({
 // ─── Main Page Component ─────────────────────────────────────────
 
 export default function LearnSubjectPage() {
+  const { t } = useTranslation('child');
   const { subjectId } = useParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -456,12 +459,12 @@ export default function LearnSubjectPage() {
   };
 
   const getMascotMessage = () => {
-    if (completedCount === 0) return "Ready to learn? Let's go! 🚀";
+    if (completedCount === 0) return t('subject.letsGo');
     if (completedCount >= totalCount * 0.8)
-      return "Almost at the challenge! 💪";
+      return t('subject.almostAtChallenge');
     if (completedCount >= totalCount / 2)
-      return "You're halfway there! Keep it up!";
-    return "Great progress! Keep learning! ⭐";
+      return t('subject.halfwayThere');
+    return t('subject.greatProgress');
   };
 
   return (
@@ -553,10 +556,10 @@ export default function LearnSubjectPage() {
                 </div>
                 <div className="flex items-center justify-between mt-2">
                   <p className="text-xs text-gray-600">
-                    {completedCount}/{totalCount} lessons
+                    {t('subject.lessonsProgress', { completed: completedCount, total: totalCount })}
                   </p>
                   <p className="text-xs font-bold text-purple-600">
-                    {Math.round(progressPercent)}%
+                    {t('subject.percentComplete', { percent: Math.round(progressPercent) })}
                   </p>
                 </div>
               </div>
@@ -565,7 +568,7 @@ export default function LearnSubjectPage() {
               <div className="flex items-center gap-2 mt-3">
                 <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                 <span className="text-sm font-bold text-gray-800">
-                  {totalXP} XP
+                  {t('subject.totalXp', { xp: totalXP })}
                 </span>
               </div>
             </div>
@@ -573,7 +576,7 @@ export default function LearnSubjectPage() {
             {/* Mini-Map */}
             <div className="mb-6 p-4 bg-gray-50 rounded-2xl">
               <h3 className="text-xs font-bold text-gray-700 mb-3 uppercase tracking-wide">
-                Path Overview
+                {t('subject.pathOverview')}
               </h3>
               <div className="relative flex flex-col items-center justify-between py-2 gap-2">
                 <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gray-200 -translate-x-1/2" />
@@ -604,7 +607,7 @@ export default function LearnSubjectPage() {
                       {status === "current" && (
                         <div className="absolute left-6 top-1/2 -translate-y-1/2 whitespace-nowrap">
                           <span className="text-xs font-bold text-purple-600">
-                            ← You
+                            {t('subject.youAreHere')}
                           </span>
                         </div>
                       )}
@@ -653,10 +656,10 @@ export default function LearnSubjectPage() {
                 <span className="text-3xl">🦉</span>
                 <div>
                   <h4 className="font-bold text-white text-sm mb-1">
-                    Keep going!
+                    {t('subject.keepGoing')}
                   </h4>
                   <p className="text-xs text-purple-100">
-                    You&apos;re doing great! 🚀
+                    {t('subject.youreDoingGreat')}
                   </p>
                 </div>
               </div>
@@ -672,7 +675,7 @@ export default function LearnSubjectPage() {
               {subject.name} — Level{" "}
               {subject.enrollment?.current_level ?? 1}
             </h1>
-            <p className="text-sm text-gray-500">Continue your journey</p>
+            <p className="text-sm text-gray-500">{t('subject.continueJourney')}</p>
           </div>
 
           {/* Path Corridor */}
@@ -833,7 +836,7 @@ export default function LearnSubjectPage() {
                   />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  {completedCount}/{totalCount} complete
+                  {t('subject.lessonsComplete', { completed: completedCount, total: totalCount })}
                 </p>
               </div>
             </div>
@@ -897,7 +900,7 @@ export default function LearnSubjectPage() {
                   style={{ whiteSpace: "nowrap" }}
                 >
                   <p className="text-sm font-bold text-gray-800">
-                    Let&apos;s go! 🚀
+                    {t('subject.letsGo')}
                   </p>
                   <div className="absolute -left-1 top-2 w-3 h-3 bg-white transform rotate-45" />
                 </motion.div>
@@ -1064,7 +1067,7 @@ export default function LearnSubjectPage() {
                             </div>
                             <div className="absolute inset-0 rounded-full bg-orange-400 opacity-40 blur-lg" />
                             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow-md">
-                              BOSS
+                              {t('subject.bossLabel')}
                             </div>
                           </>
                         )}
@@ -1077,7 +1080,7 @@ export default function LearnSubjectPage() {
                           transition={{ duration: 1.5, repeat: Infinity }}
                           className="text-xs font-bold text-purple-600 mt-1"
                         >
-                          Continue
+                          {t('subject.continue')}
                         </motion.p>
                       )}
 

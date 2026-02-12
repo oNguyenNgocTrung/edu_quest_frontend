@@ -13,75 +13,48 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { Mascot } from "@/components/Mascot";
-
-const features = [
-  {
-    icon: Brain,
-    title: "Spaced Repetition",
-    description:
-      "Science-backed learning system that helps kids remember more with less effort",
-    gradient: "from-blue-500 to-cyan-500",
-  },
-  {
-    icon: Trophy,
-    title: "Gamified Learning",
-    description:
-      "XP points, daily streaks, achievements and rewards keep kids motivated",
-    gradient: "from-purple-500 to-pink-500",
-  },
-  {
-    icon: Sparkles,
-    title: "AI-Powered Content",
-    description:
-      "Generate custom flashcards and lessons tailored to your child's needs",
-    gradient: "from-orange-500 to-red-500",
-  },
-  {
-    icon: Users,
-    title: "Parent Dashboard",
-    description:
-      "Track progress, create content, and manage rewards from a powerful dashboard",
-    gradient: "from-green-500 to-teal-500",
-  },
-];
-
-const benefits = [
-  "Proven spaced repetition algorithm",
-  "Beautiful, kid-friendly interface",
-  "Comprehensive progress analytics",
-  "Custom content creation tools",
-  "AI-powered flashcard generation",
-  "Achievement & reward system",
-  "Multi-subject learning paths",
-  "Safe, ad-free experience",
-];
-
-const testimonials = [
-  {
-    name: "Sarah M.",
-    role: "Mother of 2",
-    content:
-      "My kids actually look forward to their daily lessons now! The gamification makes learning fun.",
-    rating: 5,
-  },
-  {
-    name: "David L.",
-    role: "Teacher & Parent",
-    content:
-      "As an educator, I love the spaced repetition system. As a parent, I love how engaged my daughter is.",
-    rating: 5,
-  },
-  {
-    name: "Emily R.",
-    role: "Homeschool Parent",
-    content:
-      "The AI content generator saves me hours. I can create custom lessons in minutes!",
-    rating: 5,
-  },
-];
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export default function LandingPage() {
+  const { t } = useTranslation('landing');
+
+  const features = [
+    {
+      icon: Brain,
+      title: t('features.spacedRepetition'),
+      description: t('features.spacedRepetitionDesc'),
+      gradient: "from-blue-500 to-cyan-500",
+    },
+    {
+      icon: Trophy,
+      title: t('features.gamifiedLearning'),
+      description: t('features.gamifiedLearningDesc'),
+      gradient: "from-purple-500 to-pink-500",
+    },
+    {
+      icon: Sparkles,
+      title: t('features.aiPowered'),
+      description: t('features.aiPoweredDesc'),
+      gradient: "from-orange-500 to-red-500",
+    },
+    {
+      icon: Users,
+      title: t('features.parentDashboard'),
+      description: t('features.parentDashboardDesc'),
+      gradient: "from-green-500 to-teal-500",
+    },
+  ];
+
+  const benefits = t('benefits.items', { returnObjects: true }) as string[];
+
+  const testimonials = t('testimonials.items', { returnObjects: true }) as Array<{
+    name: string;
+    role: string;
+    content: string;
+  }>;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       {/* Navigation */}
@@ -94,29 +67,31 @@ export default function LandingPage() {
               </div>
               <div>
                 <h1 className="text-xl font-black text-gray-800">LearnNest</h1>
-                <p className="text-xs text-gray-500">Learn. Play. Grow.</p>
+                <p className="text-xs text-gray-500">{t('nav.tagline')}</p>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-6">
+              <LanguageSwitcher />
               <Link
                 href="/login"
                 className="text-gray-600 hover:text-gray-800 font-semibold transition-colors"
               >
-                Login
+                {t('nav.login')}
               </Link>
               <Link
                 href="/register"
                 className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-6 py-2 rounded-full hover:shadow-lg transition-shadow"
               >
-                Get Started
+                {t('nav.getStarted')}
               </Link>
             </div>
-            <div className="md:hidden">
+            <div className="md:hidden flex items-center gap-3">
+              <LanguageSwitcher />
               <Link
                 href="/register"
                 className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-4 py-2 rounded-full text-sm"
               >
-                Start Free
+                {t('nav.startFree')}
               </Link>
             </div>
           </div>
@@ -132,16 +107,13 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-6xl font-black text-gray-800 mb-6 leading-tight">
-              Learning Made
+              {t('hero.titlePart1')}
               <span className="bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                {" "}
-                Magical
+                {t('hero.titleHighlight')}
               </span>
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              LearnNest combines Duolingo&apos;s engaging gamification with
-              Anki&apos;s proven spaced repetition to help kids ages 6-14 master
-              any subject while having fun.
+              {t('hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <motion.div
@@ -152,7 +124,7 @@ export default function LandingPage() {
                   href="/register"
                   className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center gap-2"
                 >
-                  Start Free Trial
+                  {t('hero.startTrial')}
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </motion.div>
@@ -164,7 +136,7 @@ export default function LandingPage() {
                   href="/login"
                   className="bg-white text-gray-700 font-semibold px-8 py-4 rounded-xl border-2 border-gray-300 hover:border-purple-500 transition-colors flex items-center justify-center"
                 >
-                  Learn More
+                  {t('hero.learnMore')}
                 </Link>
               </motion.div>
             </div>
@@ -182,7 +154,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <p className="text-sm font-bold text-gray-800">
-                    10,000+ families
+                    {t('hero.familyCount')}
                   </p>
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((i) => (
@@ -212,7 +184,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <p className="font-bold text-gray-800">Alex</p>
-                      <p className="text-sm text-gray-500">Level 12</p>
+                      <p className="text-sm text-gray-500">{t('demo.level')}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -225,22 +197,22 @@ export default function LandingPage() {
                   <div className="bg-gradient-to-r from-orange-100 to-pink-100 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-bold text-gray-800">
-                        Daily Streak
+                        {t('demo.dailyStreak')}
                       </span>
                       <span className="text-2xl">🔥</span>
                     </div>
                     <p className="text-3xl font-black text-orange-600">
-                      15 Days
+                      {t('demo.days')}
                     </p>
                   </div>
 
                   <div className="bg-purple-50 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-3">
                       <span className="font-bold text-gray-800">
-                        Today&apos;s Progress
+                        {t('demo.todaysProgress')}
                       </span>
                       <span className="text-sm font-bold text-purple-600">
-                        3/5 lessons
+                        {t('demo.lessonsProgress')}
                       </span>
                     </div>
                     <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
@@ -266,7 +238,7 @@ export default function LandingPage() {
             >
               <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
               <p className="text-xs font-bold text-gray-800 mt-1">
-                New Achievement!
+                {t('hero.newAchievement')}
               </p>
             </motion.div>
 
@@ -287,10 +259,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-gray-800 mb-4">
-              Everything Your Child Needs to Succeed
+              {t('features.title')}
             </h2>
             <p className="text-xl text-gray-600">
-              Powerful features designed for both kids and parents
+              {t('features.subtitle')}
             </p>
           </div>
 
@@ -331,7 +303,7 @@ export default function LandingPage() {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl font-black text-gray-800 mb-6">
-                Why Parents & Kids Love LearnNest
+                {t('benefits.title')}
               </h2>
               <div className="grid grid-cols-1 gap-3">
                 {benefits.map((benefit, index) => (
@@ -361,22 +333,19 @@ export default function LandingPage() {
             >
               <BookOpen className="w-16 h-16 mb-6" />
               <h3 className="text-3xl font-black mb-4">
-                Two Powerful Interfaces
+                {t('benefits.twoInterfaces')}
               </h3>
               <div className="space-y-6">
                 <div>
-                  <h4 className="text-xl font-bold mb-2">Child App</h4>
+                  <h4 className="text-xl font-bold mb-2">{t('benefits.childApp')}</h4>
                   <p className="text-white/90">
-                    Fun, colorful, game-like experience with daily quests,
-                    streaks, rewards, and an adorable mascot guide.
+                    {t('benefits.childAppDesc')}
                   </p>
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold mb-2">Parent Dashboard</h4>
+                  <h4 className="text-xl font-bold mb-2">{t('benefits.parentDashboard')}</h4>
                   <p className="text-white/90">
-                    Professional analytics, content creation tools, AI
-                    generation, and complete control over your child&apos;s
-                    learning journey.
+                    {t('benefits.parentDashboardDesc')}
                   </p>
                 </div>
               </div>
@@ -390,10 +359,10 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-black text-gray-800 mb-4">
-              Loved by Families Everywhere
+              {t('testimonials.title')}
             </h2>
             <p className="text-xl text-gray-600">
-              See what parents are saying about LearnNest
+              {t('testimonials.subtitle')}
             </p>
           </div>
 
@@ -408,7 +377,7 @@ export default function LandingPage() {
                 className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
               >
                 <div className="flex items-center gap-1 mb-4">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
+                  {Array.from({ length: 5 }).map((_, i) => (
                     <Star
                       key={i}
                       className="w-5 h-5 fill-yellow-400 text-yellow-400"
@@ -438,11 +407,10 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-              Start Your Learning Adventure Today
+              {t('cta.title')}
             </h2>
             <p className="text-xl text-white/90 mb-8">
-              Join thousands of families who are making learning fun with
-              LearnNest. Free 14-day trial, no credit card required.
+              {t('cta.subtitle')}
             </p>
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -453,12 +421,11 @@ export default function LandingPage() {
                 href="/register"
                 className="bg-white text-purple-600 font-bold px-10 py-4 rounded-xl shadow-xl hover:shadow-2xl transition-shadow text-lg inline-block"
               >
-                Get Started Free
+                {t('cta.getStarted')}
               </Link>
             </motion.div>
             <p className="text-white/80 mt-4 text-sm">
-              No credit card required &bull; Cancel anytime &bull; 14-day free
-              trial
+              {t('cta.noCard')} &bull; {t('cta.cancelAnytime')} &bull; {t('cta.freeTrial')}
             </p>
           </motion.div>
         </div>
@@ -476,72 +443,72 @@ export default function LandingPage() {
                 <span className="font-black text-xl">LearnNest</span>
               </div>
               <p className="text-gray-400 text-sm">
-                Making learning magical for kids ages 6-14.
+                {t('footer.tagline')}
               </p>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Product</h4>
+              <h4 className="font-bold mb-4">{t('footer.product')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
                   <span className="hover:text-white transition-colors cursor-pointer">
-                    About
+                    {t('footer.about')}
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-white transition-colors cursor-pointer">
-                    Pricing
+                    {t('footer.pricing')}
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-white transition-colors cursor-pointer">
-                    Features
+                    {t('footer.featuresLink')}
                   </span>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Company</h4>
+              <h4 className="font-bold mb-4">{t('footer.company')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
                   <span className="hover:text-white transition-colors cursor-pointer">
-                    Blog
+                    {t('footer.blog')}
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-white transition-colors cursor-pointer">
-                    Careers
+                    {t('footer.careers')}
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-white transition-colors cursor-pointer">
-                    Contact
+                    {t('footer.contact')}
                   </span>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Legal</h4>
+              <h4 className="font-bold mb-4">{t('footer.legal')}</h4>
               <ul className="space-y-2 text-sm text-gray-400">
                 <li>
                   <span className="hover:text-white transition-colors cursor-pointer">
-                    Privacy
+                    {t('footer.privacy')}
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-white transition-colors cursor-pointer">
-                    Terms
+                    {t('footer.terms')}
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-white transition-colors cursor-pointer">
-                    Security
+                    {t('footer.security')}
                   </span>
                 </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2026 LearnNest. All rights reserved.</p>
+            <p>{t('footer.copyright')}</p>
           </div>
         </div>
       </footer>

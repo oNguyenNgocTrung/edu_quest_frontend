@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "tagline": "Học. Chơi. Lớn lên.",
+    "login": "Đăng nhập",
+    "getStarted": "Bắt đầu",
+    "startFree": "Miễn phí"
+  },
+  "hero": {
+    "titlePart1": "Học tập thật",
+    "titleHighlight": " Kỳ diệu",
+    "subtitle": "LearnNest kết hợp trò chơi hóa hấp dẫn của Duolingo với hệ thống lặp lại ngắt quãng đã được chứng minh của Anki, giúp trẻ từ 6-14 tuổi làm chủ mọi môn học một cách vui vẻ.",
+    "startTrial": "Dùng thử miễn phí",
+    "learnMore": "Tìm hiểu thêm",
+    "familyCount": "10.000+ gia đình",
+    "newAchievement": "Thành tựu mới!"
+  },
+  "demo": {
+    "level": "Cấp 12",
+    "dailyStreak": "Chuỗi ngày",
+    "days": "15 Ngày",
+    "todaysProgress": "Tiến trình hôm nay",
+    "lessonsProgress": "3/5 bài học"
+  },
+  "features": {
+    "title": "Mọi thứ con bạn cần để thành công",
+    "subtitle": "Tính năng mạnh mẽ dành cho cả trẻ và phụ huynh",
+    "spacedRepetition": "Lặp lại ngắt quãng",
+    "spacedRepetitionDesc": "Hệ thống học tập dựa trên khoa học giúp trẻ nhớ nhiều hơn với ít công sức hơn",
+    "gamifiedLearning": "Học qua trò chơi",
+    "gamifiedLearningDesc": "Điểm XP, chuỗi ngày, thành tựu và phần thưởng giúp trẻ luôn hứng thú",
+    "aiPowered": "Nội dung AI",
+    "aiPoweredDesc": "Tạo thẻ ghi nhớ và bài học tùy chỉnh phù hợp với nhu cầu của con bạn",
+    "parentDashboard": "Bảng điều khiển Phụ huynh",
+    "parentDashboardDesc": "Theo dõi tiến trình, tạo nội dung và quản lý phần thưởng từ bảng điều khiển"
+  },
+  "benefits": {
+    "title": "Tại sao Phụ huynh & Trẻ em yêu thích LearnNest",
+    "items": [
+      "Thuật toán lặp lại ngắt quãng đã được chứng minh",
+      "Giao diện đẹp, thân thiện với trẻ em",
+      "Phân tích tiến trình toàn diện",
+      "Công cụ tạo nội dung tùy chỉnh",
+      "Tạo thẻ ghi nhớ bằng AI",
+      "Hệ thống thành tựu & phần thưởng",
+      "Lộ trình học đa môn",
+      "Trải nghiệm an toàn, không quảng cáo"
+    ],
+    "twoInterfaces": "Hai giao diện mạnh mẽ",
+    "childApp": "Ứng dụng Trẻ em",
+    "childAppDesc": "Trải nghiệm vui nhộn, đầy màu sắc, giống trò chơi với nhiệm vụ hàng ngày, chuỗi ngày, phần thưởng và nhân vật hướng dẫn đáng yêu.",
+    "parentDashboard": "Bảng điều khiển Phụ huynh",
+    "parentDashboardDesc": "Phân tích chuyên nghiệp, công cụ tạo nội dung, tạo bằng AI và toàn quyền kiểm soát hành trình học tập của con."
+  },
+  "testimonials": {
+    "title": "Được các gia đình yêu thích",
+    "subtitle": "Phụ huynh nói gì về LearnNest",
+    "items": [
+      {
+        "name": "Chị Hương",
+        "role": "Mẹ 2 con",
+        "content": "Các con tôi thực sự mong chờ bài học hàng ngày! Trò chơi hóa khiến việc học trở nên thú vị."
+      },
+      {
+        "name": "Anh Đức",
+        "role": "Giáo viên & Phụ huynh",
+        "content": "Là một nhà giáo dục, tôi yêu hệ thống lặp lại ngắt quãng. Là phụ huynh, tôi yêu cách con gái tôi hào hứng."
+      },
+      {
+        "name": "Chị Linh",
+        "role": "Phụ huynh dạy tại nhà",
+        "content": "Trình tạo nội dung AI tiết kiệm cho tôi hàng giờ. Tôi có thể tạo bài học tùy chỉnh trong vài phút!"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Bắt đầu hành trình học tập hôm nay",
+    "subtitle": "Tham gia hàng ngàn gia đình đang biến việc học thành niềm vui với LearnNest. Dùng thử 14 ngày miễn phí, không cần thẻ tín dụng.",
+    "getStarted": "Bắt đầu miễn phí",
+    "noCard": "Không cần thẻ tín dụng",
+    "cancelAnytime": "Hủy bất cứ lúc nào",
+    "freeTrial": "Dùng thử 14 ngày miễn phí"
+  },
+  "footer": {
+    "tagline": "Biến việc học thành điều kỳ diệu cho trẻ từ 6-14 tuổi.",
+    "product": "Sản phẩm",
+    "about": "Giới thiệu",
+    "pricing": "Giá cả",
+    "featuresLink": "Tính năng",
+    "company": "Công ty",
+    "blog": "Blog",
+    "careers": "Tuyển dụng",
+    "contact": "Liên hệ",
+    "legal": "Pháp lý",
+    "privacy": "Quyền riêng tư",
+    "terms": "Điều khoản",
+    "security": "Bảo mật",
+    "copyright": "© 2026 LearnNest. Bảo lưu mọi quyền."
+  }
+}

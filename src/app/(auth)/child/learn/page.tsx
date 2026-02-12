@@ -18,6 +18,7 @@ import {
   Flame,
   Coins,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Mascot } from "@/components/Mascot";
 import { BottomNav } from "@/components/child/BottomNav";
 import { SubjectBrowserCard } from "@/components/child/SubjectBrowserCard";
@@ -32,6 +33,7 @@ const sidebarNavItems = [
 ];
 
 export default function LearnBrowserPage() {
+  const { t } = useTranslation('child');
   const { currentChildProfile } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
@@ -95,7 +97,7 @@ export default function LearnBrowserPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search subjects..."
+                placeholder={t('learn.searchSubjects')}
                 className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
               />
             </div>
@@ -142,15 +144,15 @@ export default function LearnBrowserPage() {
             <div className="flex items-center gap-3 mb-4">
               <Mascot mood="excited" size="md" showSpeechBubble={false} />
               <div>
-                <p className="font-bold text-gray-800">Your Progress</p>
-                <p className="text-xs text-gray-600">Keep it up!</p>
+                <p className="font-bold text-gray-800">{t('home.yourProgress')}</p>
+                <p className="text-xs text-gray-600">{t('home.keepItUp')}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 mb-2 p-2 bg-white rounded-lg">
               <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
               <div className="flex-1">
-                <p className="text-xs text-gray-500">Total XP</p>
+                <p className="text-xs text-gray-500">{t('home.totalXp')}</p>
                 <p className="text-lg font-bold text-gray-800">{totalXP}</p>
               </div>
             </div>
@@ -158,7 +160,7 @@ export default function LearnBrowserPage() {
             <div className="flex items-center gap-2 p-2 bg-white rounded-lg">
               <Trophy className="w-5 h-5 text-purple-500 fill-purple-500" />
               <div className="flex-1">
-                <p className="text-xs text-gray-500">Stars Earned</p>
+                <p className="text-xs text-gray-500">{t('home.starsEarned')}</p>
                 <p className="text-lg font-bold text-gray-800">{totalStars}</p>
               </div>
             </div>
@@ -201,10 +203,10 @@ export default function LearnBrowserPage() {
               <span className="text-3xl">🎯</span>
               <div>
                 <h4 className="font-bold text-white text-sm mb-1">
-                  Unlock More!
+                  {t('home.unlockMore')}
                 </h4>
                 <p className="text-xs text-purple-100">
-                  Complete lessons to unlock new subjects
+                  {t('home.completeLessonsToUnlock')}
                 </p>
               </div>
             </div>
@@ -217,10 +219,10 @@ export default function LearnBrowserPage() {
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="text-center mb-4">
             <h1 className="text-2xl font-black text-gray-800">
-              Your Learning Journey
+              {t('learn.title')}
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              Choose a subject to continue learning
+              {t('learn.subtitle')}
             </p>
           </div>
 
@@ -231,7 +233,7 @@ export default function LearnBrowserPage() {
                 <Star className="w-5 h-5 text-white fill-white" />
               </div>
               <div>
-                <p className="text-xs text-gray-500">Total XP</p>
+                <p className="text-xs text-gray-500">{t('home.totalXp')}</p>
                 <p className="text-lg font-bold text-gray-800">{totalXP}</p>
               </div>
             </div>
@@ -243,7 +245,7 @@ export default function LearnBrowserPage() {
                 <Trophy className="w-5 h-5 text-white fill-white" />
               </div>
               <div>
-                <p className="text-xs text-gray-500">Stars</p>
+                <p className="text-xs text-gray-500">{t('home.starsEarned')}</p>
                 <p className="text-lg font-bold text-gray-800">{totalStars}</p>
               </div>
             </div>
@@ -275,10 +277,10 @@ export default function LearnBrowserPage() {
           >
             <div className="text-4xl mb-3">🎯</div>
             <h3 className="text-xl font-bold mb-2">
-              Keep Up the Great Work!
+              {t('learn.keepUpGreatWork')}
             </h3>
             <p className="text-sm opacity-90">
-              Complete lessons to unlock new subjects and earn amazing rewards!
+              {t('learn.completeLessonsToUnlock')}
             </p>
           </motion.div>
 
@@ -297,10 +299,10 @@ export default function LearnBrowserPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-black text-gray-800 mb-2">
-                  Your Learning Journey
+                  {t('learn.title')}
                 </h1>
                 <p className="text-gray-600">
-                  Choose a subject to continue learning and earn rewards!
+                  {t('learn.chooseSubject')}
                 </p>
               </div>
               <div className="flex items-center gap-6">
@@ -309,7 +311,7 @@ export default function LearnBrowserPage() {
                     <Star className="w-7 h-7 text-white fill-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Total XP</p>
+                    <p className="text-sm text-gray-500">{t('home.totalXp')}</p>
                     <p className="text-2xl font-bold text-gray-800">
                       {totalXP}
                     </p>
@@ -323,7 +325,7 @@ export default function LearnBrowserPage() {
                     <Trophy className="w-7 h-7 text-white fill-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Stars</p>
+                    <p className="text-sm text-gray-500">{t('home.starsEarned')}</p>
                     <p className="text-2xl font-bold text-gray-800">
                       {totalStars}
                     </p>
@@ -357,11 +359,10 @@ export default function LearnBrowserPage() {
                 <div className="text-6xl">🎯</div>
                 <div>
                   <h3 className="text-2xl font-bold mb-2">
-                    Keep Up the Great Work!
+                    {t('learn.keepUpGreatWork')}
                   </h3>
                   <p className="text-base opacity-90">
-                    Complete lessons to unlock new subjects and earn amazing
-                    rewards!
+                    {t('learn.completeLessonsToUnlock')}
                   </p>
                 </div>
               </div>
@@ -371,7 +372,7 @@ export default function LearnBrowserPage() {
                 onClick={() => router.push("/child/rewards")}
                 className="px-6 py-3 bg-white text-purple-600 rounded-full font-bold shadow-lg hover:shadow-xl transition-all"
               >
-                View All Rewards
+                {t('learn.viewAllRewards')}
               </motion.button>
             </div>
           </motion.div>

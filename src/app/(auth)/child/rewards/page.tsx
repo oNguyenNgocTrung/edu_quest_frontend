@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import apiClient from "@/lib/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import type { Reward } from "@/types";
@@ -15,6 +16,7 @@ export default function RewardShopPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { currentChildProfile } = useAuthStore();
+  const { t } = useTranslation('child');
   const [showConfetti, setShowConfetti] = useState(false);
   const [redeemedItem, setRedeemedItem] = useState<string | null>(null);
 
@@ -37,7 +39,7 @@ export default function RewardShopPage() {
       const reward = rewards?.find((r) => r.id === rewardId);
       setRedeemedItem(reward?.name || "Reward");
       setShowConfetti(true);
-      toast.success(`Redeemed: ${reward?.name}!`);
+      toast.success(t('rewards.redeemSuccess', { name: reward?.name }));
       queryClient.invalidateQueries({ queryKey: ["rewards"] });
       setTimeout(() => {
         setShowConfetti(false);
@@ -45,7 +47,7 @@ export default function RewardShopPage() {
       }, 3000);
     },
     onError: () => {
-      toast.error("Not enough coins or reward unavailable");
+      toast.error(t('rewards.redeemError'));
     },
   });
 
@@ -64,7 +66,7 @@ export default function RewardShopPage() {
               >
                 <ArrowLeft className="w-6 h-6 text-gray-600" />
               </button>
-              <h1 className="text-xl font-black text-gray-800">Reward Shop</h1>
+              <h1 className="text-xl font-black text-gray-800">{t('rewards.title')}</h1>
             </div>
 
             <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-400 px-4 py-2 rounded-full shadow-lg">
@@ -81,11 +83,10 @@ export default function RewardShopPage() {
         <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl p-6 mb-6 text-white">
           <div className="flex items-center gap-3 mb-2">
             <Sparkles className="w-6 h-6" />
-            <h2 className="text-xl font-black">Spend Your Coins!</h2>
+            <h2 className="text-xl font-black">{t('rewards.spendCoins')}</h2>
           </div>
           <p className="text-white/90">
-            Complete lessons and quests to earn more coins and unlock amazing
-            rewards!
+            {t('rewards.spendCoinsDesc')}
           </p>
         </div>
 
@@ -140,10 +141,10 @@ export default function RewardShopPage() {
                       }`}
                     >
                       {isLocked
-                        ? "Locked"
+                        ? t('rewards.locked')
                         : canAfford
-                          ? "Redeem"
-                          : "Need More"}
+                          ? t('rewards.redeem')
+                          : t('rewards.needMore')}
                     </motion.button>
                   </div>
                 </div>
@@ -161,22 +162,24 @@ export default function RewardShopPage() {
         >
           <h3 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
             <Sparkles className="w-5 h-5" />
-            Earn More Coins!
+            {t('rewards.earnMoreCoins')}
           </h3>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>
-              Complete daily quests:{" "}
-              <span className="font-bold">+50 coins</span>
+              {t('rewards.dailyQuests')}{" "}
+              <span className="font-bold">{t('rewards.dailyQuestsCoins')}</span>
             </li>
             <li>
-              Perfect lesson score:{" "}
-              <span className="font-bold">+30 coins</span>
+              {t('rewards.perfectScore')}{" "}
+              <span className="font-bold">{t('rewards.perfectScoreCoins')}</span>
             </li>
             <li>
-              7-day streak: <span className="font-bold">+100 coins</span>
+              {t('rewards.sevenDayStreak')}{" "}
+              <span className="font-bold">{t('rewards.sevenDayStreakCoins')}</span>
             </li>
             <li>
-              Beat a boss level: <span className="font-bold">+200 coins</span>
+              {t('rewards.beatBoss')}{" "}
+              <span className="font-bold">{t('rewards.beatBossCoins')}</span>
             </li>
           </ul>
         </motion.div>
@@ -199,16 +202,16 @@ export default function RewardShopPage() {
             >
               <div className="text-6xl mb-4">🎉</div>
               <h2 className="text-2xl font-black text-gray-800 mb-2">
-                Redeemed!
+                {t('rewards.redeemed')}
               </h2>
               <p className="text-gray-600">
-                You got:{" "}
+                {t('rewards.youGot')}{" "}
                 <span className="font-bold text-purple-600">
                   {redeemedItem}
                 </span>
               </p>
               <p className="text-sm text-gray-500 mt-2">
-                Check with your parent to claim it!
+                {t('rewards.checkWithParent')}
               </p>
             </motion.div>
 

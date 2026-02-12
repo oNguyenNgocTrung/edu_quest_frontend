@@ -15,6 +15,7 @@ import {
   Check,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import apiClient from "@/lib/api-client";
 import { useAuthStore } from "@/stores/auth-store";
 import FileImportModal from "@/components/parent/FileImportModal";
@@ -24,6 +25,7 @@ type UploadMode = "image" | "file";
 
 export default function WorksheetUploadPage() {
   const router = useRouter();
+  const { t } = useTranslation("parent");
   const { childProfiles } = useAuthStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -92,11 +94,11 @@ export default function WorksheetUploadPage() {
     },
     onSuccess: (data) => {
       const worksheetId = data.data?.id || data.id;
-      toast.success("Worksheet uploaded! Processing started.");
+      toast.success(t("worksheetUpload.uploadSuccess"));
       router.push(`/parent/worksheets/${worksheetId}/processing`);
     },
     onError: () => {
-      toast.error("Failed to upload worksheet");
+      toast.error(t("worksheetUpload.uploadError"));
     },
   });
 
@@ -132,11 +134,11 @@ export default function WorksheetUploadPage() {
     },
     onSuccess: (data) => {
       const worksheetId = data.data?.id || data.id;
-      toast.success("Questions imported! Ready for review.");
+      toast.success(t("worksheetUpload.importSuccess"));
       router.push(`/parent/worksheets/${worksheetId}/review`);
     },
     onError: () => {
-      toast.error("Failed to import questions");
+      toast.error(t("worksheetUpload.importError"));
     },
   });
 
@@ -171,21 +173,21 @@ export default function WorksheetUploadPage() {
                 className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-2 text-sm"
               >
                 <ArrowLeft size={16} />
-                Dashboard
+                {t("worksheetUpload.dashboard")}
               </button>
               <h1
                 className="text-2xl font-black text-gray-800"
                 style={{ fontFamily: "Nunito, sans-serif" }}
               >
-                Upload Worksheet
+                {t("worksheetUpload.title")}
               </h1>
               <p
                 className="text-sm text-gray-600 mt-1"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
                 {uploadMode === "image"
-                  ? "AI will extract questions and create practice exercises"
-                  : "Import questions directly from a CSV or JSON file"}
+                  ? t("worksheetUpload.subtitleImage")
+                  : t("worksheetUpload.subtitleFile")}
               </p>
             </div>
             <button
@@ -193,7 +195,7 @@ export default function WorksheetUploadPage() {
               className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800 transition-colors"
               style={{ fontFamily: "Inter, sans-serif" }}
             >
-              Cancel
+              {t("worksheetUpload.cancel")}
             </button>
           </div>
         </div>
@@ -212,7 +214,7 @@ export default function WorksheetUploadPage() {
             style={{ fontFamily: "Inter, sans-serif" }}
           >
             <Camera size={16} />
-            Image (AI Processing)
+            {t("worksheetUpload.imageMode")}
           </button>
           <button
             onClick={() => handleModeSwitch("file")}
@@ -224,7 +226,7 @@ export default function WorksheetUploadPage() {
             style={{ fontFamily: "Inter, sans-serif" }}
           >
             <FileSpreadsheet size={16} />
-            CSV / JSON File
+            {t("worksheetUpload.fileMode")}
           </button>
         </div>
 
@@ -261,13 +263,13 @@ export default function WorksheetUploadPage() {
                       className="text-xl font-bold text-gray-800 mb-2"
                       style={{ fontFamily: "Nunito, sans-serif" }}
                     >
-                      Tap to take photo or select from gallery
+                      {t("worksheetUpload.dragDrop")}
                     </h3>
                     <p
                       className="text-sm text-gray-600 mb-8"
                       style={{ fontFamily: "Inter, sans-serif" }}
                     >
-                      Supports images and PDF files
+                      {t("worksheetUpload.supportedFormats")}
                     </p>
 
                     {/* Upload Method Buttons */}
@@ -286,7 +288,7 @@ export default function WorksheetUploadPage() {
                           className="font-semibold text-purple-600"
                           style={{ fontFamily: "Inter, sans-serif" }}
                         >
-                          Camera
+                          {t("worksheetUpload.camera")}
                         </span>
                       </motion.button>
 
@@ -304,7 +306,7 @@ export default function WorksheetUploadPage() {
                           className="font-semibold text-purple-600"
                           style={{ fontFamily: "Inter, sans-serif" }}
                         >
-                          Gallery
+                          {t("worksheetUpload.gallery")}
                         </span>
                       </motion.button>
 
@@ -322,7 +324,7 @@ export default function WorksheetUploadPage() {
                           className="font-semibold text-purple-600"
                           style={{ fontFamily: "Inter, sans-serif" }}
                         >
-                          PDF
+                          {t("worksheetUpload.pdf")}
                         </span>
                       </motion.button>
                     </div>
@@ -343,7 +345,7 @@ export default function WorksheetUploadPage() {
                       className="text-lg font-bold text-gray-800"
                       style={{ fontFamily: "Nunito, sans-serif" }}
                     >
-                      Preview
+                      {t("worksheetUpload.preview")}
                     </h3>
                     <button
                       onClick={() => {
@@ -353,7 +355,7 @@ export default function WorksheetUploadPage() {
                       className="text-sm font-semibold text-red-600 hover:text-red-700"
                       style={{ fontFamily: "Inter, sans-serif" }}
                     >
-                      Remove
+                      {t("worksheetUpload.remove")}
                     </button>
                   </div>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -388,13 +390,13 @@ export default function WorksheetUploadPage() {
                       className="text-xl font-bold text-gray-800 mb-2"
                       style={{ fontFamily: "Nunito, sans-serif" }}
                     >
-                      Import from CSV or JSON
+                      {t("worksheetUpload.importFromFile")}
                     </h3>
                     <p
                       className="text-sm text-gray-600 mb-8"
                       style={{ fontFamily: "Inter, sans-serif" }}
                     >
-                      Upload a file with questions — no AI processing needed
+                      {t("worksheetUpload.importFileDesc")}
                     </p>
 
                     <motion.button
@@ -411,7 +413,7 @@ export default function WorksheetUploadPage() {
                         className="font-semibold text-purple-600"
                         style={{ fontFamily: "Inter, sans-serif" }}
                       >
-                        Choose File
+                        {t("worksheetUpload.chooseFile")}
                       </span>
                     </motion.button>
                   </div>
@@ -428,8 +430,9 @@ export default function WorksheetUploadPage() {
                           className="text-lg font-bold text-gray-800"
                           style={{ fontFamily: "Nunito, sans-serif" }}
                         >
-                          {importedQuestions.length} Question
-                          {importedQuestions.length !== 1 ? "s" : ""} Ready
+                          {importedQuestions.length === 1
+                            ? t("worksheetUpload.questionsReady", { count: importedQuestions.length })
+                            : t("worksheetUpload.questionsReadyPlural", { count: importedQuestions.length })}
                         </h3>
                         <p
                           className="text-sm text-gray-500"
@@ -462,7 +465,7 @@ export default function WorksheetUploadPage() {
                       className="text-sm font-semibold text-red-600 hover:text-red-700"
                       style={{ fontFamily: "Inter, sans-serif" }}
                     >
-                      Remove
+                      {t("worksheetUpload.remove")}
                     </button>
                   </div>
 
@@ -533,7 +536,7 @@ export default function WorksheetUploadPage() {
               className="text-lg font-bold text-gray-800"
               style={{ fontFamily: "Nunito, sans-serif" }}
             >
-              Quick Info (Optional)
+              {t("worksheetUpload.quickInfo")}
             </h3>
             <motion.div
               animate={{ rotate: showMetadata ? 180 : 0 }}
@@ -557,7 +560,7 @@ export default function WorksheetUploadPage() {
                     className="block text-sm font-semibold text-gray-700 mb-2"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
-                    Title
+                    {t("worksheetUpload.titleLabel")}
                   </label>
                   <input
                     type="text"
@@ -565,7 +568,7 @@ export default function WorksheetUploadPage() {
                     onChange={(e) =>
                       setMetadata({ ...metadata, title: e.target.value })
                     }
-                    placeholder="e.g., Math Worksheet - Fractions"
+                    placeholder={t("worksheetUpload.titlePlaceholder")}
                     className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
@@ -577,7 +580,7 @@ export default function WorksheetUploadPage() {
                     className="block text-sm font-semibold text-gray-700 mb-2"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
-                    Child
+                    {t("worksheetUpload.child")}
                   </label>
                   <select
                     value={metadata.child_profile_id}
@@ -590,7 +593,7 @@ export default function WorksheetUploadPage() {
                     className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
-                    <option value="">Select child (optional)</option>
+                    <option value="">{t("worksheetUpload.selectChild")}</option>
                     {childProfiles.map((cp: ChildProfile) => (
                       <option key={cp.id} value={cp.id}>
                         {cp.name}
@@ -605,7 +608,7 @@ export default function WorksheetUploadPage() {
                     className="block text-sm font-semibold text-gray-700 mb-2"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
-                    Subject
+                    {t("worksheetUpload.subject")}
                   </label>
                   <select
                     value={metadata.subject_id}
@@ -616,7 +619,7 @@ export default function WorksheetUploadPage() {
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
                     <option value="">
-                      {uploadMode === "image" ? "Auto-detect" : "Select subject (optional)"}
+                      {uploadMode === "image" ? t("worksheetUpload.autoDetect") : t("worksheetUpload.selectSubject")}
                     </option>
                     {subjects?.map((s: Subject) => (
                       <option key={s.id} value={s.id}>
@@ -632,7 +635,7 @@ export default function WorksheetUploadPage() {
                     className="block text-sm font-semibold text-gray-700 mb-2"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
-                    School Date
+                    {t("worksheetUpload.schoolDate")}
                   </label>
                   <input
                     type="date"
@@ -651,7 +654,7 @@ export default function WorksheetUploadPage() {
                     className="block text-sm font-semibold text-gray-700 mb-2"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
-                    Chapter/Unit (Optional)
+                    {t("worksheetUpload.chapter")}
                   </label>
                   <input
                     type="text"
@@ -659,7 +662,7 @@ export default function WorksheetUploadPage() {
                     onChange={(e) =>
                       setMetadata({ ...metadata, chapter: e.target.value })
                     }
-                    placeholder="e.g., Chapter 5: Fractions"
+                    placeholder={t("worksheetUpload.chapterPlaceholder")}
                     className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
@@ -671,7 +674,7 @@ export default function WorksheetUploadPage() {
                     className="block text-sm font-semibold text-gray-700 mb-2"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
-                    Textbook Reference (Optional)
+                    {t("worksheetUpload.textbookRef")}
                   </label>
                   <input
                     type="text"
@@ -682,7 +685,7 @@ export default function WorksheetUploadPage() {
                         textbook_reference: e.target.value,
                       })
                     }
-                    placeholder="e.g., Math Grade 4, Page 142"
+                    placeholder={t("worksheetUpload.textbookRefPlaceholder")}
                     className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
@@ -717,11 +720,13 @@ export default function WorksheetUploadPage() {
         >
           {isAnyPending
             ? uploadMode === "image"
-              ? "Uploading..."
-              : "Importing..."
+              ? t("worksheetUpload.uploading")
+              : t("worksheetUpload.importing")
             : uploadMode === "image"
-              ? "Upload & Process with AI"
-              : `Import ${importedQuestions.length} Question${importedQuestions.length !== 1 ? "s" : ""}`}
+              ? t("worksheetUpload.uploadAndProcess")
+              : importedQuestions.length === 1
+                ? t("worksheetUpload.importQuestions", { count: importedQuestions.length })
+                : t("worksheetUpload.importQuestionsPlural", { count: importedQuestions.length })}
         </motion.button>
 
         {/* Info Tip */}
@@ -741,16 +746,16 @@ export default function WorksheetUploadPage() {
                 style={{ fontFamily: "Nunito, sans-serif" }}
               >
                 {uploadMode === "image"
-                  ? "AI-Powered Processing"
-                  : "Direct File Import"}
+                  ? t("worksheetUpload.aiPowered")
+                  : t("worksheetUpload.directImport")}
               </h4>
               <p
                 className="text-xs text-blue-700 leading-relaxed"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
                 {uploadMode === "image"
-                  ? "Our AI will extract all questions from the worksheet and automatically generate similar practice problems to help your child master each concept."
-                  : "Import questions directly from a CSV or JSON file. Questions go straight to the review page where you can edit them before creating a practice deck. Download a template from the import dialog."}
+                  ? t("worksheetUpload.aiPoweredDesc")
+                  : t("worksheetUpload.directImportDesc")}
               </p>
             </div>
           </div>

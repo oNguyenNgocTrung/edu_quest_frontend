@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import apiClient from "@/lib/api-client";
 import type { Deck } from "@/types";
 import { ArrowLeft, Plus, BookOpen, HelpCircle, Trash2, ChevronRight } from "lucide-react";
@@ -10,6 +11,7 @@ import { toast } from "sonner";
 
 export default function ContentCreatorPage() {
   const router = useRouter();
+  const { t } = useTranslation("parent");
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"flashcards" | "quizzes">("flashcards");
   const [showCreate, setShowCreate] = useState(false);
@@ -35,7 +37,7 @@ export default function ContentCreatorPage() {
       return data;
     },
     onSuccess: () => {
-      toast.success("Deck created!");
+      toast.success(t("content.deckCreated"));
       queryClient.invalidateQueries({ queryKey: ["decks"] });
       setShowCreate(false);
       setNewDeck({ name: "", difficulty: "medium", deck_type: "flashcards" });
@@ -47,7 +49,7 @@ export default function ContentCreatorPage() {
       await apiClient.delete(`/decks/${id}`);
     },
     onSuccess: () => {
-      toast.success("Deck deleted");
+      toast.success(t("content.deckDeleted"));
       queryClient.invalidateQueries({ queryKey: ["decks"] });
     },
   });
@@ -67,9 +69,9 @@ export default function ContentCreatorPage() {
             className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-3"
           >
             <ArrowLeft size={20} />
-            Dashboard
+            {t("content.dashboard")}
           </button>
-          <h1 className="text-2xl font-bold text-gray-800">Content Creator</h1>
+          <h1 className="text-2xl font-bold text-gray-800">{t("content.title")}</h1>
         </div>
       </div>
 
@@ -85,7 +87,7 @@ export default function ContentCreatorPage() {
             }`}
           >
             <BookOpen size={16} className="inline mr-1" />
-            Flashcards
+            {t("content.flashcards")}
           </button>
           <button
             onClick={() => setActiveTab("quizzes")}
@@ -96,7 +98,7 @@ export default function ContentCreatorPage() {
             }`}
           >
             <HelpCircle size={16} className="inline mr-1" />
-            Quizzes
+            {t("content.quizzes")}
           </button>
         </div>
 
@@ -112,7 +114,7 @@ export default function ContentCreatorPage() {
           className="w-full bg-white border-2 border-dashed border-gray-200 rounded-xl p-4 text-gray-500 hover:border-indigo-300 hover:text-indigo-500 transition flex items-center justify-center gap-2"
         >
           <Plus size={20} />
-          Create New Deck
+          {t("content.createNewDeck")}
         </button>
 
         {/* Create form */}
@@ -120,7 +122,7 @@ export default function ContentCreatorPage() {
           <div className="bg-white rounded-xl p-4 shadow-sm space-y-3">
             <input
               type="text"
-              placeholder="Deck name"
+              placeholder={t("content.deckName")}
               value={newDeck.name}
               onChange={(e) => setNewDeck((d) => ({ ...d, name: e.target.value }))}
               className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
@@ -130,9 +132,9 @@ export default function ContentCreatorPage() {
               onChange={(e) => setNewDeck((d) => ({ ...d, difficulty: e.target.value }))}
               className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
             >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
+              <option value="easy">{t("content.easy")}</option>
+              <option value="medium">{t("content.medium")}</option>
+              <option value="hard">{t("content.hard")}</option>
             </select>
             <div className="flex gap-2">
               <button
@@ -140,13 +142,13 @@ export default function ContentCreatorPage() {
                 disabled={!newDeck.name || createDeck.isPending}
                 className="flex-1 py-2 bg-indigo-600 text-white rounded-lg font-medium disabled:opacity-50"
               >
-                Create
+                {t("content.create")}
               </button>
               <button
                 onClick={() => setShowCreate(false)}
                 className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg"
               >
-                Cancel
+                {t("content.cancel")}
               </button>
             </div>
           </div>
@@ -180,8 +182,8 @@ export default function ContentCreatorPage() {
                   </h3>
                   <p className="text-sm text-gray-500">
                     {deck.deck_type === "flashcards"
-                      ? `${deck.flashcards_count} cards`
-                      : `${deck.questions_count} questions`}{" "}
+                      ? t("content.cardsCount", { count: deck.flashcards_count })
+                      : t("content.questionsCount", { count: deck.questions_count })}{" "}
                     · {deck.difficulty}
                   </p>
                 </div>

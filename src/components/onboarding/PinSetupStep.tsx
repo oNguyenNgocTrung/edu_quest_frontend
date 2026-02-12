@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect, useCallback } from "react";
 import { Shield, Delete } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 interface PinSetupStepProps {
@@ -12,6 +13,7 @@ interface PinSetupStepProps {
 }
 
 export function PinSetupStep({ stepLabel, onComplete }: PinSetupStepProps) {
+  const { t } = useTranslation('onboarding');
   const setPin = useAuthStore((s) => s.setPin);
   const [step, setStep] = useState<1 | 2>(1);
   const [firstPIN, setFirstPIN] = useState("");
@@ -111,13 +113,13 @@ export function PinSetupStep({ stepLabel, onComplete }: PinSetupStepProps) {
 
       {/* Heading */}
       <h3 className="mb-2 text-xl font-bold text-gray-800 font-[Nunito]">
-        {step === 1 ? "Create a Parent PIN" : "Confirm your PIN"}
+        {step === 1 ? t('pin.title') : t('pin.confirmPin')}
       </h3>
 
       <p className="mb-12 max-w-sm text-sm text-gray-500 text-center leading-relaxed">
         {step === 1
-          ? "This PIN protects access to the Parent Dashboard and profile management"
-          : "Re-enter your PIN to confirm"}
+          ? t('pin.subtitle')
+          : t('pin.confirmPin')}
       </p>
 
       {/* PIN Dots */}

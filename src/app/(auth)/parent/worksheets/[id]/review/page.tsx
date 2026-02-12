@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import apiClient from "@/lib/api-client";
 import type { Worksheet, WorksheetExtractedQuestion } from "@/types";
 import FileImportModal, {
@@ -32,6 +33,7 @@ export default function ReviewQuestionsPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
+  const { t } = useTranslation("parent");
   const [worksheet, setWorksheet] = useState<Worksheet | null>(null);
   const [questions, setQuestions] = useState<WorksheetExtractedQuestion[]>([]);
   const [expandedQuestions, setExpandedQuestions] = useState<Set<string>>(
@@ -51,13 +53,13 @@ export default function ReviewQuestionsPage({
         setWorksheet(ws);
         setQuestions(ws.extracted_questions || []);
       } catch {
-        toast.error("Failed to load worksheet");
+        toast.error(t("worksheetReview.loadError"));
       } finally {
         setLoading(false);
       }
     };
     fetchWorksheet();
-  }, [id]);
+  }, [id, t]);
 
   const toggleExpanded = (key: string) => {
     setExpandedQuestions((prev) => {
@@ -108,7 +110,7 @@ export default function ReviewQuestionsPage({
     });
     setHasUnsavedChanges(true);
     setShowImportModal(false);
-    toast.success(`${typedQuestions.length} questions imported!`);
+    toast.success(t("worksheetReview.questionsImported", { count: typedQuestions.length }));
   };
 
   const saveMutation = useMutation({
@@ -118,11 +120,11 @@ export default function ReviewQuestionsPage({
       });
     },
     onSuccess: () => {
-      toast.success("Changes saved!");
+      toast.success(t("worksheetReview.changesSaved"));
       setHasUnsavedChanges(false);
     },
     onError: () => {
-      toast.error("Failed to save changes");
+      toast.error(t("worksheetReview.saveError"));
     },
   });
 
@@ -137,12 +139,12 @@ export default function ReviewQuestionsPage({
     },
     onSuccess: (data) => {
       toast.success(
-        `Approved! ${data.questions_created || questions.length} questions added to practice.`
+        t("worksheetReview.approvedSuccess", { count: data.questions_created || questions.length })
       );
       router.push("/parent/dashboard");
     },
     onError: () => {
-      toast.error("Failed to approve worksheet");
+      toast.error(t("worksheetReview.approveError"));
     },
   });
 
@@ -151,7 +153,7 @@ export default function ReviewQuestionsPage({
       <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading questions...</p>
+          <p className="text-gray-600">{t("worksheetReview.loadingQuestions")}</p>
         </div>
       </div>
     );
@@ -179,19 +181,19 @@ export default function ReviewQuestionsPage({
                 className="flex items-center gap-2 text-gray-500 hover:text-gray-700 mb-2 text-sm"
               >
                 <ArrowLeft size={16} />
-                Worksheets
+                {t("worksheetReview.worksheets")}
               </button>
               <h1
                 className="text-2xl font-black text-gray-800"
                 style={{ fontFamily: "Nunito, sans-serif" }}
               >
-                Review Questions
+                {t("worksheetReview.title")}
               </h1>
               <p
                 className="text-sm text-gray-600 mt-1"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-Verify AI-extracted questions before adding to practice
+{t("worksheetReview.subtitle")}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -202,7 +204,7 @@ Verify AI-extracted questions before adding to practice
                   className="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
                   <Save className="w-4 h-4" />
-                  Save
+                  {t("worksheetReview.save")}
                 </button>
               )}
               <motion.button
@@ -216,7 +218,7 @@ Verify AI-extracted questions before adding to practice
                 style={{ fontFamily: "Nunito, sans-serif" }}
               >
                 <Check className="w-5 h-5" />
-                Approve All
+                {t("worksheetReview.approveAll")}
               </motion.button>
             </div>
           </div>
@@ -269,7 +271,7 @@ Verify AI-extracted questions before adding to practice
                 className="text-xs text-purple-700 mt-1"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-                Questions
+                {t("worksheetReview.questions")}
               </p>
             </div>
 
@@ -284,7 +286,7 @@ Verify AI-extracted questions before adding to practice
                 className="text-xs text-green-700 mt-1"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-                AI Confidence
+                {t("worksheetReview.aiConfidence")}
               </p>
             </div>
 
@@ -299,7 +301,7 @@ Verify AI-extracted questions before adding to practice
                 className="text-xs text-blue-700 mt-1"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-                Auto-Verified
+                {t("worksheetReview.autoVerified")}
               </p>
             </div>
 
@@ -314,7 +316,7 @@ Verify AI-extracted questions before adding to practice
                 className="text-xs text-amber-700 mt-1"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-                Needs Review
+                {t("worksheetReview.needsReview")}
               </p>
             </div>
           </div>
@@ -327,14 +329,14 @@ Verify AI-extracted questions before adding to practice
             className="flex-1 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-indigo-400 hover:text-indigo-600 font-semibold transition-colors flex items-center justify-center gap-2"
           >
             <Plus className="w-5 h-5" />
-            Add Question
+            {t("worksheetReview.addQuestion")}
           </button>
           <button
             onClick={() => setShowImportModal(true)}
             className="py-3 px-6 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-indigo-400 hover:text-indigo-600 font-semibold transition-colors flex items-center justify-center gap-2"
           >
             <Upload className="w-5 h-5" />
-            Import from File
+            {t("worksheetReview.importFile")}
           </button>
         </div>
 
@@ -381,17 +383,17 @@ Verify AI-extracted questions before adding to practice
                       {question.needs_review ? (
                         <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold flex items-center gap-1">
                           <AlertTriangle className="w-3.5 h-3.5" />
-                          Needs Review
+                          {t("worksheetReview.needsReview")}
                         </span>
                       ) : (
                         <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold flex items-center gap-1">
                           <Check className="w-3.5 h-3.5" />
-                          Verified
+                          {t("worksheetReview.verified")}
                         </span>
                       )}
                       {question.confidence < 90 && (
                         <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-semibold">
-                          Confidence: {question.confidence}%
+                          {t("worksheetReview.confidence")}: {question.confidence}%
                         </span>
                       )}
                     </div>
@@ -453,7 +455,7 @@ Verify AI-extracted questions before adding to practice
                     {question.type === "fill-blank" && (
                       <div className="p-4 bg-green-50 border-2 border-green-400 rounded-lg">
                         <p className="text-sm font-bold text-green-900">
-                          Correct Answer: {question.correct_answer}
+                          {t("worksheetReview.correctAnswerText", { answer: question.correct_answer })}
                         </p>
                       </div>
                     )}
@@ -502,8 +504,7 @@ Verify AI-extracted questions before adding to practice
                           className="w-full flex items-center justify-between hover:bg-purple-50 rounded-lg p-2 transition-colors"
                         >
                           <span className="text-sm font-semibold text-purple-600">
-                            +{question.similar_exercises.length} similar
-                            exercises generated by AI
+                            {t("worksheetReview.similarExercises", { count: question.similar_exercises.length })}
                           </span>
                           {expandedQuestions.has(`q-${index}`) ? (
                             <ChevronUp className="w-4 h-4 text-purple-600" />
@@ -558,8 +559,8 @@ Verify AI-extracted questions before adding to practice
             >
               <Check className="w-6 h-6" />
               {approveMutation.isPending
-                ? "Approving..."
-                : `Approve & Add to Practice (${questions.length} questions)`}
+                ? t("worksheetReview.approving")
+                : t("worksheetReview.approveCount", { count: questions.length })}
             </motion.button>
           </motion.div>
         )}
@@ -568,13 +569,13 @@ Verify AI-extracted questions before adding to practice
         {questions.length === 0 && !loading && (
           <div className="text-center py-12">
             <p className="text-gray-500 mb-4">
-              No questions found in this worksheet.
+              {t("worksheetReview.noQuestions")}
             </p>
             <button
               onClick={() => setShowAddQuestion(true)}
               className="text-purple-600 font-semibold hover:text-purple-700"
             >
-              Add a question manually
+              {t("worksheetReview.addManually")}
             </button>
           </div>
         )}
@@ -602,6 +603,7 @@ function EditQuestionForm({
   onSave: (updates: Partial<WorksheetExtractedQuestion>) => void;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation("parent");
   const [text, setText] = useState(question.text);
   const [type, setType] = useState(question.type);
   const [options, setOptions] = useState(question.options || []);
@@ -613,7 +615,7 @@ function EditQuestionForm({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h4 className="font-semibold text-gray-700">
-          Edit Question {question.number || index + 1}
+          {t("worksheetReview.editQuestionNumber", { number: question.number || index + 1 })}
         </h4>
         <div className="flex gap-2">
           <button
@@ -629,21 +631,21 @@ function EditQuestionForm({
             className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
           >
             <Check size={14} />
-            Save
+            {t("worksheetReview.save")}
           </button>
           <button
             onClick={onCancel}
             className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
           >
             <X size={14} />
-            Cancel
+            {t("worksheetReview.cancel")}
           </button>
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Question Type
+          {t("worksheetReview.questionType")}
         </label>
         <select
           value={type}
@@ -661,15 +663,15 @@ function EditQuestionForm({
           }}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
         >
-          <option value="mcq">Multiple Choice</option>
-          <option value="true-false">True/False</option>
-          <option value="fill-blank">Fill in the Blank</option>
+          <option value="mcq">{t("worksheetReview.multipleChoice")}</option>
+          <option value="true-false">{t("worksheetReview.trueFalse")}</option>
+          <option value="fill-blank">{t("worksheetReview.fillBlank")}</option>
         </select>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Question Text
+          {t("worksheetReview.questionTextLabel")}
         </label>
         <textarea
           value={text}
@@ -682,7 +684,7 @@ function EditQuestionForm({
       {type === "mcq" && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Options (click to select correct answer)
+            {t("worksheetReview.optionsLabel")}
           </label>
           <div className="space-y-2">
             {options.map((opt, i) => (
@@ -722,7 +724,7 @@ function EditQuestionForm({
       {type === "true-false" && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Correct Answer
+            {t("worksheetReview.correctAnswerLabel")}
           </label>
           <div className="flex gap-3">
             {["True", "False"].map((val) => (
@@ -748,7 +750,7 @@ function EditQuestionForm({
       {type === "fill-blank" && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Correct Answer
+            {t("worksheetReview.correctAnswerLabel")}
           </label>
           <input
             type="text"
@@ -771,6 +773,7 @@ function AddQuestionForm({
   onAdd: (question: WorksheetExtractedQuestion) => void;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation("parent");
   const [text, setText] = useState("");
   const [type, setType] = useState<"mcq" | "fill-blank" | "true-false">("mcq");
   const [options, setOptions] = useState(["", "", "", ""]);
@@ -798,7 +801,7 @@ function AddQuestionForm({
       className="bg-white rounded-2xl p-6 shadow-md border-2 border-indigo-200 mb-4"
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-bold text-gray-800">Add New Question</h3>
+        <h3 className="font-bold text-gray-800">{t("worksheetReview.addNewQuestion")}</h3>
         <button
           onClick={onCancel}
           className="p-1 hover:bg-gray-100 rounded-lg transition"
@@ -810,7 +813,7 @@ function AddQuestionForm({
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Question Type
+            {t("worksheetReview.questionType")}
           </label>
           <select
             value={type}
@@ -822,20 +825,20 @@ function AddQuestionForm({
             }}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
-            <option value="mcq">Multiple Choice</option>
-            <option value="true-false">True/False</option>
-            <option value="fill-blank">Fill in the Blank</option>
+            <option value="mcq">{t("worksheetReview.multipleChoice")}</option>
+            <option value="true-false">{t("worksheetReview.trueFalse")}</option>
+            <option value="fill-blank">{t("worksheetReview.fillBlank")}</option>
           </select>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Question Text
+            {t("worksheetReview.questionTextLabel")}
           </label>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Enter your question..."
+            placeholder={t("worksheetReview.enterQuestion")}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
             rows={2}
           />
@@ -844,7 +847,7 @@ function AddQuestionForm({
         {type === "mcq" && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Options (click circle for correct answer)
+              {t("worksheetReview.optionsCircleLabel")}
             </label>
             <div className="space-y-2">
               {options.map((opt, i) => (
@@ -887,7 +890,7 @@ function AddQuestionForm({
         {type === "true-false" && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Correct Answer
+              {t("worksheetReview.correctAnswerLabel")}
             </label>
             <div className="flex gap-3">
               {["True", "False"].map((val) => (
@@ -913,13 +916,13 @@ function AddQuestionForm({
         {type === "fill-blank" && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Correct Answer
+              {t("worksheetReview.correctAnswerLabel")}
             </label>
             <input
               type="text"
               value={correctAnswer}
               onChange={(e) => setCorrectAnswer(e.target.value)}
-              placeholder="Enter the correct answer"
+              placeholder={t("worksheetReview.enterCorrectAnswer")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
@@ -933,13 +936,13 @@ function AddQuestionForm({
           className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium disabled:opacity-50 hover:bg-indigo-700 transition"
         >
           <Plus size={16} />
-          Add Question
+          {t("worksheetReview.addQuestion")}
         </button>
         <button
           onClick={onCancel}
           className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
         >
-          Cancel
+          {t("worksheetReview.cancel")}
         </button>
       </div>
     </motion.div>
