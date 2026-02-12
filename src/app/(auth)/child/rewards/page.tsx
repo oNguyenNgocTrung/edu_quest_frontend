@@ -43,12 +43,18 @@ export default function RewardShopPage() {
     },
   });
 
+  const selectChildProfile = useAuthStore((s) => s.selectChildProfile);
+
   const redeemMutation = useMutation({
     mutationFn: async (rewardId: string) => {
       const { data } = await apiClient.post(`/rewards/${rewardId}/redeem`);
       return data;
     },
-    onSuccess: (_, rewardId) => {
+    onSuccess: (data, rewardId) => {
+      // Update coins in the auth store so header + buttons reflect new balance
+      if (currentChildProfile && data.coins_remaining !== undefined) {
+        selectChildProfile({ ...currentChildProfile, coins: data.coins_remaining });
+      }
       const reward = rewards?.find((r) => r.id === rewardId);
       setRedeemedItem(reward?.name || "Reward");
       setShowConfetti(true);
