@@ -2,6 +2,11 @@
 
 import { useTranslation } from "react-i18next";
 
+function changeLanguage(i18n: { changeLanguage: (lng: string) => void }, lng: string) {
+  i18n.changeLanguage(lng);
+  localStorage.setItem("language", lng);
+}
+
 export function LanguageSwitcher({ className = "" }: { className?: string }) {
   const { i18n } = useTranslation();
   const isVi = i18n.language?.startsWith("vi");
@@ -9,7 +14,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
   return (
     <div className={`flex items-center rounded-full border border-gray-200 bg-white overflow-hidden text-sm ${className}`}>
       <button
-        onClick={() => i18n.changeLanguage("vi")}
+        onClick={() => changeLanguage(i18n, "vi")}
         className={`px-3 py-1.5 font-semibold transition-colors ${
           isVi
             ? "bg-indigo-600 text-white"
@@ -19,7 +24,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
         VI
       </button>
       <button
-        onClick={() => i18n.changeLanguage("en")}
+        onClick={() => changeLanguage(i18n, "en")}
         className={`px-3 py-1.5 font-semibold transition-colors ${
           !isVi
             ? "bg-indigo-600 text-white"
