@@ -18,11 +18,11 @@ import {
   Edit3,
   GripVertical,
   Upload,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import FileImportModal, {
   type ImportedFlashcard,
-  type ImportedQuestion,
 } from "@/components/parent/FileImportModal";
 
 export default function DeckDetailPage() {
@@ -44,6 +44,8 @@ export default function DeckDetailPage() {
     xp_value: 10,
   });
   const [showImportModal, setShowImportModal] = useState(false);
+  const [reviewQuestions, setReviewQuestions] = useState<WorksheetExtractedQuestion[]>([]);
+  const [editingReviewIndex, setEditingReviewIndex] = useState<number | null>(null);
 
   const { data: deck, isLoading: deckLoading } = useQuery({
     queryKey: ["deck", id],
@@ -202,19 +204,47 @@ export default function DeckDetailPage() {
     },
   });
 
-  const batchQuestions = useMutation({
-    mutationFn: async (questions: ImportedQuestion[]) => {
+  const confirmImport = useMutation({
+    mutationFn: async (qs: WorksheetExtractedQuestion[]) => {
+      const converted = qs.map((q) => {
+        if (q.type === "true-false") {
+          return {
+            question_text: q.text,
+            question_type: "true_false",
+            options: ["True", "False"],
+            correct_answer_index: q.correct_answer === "True" ? 0 : 1,
+            xp_value: 10,
+          };
+        }
+        if (q.type === "fill-blank") {
+          return {
+            question_text: q.text,
+            question_type: "fill_blank",
+            options: [q.correct_answer],
+            correct_answer_index: 0,
+            xp_value: 10,
+          };
+        }
+        return {
+          question_text: q.text,
+          question_type: "mcq",
+          options: q.options,
+          correct_answer_index: Math.max(q.options.indexOf(q.correct_answer), 0),
+          xp_value: 10,
+        };
+      });
       const { data } = await apiClient.post(`/decks/${id}/questions/batch`, {
-        questions,
+        questions: converted,
       });
       return data;
     },
-    onSuccess: (_data, variables) => {
-      toast.success(t("contentDetail.importedQuestions", { count: variables.length }));
+    onSuccess: () => {
+      toast.success(t("contentDetail.importedQuestions", { count: reviewQuestions.length }));
       queryClient.invalidateQueries({ queryKey: ["deck", id, "questions"] });
       queryClient.invalidateQueries({ queryKey: ["deck", id] });
       queryClient.invalidateQueries({ queryKey: ["decks"] });
-      setShowImportModal(false);
+      setReviewQuestions([]);
+      setEditingReviewIndex(null);
     },
     onError: () => {
       toast.error(t("contentDetail.importQuestionsFailed"));
@@ -222,12 +252,13 @@ export default function DeckDetailPage() {
   });
 
   const handleImport = (
-    data: ImportedFlashcard[] | ImportedQuestion[] | WorksheetExtractedQuestion[]
+    data: ImportedFlashcard[] | WorksheetExtractedQuestion[]
   ) => {
     if (deck?.deck_type === "flashcards") {
       batchFlashcards.mutate(data as ImportedFlashcard[]);
     } else {
-      batchQuestions.mutate(data as ImportedQuestion[]);
+      setReviewQuestions(data as WorksheetExtractedQuestion[]);
+      setShowImportModal(false);
     }
   };
 
@@ -329,6 +360,158 @@ export default function DeckDetailPage() {
             {t("contentDetail.importFile")}
           </button>
         </div>
+
+        {/* Review imported questions */}
+        {reviewQuestions.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-xl p-6 shadow-sm border-2 border-indigo-200"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold text-gray-800">
+                {t("contentDetail.reviewImportedQuestions")}
+              </h3>
+              <button
+                onClick={() => {
+                  setReviewQuestions([]);
+                  setEditingReviewIndex(null);
+                }}
+                className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+              >
+                <X size={14} />
+                {t("contentDetail.cancelImport")}
+              </button>
+            </div>
+
+            <div className="space-y-3 mb-4">
+              {reviewQuestions.map((q, index) => (
+                <div
+                  key={q.id}
+                  className="border border-gray-200 rounded-lg p-4"
+                >
+                  {editingReviewIndex === index ? (
+                    <ReviewEditForm
+                      question={q}
+                      index={index}
+                      onSave={(updates) => {
+                        setReviewQuestions((prev) =>
+                          prev.map((item, i) =>
+                            i === index ? { ...item, ...updates } : item
+                          )
+                        );
+                        setEditingReviewIndex(null);
+                      }}
+                      onCancel={() => setEditingReviewIndex(null)}
+                    />
+                  ) : (
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-sm font-medium text-gray-500">
+                            Q{index + 1}
+                          </span>
+                          <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded capitalize">
+                            {q.type.replace("-", " ")}
+                          </span>
+                        </div>
+                        <p className="text-gray-800 mb-2">{q.text}</p>
+
+                        {q.type === "mcq" && q.options && (
+                          <div className="grid grid-cols-2 gap-2">
+                            {q.options.map((opt, i) => (
+                              <div
+                                key={i}
+                                className={`px-3 py-1.5 rounded-lg text-sm ${
+                                  opt === q.correct_answer
+                                    ? "bg-green-50 text-green-700 border border-green-200 font-medium"
+                                    : "bg-gray-50 text-gray-600 border border-gray-100"
+                                }`}
+                              >
+                                {String.fromCharCode(65 + i)}. {opt}
+                                {opt === q.correct_answer && (
+                                  <Check size={12} className="inline ml-1 text-green-500" />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {q.type === "true-false" && (
+                          <div className="flex gap-2">
+                            {["True", "False"].map((val) => (
+                              <div
+                                key={val}
+                                className={`px-3 py-1.5 rounded-lg text-sm ${
+                                  q.correct_answer === val
+                                    ? "bg-green-50 text-green-700 border border-green-200 font-medium"
+                                    : "bg-gray-50 text-gray-600 border border-gray-100"
+                                }`}
+                              >
+                                {val}
+                                {q.correct_answer === val && (
+                                  <Check size={12} className="inline ml-1 text-green-500" />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {q.type === "fill-blank" && (
+                          <div className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium inline-block">
+                            {q.correct_answer}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex gap-1 ml-3">
+                        <button
+                          onClick={() => setEditingReviewIndex(index)}
+                          className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-indigo-600 transition"
+                        >
+                          <Edit3 size={16} />
+                        </button>
+                        <button
+                          onClick={() =>
+                            setReviewQuestions((prev) =>
+                              prev.filter((_, i) => i !== index)
+                            )
+                          }
+                          className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-500 transition"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => confirmImport.mutate(reviewQuestions)}
+                disabled={confirmImport.isPending || reviewQuestions.length === 0}
+                className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 transition disabled:opacity-50"
+              >
+                {confirmImport.isPending ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Check size={16} />
+                )}
+                {t("contentDetail.confirmImport", { count: reviewQuestions.length })}
+              </button>
+              <button
+                onClick={() => {
+                  setReviewQuestions([]);
+                  setEditingReviewIndex(null);
+                }}
+                className="px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200 transition"
+              >
+                {t("contentDetail.cancelImport")}
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         {/* Add flashcard form */}
         {showAddCard && (
@@ -586,9 +769,9 @@ export default function DeckDetailPage() {
       <FileImportModal
         isOpen={showImportModal}
         onClose={() => setShowImportModal(false)}
-        importType={isFlashcardDeck ? "flashcards" : "questions"}
+        importType={isFlashcardDeck ? "flashcards" : "worksheet_questions"}
         onImport={handleImport}
-        isSubmitting={batchFlashcards.isPending || batchQuestions.isPending}
+        isSubmitting={batchFlashcards.isPending}
       />
     </div>
   );
@@ -916,5 +1099,166 @@ function QuestionItem({
         </div>
       </div>
     </motion.div>
+  );
+}
+
+function ReviewEditForm({
+  question,
+  index,
+  onSave,
+  onCancel,
+}: {
+  question: WorksheetExtractedQuestion;
+  index: number;
+  onSave: (updates: Partial<WorksheetExtractedQuestion>) => void;
+  onCancel: () => void;
+}) {
+  const { t } = useTranslation("parent");
+  const [text, setText] = useState(question.text);
+  const [type, setType] = useState(question.type);
+  const [options, setOptions] = useState(question.options || []);
+  const [correctAnswer, setCorrectAnswer] = useState(question.correct_answer || "");
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h4 className="text-sm font-semibold text-gray-700">
+          {t("contentDetail.editImportedQuestion", { number: index + 1 })}
+        </h4>
+        <div className="flex gap-2">
+          <button
+            onClick={() =>
+              onSave({ text, type, options, correct_answer: correctAnswer })
+            }
+            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
+          >
+            <Check size={14} />
+            {t("contentDetail.save")}
+          </button>
+          <button
+            onClick={onCancel}
+            className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
+          >
+            <X size={14} />
+            {t("contentDetail.cancel")}
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {t("contentDetail.questionType")}
+        </label>
+        <select
+          value={type}
+          onChange={(e) => {
+            const newType = e.target.value as typeof type;
+            setType(newType);
+            if (newType === "true-false") {
+              setOptions(["True", "False"]);
+              setCorrectAnswer("True");
+            } else if (newType === "fill-blank") {
+              setOptions([]);
+            } else if (newType === "mcq" && options.length < 2) {
+              setOptions(["", "", "", ""]);
+            }
+          }}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
+        >
+          <option value="mcq">MCQ</option>
+          <option value="true-false">True/False</option>
+          <option value="fill-blank">Fill in the Blank</option>
+        </select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {t("contentDetail.questionText")}
+        </label>
+        <textarea
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
+          rows={2}
+        />
+      </div>
+
+      {type === "mcq" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t("contentDetail.options")}
+          </label>
+          <div className="space-y-2">
+            {options.map((opt, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCorrectAnswer(opt)}
+                  className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                    correctAnswer === opt
+                      ? "border-green-500 bg-green-500 text-white"
+                      : "border-gray-300 hover:border-green-400"
+                  }`}
+                >
+                  {correctAnswer === opt && <Check size={10} />}
+                </button>
+                <input
+                  type="text"
+                  value={opt}
+                  onChange={(e) => {
+                    const wasCorrect = correctAnswer === opt;
+                    const newOpts = [...options];
+                    newOpts[i] = e.target.value;
+                    setOptions(newOpts);
+                    if (wasCorrect) setCorrectAnswer(e.target.value);
+                  }}
+                  className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {type === "true-false" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t("contentDetail.correctAnswer")}
+          </label>
+          <div className="flex gap-3">
+            {["True", "False"].map((val) => (
+              <button
+                key={val}
+                type="button"
+                onClick={() => setCorrectAnswer(val)}
+                className={`flex-1 py-2 rounded-lg font-medium text-sm transition-all ${
+                  correctAnswer === val
+                    ? val === "True"
+                      ? "bg-green-500 text-white"
+                      : "bg-red-500 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                {val}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {type === "fill-blank" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t("contentDetail.correctAnswer")}
+          </label>
+          <input
+            type="text"
+            value={correctAnswer}
+            onChange={(e) => setCorrectAnswer(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+      )}
+    </div>
   );
 }

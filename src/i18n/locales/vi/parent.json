@@ -174,7 +174,13 @@
     "importedQuestions": "Đã nhập {{count}} câu hỏi!",
     "importFailed": "Không thể nhập",
     "importFlashcardsFailed": "Không thể nhập thẻ",
-    "importQuestionsFailed": "Không thể nhập câu hỏi"
+    "importQuestionsFailed": "Không thể nhập câu hỏi",
+    "reviewImportedQuestions": "Xem lại câu hỏi đã nhập",
+    "confirmImport": "Xác nhận nhập ({{count}})",
+    "cancelImport": "Hủy nhập",
+    "editImportedQuestion": "Sửa câu hỏi {{number}}",
+    "questionType": "Loại",
+    "correctAnswer": "Đáp án đúng"
   },
   "aiGenerator": {
     "title": "Tạo nội dung bằng AI",

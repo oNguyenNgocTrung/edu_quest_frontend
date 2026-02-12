@@ -23,7 +23,6 @@ import apiClient from "@/lib/api-client";
 import type { Worksheet, WorksheetExtractedQuestion } from "@/types";
 import FileImportModal, {
   type ImportedFlashcard,
-  type ImportedQuestion,
 } from "@/components/parent/FileImportModal";
 
 export default function ReviewQuestionsPage({
@@ -96,7 +95,7 @@ export default function ReviewQuestionsPage({
   };
 
   const handleBulkImport = (
-    imported: ImportedFlashcard[] | ImportedQuestion[] | WorksheetExtractedQuestion[]
+    imported: ImportedFlashcard[] | WorksheetExtractedQuestion[]
   ) => {
     const typedQuestions = imported as WorksheetExtractedQuestion[];
     setQuestions((prev) => {

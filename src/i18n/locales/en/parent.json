@@ -174,7 +174,13 @@
     "importedQuestions": "{{count}} questions imported!",
     "importFailed": "Failed to import",
     "importFlashcardsFailed": "Failed to import flashcards",
-    "importQuestionsFailed": "Failed to import questions"
+    "importQuestionsFailed": "Failed to import questions",
+    "reviewImportedQuestions": "Review Imported Questions",
+    "confirmImport": "Confirm Import ({{count}})",
+    "cancelImport": "Cancel Import",
+    "editImportedQuestion": "Edit Question {{number}}",
+    "questionType": "Type",
+    "correctAnswer": "Correct Answer"
   },
   "aiGenerator": {
     "title": "AI Content Generator",

@@ -20,14 +20,6 @@ export interface ImportedFlashcard {
   back_text: string;
 }
 
-export interface ImportedQuestion {
-  question_text: string;
-  options: string[];
-  correct_answer_index: number;
-  explanation?: string;
-  xp_value?: number;
-}
-
 type ImportType = "flashcards" | "questions" | "worksheet_questions";
 
 interface FileImportModalProps {
@@ -35,10 +27,7 @@ interface FileImportModalProps {
   onClose: () => void;
   importType: ImportType;
   onImport: (
-    data:
-      | ImportedFlashcard[]
-      | ImportedQuestion[]
-      | WorksheetExtractedQuestion[]
+    data: ImportedFlashcard[] | WorksheetExtractedQuestion[]
   ) => void;
   isSubmitting?: boolean;
 }
@@ -142,121 +131,6 @@ function parseFlashcardsCSV(text: string): ParseResult<ImportedFlashcard> {
 
 // ─── Question Parsing ───────────────────────────────────────────
 
-function parseQuestionsJSON(raw: unknown): ParseResult<ImportedQuestion> {
-  const errors: string[] = [];
-  const data: ImportedQuestion[] = [];
-
-  if (!Array.isArray(raw)) {
-    return { data: [], errors: ["JSON must be an array of questions"] };
-  }
-
-  raw.forEach((item, i) => {
-    const questionText = item.question_text || item.question || "";
-    const options: string[] = Array.isArray(item.options) ? item.options : [];
-    const correctIdx =
-      item.correct_answer_index ??
-      (item.correct_answer !== undefined
-        ? letterToIndex(String(item.correct_answer))
-        : undefined);
-    const explanation = item.explanation || "";
-    const xpValue = item.xp_value || 10;
-
-    if (!questionText)
-      errors.push(`Row ${i + 1}: Missing question text`);
-    if (options.length < 2)
-      errors.push(`Row ${i + 1}: At least 2 options required`);
-    if (correctIdx === undefined || correctIdx < 0)
-      errors.push(`Row ${i + 1}: Missing or invalid correct answer`);
-    if (correctIdx !== undefined && correctIdx >= options.length)
-      errors.push(`Row ${i + 1}: Correct answer index out of range`);
-
-    if (
-      questionText &&
-      options.length >= 2 &&
-      correctIdx !== undefined &&
-      correctIdx >= 0 &&
-      correctIdx < options.length
-    ) {
-      data.push({
-        question_text: String(questionText),
-        options: options.map(String),
-        correct_answer_index: correctIdx,
-        explanation: explanation ? String(explanation) : undefined,
-        xp_value: Number(xpValue) || 10,
-      });
-    }
-  });
-
-  return { data, errors };
-}
-
-function parseQuestionsCSV(text: string): ParseResult<ImportedQuestion> {
-  const { headers, rows } = parseCSV(text);
-  const errors: string[] = [];
-  const data: ImportedQuestion[] = [];
-
-  const questionIdx = headers.findIndex((h) =>
-    ["question", "question_text"].includes(h)
-  );
-  const optionIndices = ["option_a", "option_b", "option_c", "option_d"].map(
-    (name) => headers.indexOf(name)
-  );
-  const correctIdx = headers.findIndex((h) =>
-    ["correct_answer", "correct"].includes(h)
-  );
-  const explanationIdx = headers.indexOf("explanation");
-
-  if (questionIdx === -1)
-    errors.push("Missing 'question' column in CSV header");
-  if (optionIndices[0] === -1 || optionIndices[1] === -1)
-    errors.push("Missing option columns (need at least option_a and option_b)");
-  if (correctIdx === -1)
-    errors.push("Missing 'correct_answer' column in CSV header");
-  if (errors.length > 0) return { data, errors };
-
-  rows.forEach((row, i) => {
-    const questionText = row[questionIdx] || "";
-    const options = optionIndices
-      .map((idx) => (idx >= 0 ? row[idx] || "" : ""))
-      .filter((o) => o !== "");
-    const correctAnswerRaw = row[correctIdx] || "";
-    const explanation =
-      explanationIdx >= 0 ? row[explanationIdx] || "" : "";
-
-    const answerIndex = letterToIndex(correctAnswerRaw);
-
-    if (!questionText)
-      errors.push(`Row ${i + 1}: Missing question text`);
-    if (options.length < 2)
-      errors.push(`Row ${i + 1}: At least 2 options required`);
-    if (answerIndex < 0)
-      errors.push(
-        `Row ${i + 1}: Invalid correct answer "${correctAnswerRaw}" (use A, B, C, or D)`
-      );
-    if (answerIndex >= options.length)
-      errors.push(`Row ${i + 1}: Correct answer index out of range`);
-
-    if (
-      questionText &&
-      options.length >= 2 &&
-      answerIndex >= 0 &&
-      answerIndex < options.length
-    ) {
-      data.push({
-        question_text: questionText,
-        options,
-        correct_answer_index: answerIndex,
-        explanation: explanation || undefined,
-        xp_value: 10,
-      });
-    }
-  });
-
-  return { data, errors };
-}
-
-// ─── Worksheet Question Parsing ─────────────────────────────────
-
 function parseWorksheetQuestionsJSON(
   raw: unknown
 ): ParseResult<WorksheetExtractedQuestion> {
@@ -353,16 +227,6 @@ function parseWorksheetQuestionsCSV(
 
 // ─── Helpers ────────────────────────────────────────────────────
 
-function letterToIndex(letter: string): number {
-  const upper = letter.trim().toUpperCase();
-  if (upper.length === 1 && upper >= "A" && upper <= "Z") {
-    return upper.charCodeAt(0) - 65;
-  }
-  const num = parseInt(upper, 10);
-  if (!isNaN(num)) return num;
-  return -1;
-}
-
 function normalizeQuestionType(
   type: string
 ): "mcq" | "fill-blank" | "true-false" {
@@ -407,25 +271,6 @@ function downloadTemplate(importType: ImportType, format: "csv" | "json") {
       content = `front,back\n"What is 2+2?","4"\n"Capital of France?","Paris"`;
       filename = "flashcards_template.csv";
     }
-  } else if (importType === "questions") {
-    if (format === "json") {
-      content = JSON.stringify(
-        [
-          {
-            question_text: "What is 2+2?",
-            options: ["3", "4", "5", "6"],
-            correct_answer_index: 1,
-            explanation: "Basic addition",
-          },
-        ],
-        null,
-        2
-      );
-      filename = "questions_template.json";
-    } else {
-      content = `question,option_a,option_b,option_c,option_d,correct_answer,explanation\n"What is 2+2?","3","4","5","6","B","Basic addition"`;
-      filename = "questions_template.csv";
-    }
   } else {
     if (format === "json") {
       content = JSON.stringify(
@@ -445,10 +290,10 @@ function downloadTemplate(importType: ImportType, format: "csv" | "json") {
         null,
         2
       );
-      filename = "worksheet_questions_template.json";
+      filename = "questions_template.json";
     } else {
       content = `text,type,option_a,option_b,option_c,option_d,correct_answer\n"What is 2+2?","mcq","3","4","5","6","4"\n"Is the sky blue?","true-false","","","","","True"`;
-      filename = "worksheet_questions_template.csv";
+      filename = "questions_template.csv";
     }
   }
 
@@ -472,7 +317,7 @@ export default function FileImportModal({
 }: FileImportModalProps) {
   const { t } = useTranslation('parent');
   const [parsedData, setParsedData] = useState<
-    ImportedFlashcard[] | ImportedQuestion[] | WorksheetExtractedQuestion[]
+    ImportedFlashcard[] | WorksheetExtractedQuestion[]
   >([]);
   const [errors, setErrors] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -511,12 +356,6 @@ export default function FileImportModal({
             const result = isJSON
               ? parseFlashcardsJSON(JSON.parse(text))
               : parseFlashcardsCSV(text);
-            setParsedData(result.data);
-            setErrors(result.errors);
-          } else if (importType === "questions") {
-            const result = isJSON
-              ? parseQuestionsJSON(JSON.parse(text))
-              : parseQuestionsCSV(text);
             setParsedData(result.data);
             setErrors(result.errors);
           } else {
@@ -560,9 +399,7 @@ export default function FileImportModal({
   const typeLabel =
     importType === "flashcards"
       ? t('fileImport.flashcards')
-      : importType === "questions"
-        ? t('fileImport.questions')
-        : t('fileImport.worksheetQuestions');
+      : t('fileImport.questions');
 
   if (!isOpen) return null;
 
@@ -738,7 +575,7 @@ export default function FileImportModal({
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
-                        {(parsedData as Array<ImportedFlashcard | ImportedQuestion | WorksheetExtractedQuestion>).map(
+                        {(parsedData as Array<ImportedFlashcard | WorksheetExtractedQuestion>).map(
                           (item, i) => (
                             <tr
                               key={i}
@@ -754,18 +591,6 @@ export default function FileImportModal({
                                   </td>
                                   <td className="px-4 py-2 text-gray-800 max-w-[200px] truncate">
                                     {(item as ImportedFlashcard).back_text}
-                                  </td>
-                                </>
-                              ) : importType === "questions" ? (
-                                <>
-                                  <td className="px-4 py-2 text-gray-800 max-w-[200px] truncate">
-                                    {(item as ImportedQuestion).question_text}
-                                  </td>
-                                  <td className="px-4 py-2 text-gray-800 max-w-[200px] truncate">
-                                    {(item as ImportedQuestion).options[
-                                      (item as ImportedQuestion)
-                                        .correct_answer_index
-                                    ] || "—"}
                                   </td>
                                 </>
                               ) : (
