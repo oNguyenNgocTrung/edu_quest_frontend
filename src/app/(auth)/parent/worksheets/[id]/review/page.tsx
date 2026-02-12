@@ -122,8 +122,6 @@ export default function ReviewQuestionsPage({
     },
   });
 
-  const isApproved = worksheet?.status === "approved";
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-indigo-50 to-white flex items-center justify-center">
@@ -169,13 +167,11 @@ export default function ReviewQuestionsPage({
                 className="text-sm text-gray-600 mt-1"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
-                {isApproved
-                  ? "This worksheet has been approved"
-                  : "Verify AI-extracted questions before adding to practice"}
+Verify AI-extracted questions before adding to practice
               </p>
             </div>
             <div className="flex items-center gap-3">
-              {hasUnsavedChanges && !isApproved && (
+              {hasUnsavedChanges && (
                 <button
                   onClick={() => saveMutation.mutate()}
                   disabled={saveMutation.isPending}
@@ -185,21 +181,19 @@ export default function ReviewQuestionsPage({
                   Save
                 </button>
               )}
-              {!isApproved && (
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => approveMutation.mutate()}
-                  disabled={
-                    approveMutation.isPending || questions.length === 0
-                  }
-                  className="px-6 py-2.5 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-colors flex items-center gap-2 disabled:opacity-50"
-                  style={{ fontFamily: "Nunito, sans-serif" }}
-                >
-                  <Check className="w-5 h-5" />
-                  Approve All
-                </motion.button>
-              )}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => approveMutation.mutate()}
+                disabled={
+                  approveMutation.isPending || questions.length === 0
+                }
+                className="px-6 py-2.5 bg-green-500 text-white rounded-xl font-bold hover:bg-green-600 transition-colors flex items-center gap-2 disabled:opacity-50"
+                style={{ fontFamily: "Nunito, sans-serif" }}
+              >
+                <Check className="w-5 h-5" />
+                Approve All
+              </motion.button>
             </div>
           </div>
         </div>
@@ -303,15 +297,13 @@ export default function ReviewQuestionsPage({
         </motion.div>
 
         {/* Add Question Button */}
-        {!isApproved && (
-          <button
-            onClick={() => setShowAddQuestion(true)}
-            className="w-full mb-4 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-indigo-400 hover:text-indigo-600 font-semibold transition-colors flex items-center justify-center gap-2"
-          >
-            <Plus className="w-5 h-5" />
-            Add Question
-          </button>
-        )}
+        <button
+          onClick={() => setShowAddQuestion(true)}
+          className="w-full mb-4 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-indigo-400 hover:text-indigo-600 font-semibold transition-colors flex items-center justify-center gap-2"
+        >
+          <Plus className="w-5 h-5" />
+          Add Question
+        </button>
 
         {/* Add Question Form */}
         {showAddQuestion && <AddQuestionForm
@@ -371,28 +363,26 @@ export default function ReviewQuestionsPage({
                       )}
                     </div>
 
-                    {!isApproved && (
-                      <div className="flex items-center gap-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => setEditingIndex(index)}
-                          className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="Edit question"
-                        >
-                          <Edit2 className="w-4 h-4 text-blue-600" />
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="p-2 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Delete question"
-                          onClick={() => deleteQuestion(index)}
-                        >
-                          <Trash2 className="w-4 h-4 text-red-600" />
-                        </motion.button>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setEditingIndex(index)}
+                        className="p-2 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit question"
+                      >
+                        <Edit2 className="w-4 h-4 text-blue-600" />
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Delete question"
+                        onClick={() => deleteQuestion(index)}
+                      >
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </motion.button>
+                    </div>
                   </div>
 
                   {/* Question Content */}
@@ -409,11 +399,15 @@ export default function ReviewQuestionsPage({
                             key={idx}
                             className={`px-4 py-2 rounded-lg border-2 ${
                               option === question.correct_answer
-                                ? "bg-green-50 border-green-300"
-                                : "bg-gray-50 border-gray-200"
+                                ? "bg-green-50 border-green-400"
+                                : "bg-white border-gray-200"
                             }`}
                           >
-                            <span className="text-sm font-medium">
+                            <span className={`text-sm font-medium ${
+                              option === question.correct_answer
+                                ? "text-green-800"
+                                : "text-gray-700"
+                            }`}>
                               {String.fromCharCode(65 + idx)}) {option}
                               {option === question.correct_answer && " ✓"}
                             </span>
@@ -424,8 +418,8 @@ export default function ReviewQuestionsPage({
 
                     {/* Fill-in-the-blank */}
                     {question.type === "fill-blank" && (
-                      <div className="p-4 bg-green-50 border-2 border-green-200 rounded-lg">
-                        <p className="text-sm font-semibold text-green-800">
+                      <div className="p-4 bg-green-50 border-2 border-green-400 rounded-lg">
+                        <p className="text-sm font-bold text-green-900">
                           Correct Answer: {question.correct_answer}
                         </p>
                       </div>
@@ -437,11 +431,13 @@ export default function ReviewQuestionsPage({
                         <div
                           className={`px-4 py-2 rounded-lg border-2 ${
                             question.correct_answer === "True"
-                              ? "bg-green-50 border-green-300"
-                              : "bg-gray-50 border-gray-200"
+                              ? "bg-green-50 border-green-400"
+                              : "bg-white border-gray-200"
                           }`}
                         >
-                          <span className="text-sm font-medium">
+                          <span className={`text-sm font-medium ${
+                            question.correct_answer === "True" ? "text-green-800" : "text-gray-700"
+                          }`}>
                             True{" "}
                             {question.correct_answer === "True" && "✓"}
                           </span>
@@ -449,11 +445,13 @@ export default function ReviewQuestionsPage({
                         <div
                           className={`px-4 py-2 rounded-lg border-2 ${
                             question.correct_answer === "False"
-                              ? "bg-green-50 border-green-300"
-                              : "bg-gray-50 border-gray-200"
+                              ? "bg-green-50 border-green-400"
+                              : "bg-white border-gray-200"
                           }`}
                         >
-                          <span className="text-sm font-medium">
+                          <span className={`text-sm font-medium ${
+                            question.correct_answer === "False" ? "text-green-800" : "text-gray-700"
+                          }`}>
                             False{" "}
                             {question.correct_answer === "False" && "✓"}
                           </span>
@@ -510,7 +508,7 @@ export default function ReviewQuestionsPage({
         </div>
 
         {/* Footer Actions */}
-        {questions.length > 0 && !isApproved && (
+        {questions.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -539,14 +537,12 @@ export default function ReviewQuestionsPage({
             <p className="text-gray-500 mb-4">
               No questions found in this worksheet.
             </p>
-            {!isApproved && (
-              <button
-                onClick={() => setShowAddQuestion(true)}
-                className="text-purple-600 font-semibold hover:text-purple-700"
-              >
-                Add a question manually
-              </button>
-            )}
+            <button
+              onClick={() => setShowAddQuestion(true)}
+              className="text-purple-600 font-semibold hover:text-purple-700"
+            >
+              Add a question manually
+            </button>
           </div>
         )}
       </div>
