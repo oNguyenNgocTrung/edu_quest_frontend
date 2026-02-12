@@ -4,15 +4,21 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/stores/auth-store";
-import { ArrowLeft, Shield, LogOut } from "lucide-react";
+import { ArrowLeft, Shield, LogOut, Users, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { avatars } from "@/lib/avatars";
+import { ChildProfileModal } from "@/components/parent/ChildProfileModal";
+import type { ChildProfile } from "@/types";
 
 export default function SettingsPage() {
   const router = useRouter();
   const { t } = useTranslation('parent');
-  const { user, setPin, logout } = useAuthStore();
+  const { user, childProfiles, setPin, deleteChildProfile, logout } = useAuthStore();
   const [pin, setPinValue] = useState("");
   const [showPinForm, setShowPinForm] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<ChildProfile | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleSetPin = async () => {
     if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
@@ -27,6 +33,29 @@ export default function SettingsPage() {
     } catch {
       toast.error(t('settings.pinError'));
     }
+  };
+
+  const handleDeleteProfile = async (profile: ChildProfile) => {
+    if (!confirm(t('settings.deleteConfirm', { name: profile.name }))) return;
+    setDeletingId(profile.id);
+    try {
+      await deleteChildProfile(profile.id);
+      toast.success(t('settings.profileDeleted'));
+    } catch {
+      toast.error(t('settings.deleteError'));
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const getAvatarEmoji = (avatarValue: string | null) => {
+    const found = avatars.find((a) => a.emoji === avatarValue);
+    return found?.emoji || "🧒";
+  };
+
+  const getAvatarBg = (avatarValue: string | null) => {
+    const found = avatars.find((a) => a.emoji === avatarValue);
+    return found?.bgColor || "#F3F4F6";
   };
 
   return (
@@ -58,6 +87,84 @@ export default function SettingsPage() {
               <span className="text-gray-800">{user?.email}</span>
             </div>
           </div>
+        </div>
+
+        {/* Child Profiles */}
+        <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+              <Users size={18} className="text-purple-500" />
+              {t('settings.children')}
+            </h3>
+            <button
+              onClick={() => {
+                setEditingProfile(null);
+                setProfileModalOpen(true);
+              }}
+              className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition"
+            >
+              <Plus size={16} />
+              {t('settings.addChild')}
+            </button>
+          </div>
+
+          {childProfiles.length === 0 ? (
+            <p className="text-sm text-gray-400 text-center py-4">
+              {t('settings.noChildren')}
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {childProfiles.map((profile) => (
+                <div
+                  key={profile.id}
+                  className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition"
+                >
+                  <div
+                    className="flex items-center justify-center rounded-full shrink-0"
+                    style={{
+                      width: "44px",
+                      height: "44px",
+                      background: getAvatarBg(profile.avatar),
+                      fontSize: "24px",
+                    }}
+                  >
+                    {getAvatarEmoji(profile.avatar)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-gray-800 text-sm truncate">
+                      {profile.name}
+                    </p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-600 font-medium">
+                        {profile.age_range}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {t('settings.dailyGoalMinutes', { count: profile.daily_goal_minutes })}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => {
+                        setEditingProfile(profile);
+                        setProfileModalOpen(true);
+                      }}
+                      className="p-2 rounded-lg hover:bg-white transition text-gray-400 hover:text-purple-600"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProfile(profile)}
+                      disabled={deletingId === profile.id}
+                      className="p-2 rounded-lg hover:bg-white transition text-gray-400 hover:text-red-500 disabled:opacity-50"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* PIN settings */}
@@ -130,6 +237,17 @@ export default function SettingsPage() {
           {t('settings.signOut')}
         </button>
       </div>
+
+      {profileModalOpen && (
+        <ChildProfileModal
+          profile={editingProfile}
+          onClose={() => {
+            setProfileModalOpen(false);
+            setEditingProfile(null);
+          }}
+          onSaved={() => {}}
+        />
+      )}
     </div>
   );
 }
