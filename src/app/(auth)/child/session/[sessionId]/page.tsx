@@ -122,6 +122,7 @@ export default function SessionPage() {
           ? {
               ...base,
               lives_remaining: data.lives_remaining,
+              status: data.session_status as LearningSession["status"],
               correct_count: data.is_correct
                 ? base.correct_count + 1
                 : base.correct_count,
