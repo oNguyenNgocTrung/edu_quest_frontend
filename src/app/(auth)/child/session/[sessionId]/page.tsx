@@ -406,6 +406,15 @@ export default function SessionPage() {
 
             {/* Question Card */}
             <div className="bg-white rounded-3xl p-8 shadow-xl mb-6">
+              {question.image_url && (
+                <div className="mb-6 flex justify-center">
+                  <img
+                    src={question.image_url}
+                    alt={t('session.questionImage')}
+                    className="max-h-64 rounded-2xl border-2 border-gray-100 object-contain"
+                  />
+                </div>
+              )}
               <h2 className="text-2xl font-black text-gray-800 text-center mb-8">
                 {question.question_text}
               </h2>

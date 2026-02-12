@@ -101,6 +101,7 @@ export interface Question {
   is_ai_generated: boolean;
   correct_answer_index?: number;
   explanation?: string;
+  image_url?: string | null;
 }
 
 // ─── Learning Session ──────────────────────────────────────────
@@ -279,6 +280,7 @@ export interface WorksheetExtractedQuestion {
   correct_answer: string;
   explanation?: string;
   xp_value?: number;
+  image_url?: string | null;
   confidence: number;
   needs_review: boolean;
   similar_exercises: WorksheetSimilarExercise[];

@@ -181,7 +181,12 @@
     "editImportedQuestion": "Sửa câu hỏi {{number}}",
     "questionType": "Loại",
     "correctAnswer": "Đáp án đúng",
-    "xpValue": "Điểm XP"
+    "xpValue": "Điểm XP",
+    "questionImage": "Hình ảnh câu hỏi (tùy chọn)",
+    "uploadImage": "Tải hình ảnh",
+    "uploading": "Đang tải...",
+    "uploadFailed": "Không thể tải hình ảnh",
+    "imageUrl": "Đường dẫn hình ảnh"
   },
   "aiGenerator": {
     "title": "Tạo nội dung bằng AI",

@@ -181,7 +181,12 @@
     "editImportedQuestion": "Edit Question {{number}}",
     "questionType": "Type",
     "correctAnswer": "Correct Answer",
-    "xpValue": "XP Value"
+    "xpValue": "XP Value",
+    "questionImage": "Question Image (optional)",
+    "uploadImage": "Upload Image",
+    "uploading": "Uploading...",
+    "uploadFailed": "Failed to upload image",
+    "imageUrl": "Image URL"
   },
   "aiGenerator": {
     "title": "AI Content Generator",

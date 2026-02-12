@@ -88,7 +88,8 @@
     "correctLabel": "Correct!",
     "incorrectLabel": "Incorrect",
     "practiceProblem": "Practice Problem",
-    "fromWorksheet": "From Worksheet"
+    "fromWorksheet": "From Worksheet",
+    "questionImage": "Question illustration"
   },
   "flashcards": {
     "noCards": "No flashcards in this deck",

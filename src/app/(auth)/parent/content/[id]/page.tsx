@@ -19,11 +19,14 @@ import {
   GripVertical,
   Upload,
   X,
+  ImageIcon,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import FileImportModal, {
   type ImportedFlashcard,
 } from "@/components/parent/FileImportModal";
+import { uploadImage } from "@/lib/upload";
 
 export default function DeckDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -42,7 +45,9 @@ export default function DeckDetailPage() {
     correct_answer_index: 0,
     explanation: "",
     xp_value: 10,
+    image_url: "" as string,
   });
+  const [newQuestionUploading, setNewQuestionUploading] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [reviewQuestions, setReviewQuestions] = useState<WorksheetExtractedQuestion[]>([]);
   const [editingReviewIndex, setEditingReviewIndex] = useState<number | null>(null);
@@ -148,6 +153,7 @@ export default function DeckDetailPage() {
         correct_answer_index: 0,
         explanation: "",
         xp_value: 10,
+        image_url: "",
       });
     },
   });
@@ -210,6 +216,7 @@ export default function DeckDetailPage() {
         const base = {
           explanation: q.explanation || undefined,
           xp_value: q.xp_value || 10,
+          image_url: q.image_url || undefined,
         };
         if (q.type === "true-false") {
           return {
@@ -421,6 +428,16 @@ export default function DeckDetailPage() {
                         </div>
                         <p className="text-gray-800 mb-2">{q.text}</p>
 
+                        {q.image_url && (
+                          <div className="mb-2">
+                            <img
+                              src={q.image_url}
+                              alt=""
+                              className="max-h-32 rounded-lg border border-gray-200 object-contain"
+                            />
+                          </div>
+                        )}
+
                         {q.type === "mcq" && q.options && (
                           <div className="grid grid-cols-2 gap-2">
                             {q.options.map((opt, i) => (
@@ -621,6 +638,58 @@ export default function DeckDetailPage() {
                   rows={2}
                 />
               </div>
+              {/* Image upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t("contentDetail.questionImage")}
+                </label>
+                {newQuestion.image_url ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={newQuestion.image_url}
+                      alt=""
+                      className="max-h-48 rounded-lg border border-gray-200 object-contain"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setNewQuestion((q) => ({ ...q, image_url: "" }))}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-indigo-300 hover:bg-gray-50 transition w-fit">
+                    {newQuestionUploading ? (
+                      <Loader2 size={16} className="animate-spin text-indigo-500" />
+                    ) : (
+                      <ImageIcon size={16} className="text-gray-400" />
+                    )}
+                    <span className="text-sm text-gray-500">
+                      {newQuestionUploading ? t("contentDetail.uploading") : t("contentDetail.uploadImage")}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setNewQuestionUploading(true);
+                        try {
+                          const url = await uploadImage(file);
+                          setNewQuestion((q) => ({ ...q, image_url: url }));
+                        } catch {
+                          toast.error(t("contentDetail.uploadFailed"));
+                        } finally {
+                          setNewQuestionUploading(false);
+                        }
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t("contentDetail.answerOptions")}
@@ -687,7 +756,10 @@ export default function DeckDetailPage() {
             </div>
             <div className="flex gap-2 mt-4">
               <button
-                onClick={() => createQuestion.mutate(newQuestion)}
+                onClick={() => createQuestion.mutate({
+                  ...newQuestion,
+                  image_url: newQuestion.image_url || undefined,
+                } as typeof newQuestion)}
                 disabled={
                   !newQuestion.question_text ||
                   newQuestion.options.filter((o) => o.trim()).length < 2 ||
@@ -707,6 +779,7 @@ export default function DeckDetailPage() {
                     correct_answer_index: 0,
                     explanation: "",
                     xp_value: 10,
+                    image_url: "",
                   });
                 }}
                 className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
@@ -947,6 +1020,8 @@ function QuestionItem({
   );
   const [explanation, setExplanation] = useState(question.explanation || "");
   const [xpValue, setXpValue] = useState(question.xp_value ?? 10);
+  const [imageUrl, setImageUrl] = useState(question.image_url || "");
+  const [imageUploading, setImageUploading] = useState(false);
 
   if (isEditing) {
     return (
@@ -970,6 +1045,58 @@ function QuestionItem({
               rows={2}
             />
           </div>
+          {/* Image upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t("contentDetail.questionImage")}
+            </label>
+            {imageUrl ? (
+              <div className="relative inline-block">
+                <img
+                  src={imageUrl}
+                  alt=""
+                  className="max-h-48 rounded-lg border border-gray-200 object-contain"
+                />
+                <button
+                  type="button"
+                  onClick={() => setImageUrl("")}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <label className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-indigo-300 hover:bg-gray-50 transition w-fit">
+                {imageUploading ? (
+                  <Loader2 size={16} className="animate-spin text-indigo-500" />
+                ) : (
+                  <ImageIcon size={16} className="text-gray-400" />
+                )}
+                <span className="text-sm text-gray-500">
+                  {imageUploading ? t("contentDetail.uploading") : t("contentDetail.uploadImage")}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setImageUploading(true);
+                    try {
+                      const url = await uploadImage(file);
+                      setImageUrl(url);
+                    } catch {
+                      toast.error(t("contentDetail.uploadFailed"));
+                    } finally {
+                      setImageUploading(false);
+                    }
+                  }}
+                />
+              </label>
+            )}
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t("contentDetail.options")}
@@ -1041,6 +1168,7 @@ function QuestionItem({
                 correct_answer_index: correctIdx,
                 explanation,
                 xp_value: xpValue,
+                image_url: imageUrl || null,
               })
             }
             disabled={!text || isSaving}
@@ -1056,6 +1184,7 @@ function QuestionItem({
               setCorrectIdx(question.correct_answer_index ?? 0);
               setExplanation(question.explanation || "");
               setXpValue(question.xp_value ?? 10);
+              setImageUrl(question.image_url || "");
               onCancelEdit();
             }}
             className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
@@ -1090,6 +1219,15 @@ function QuestionItem({
               {question.xp_value} XP
             </span>
           </div>
+          {question.image_url && (
+            <div className="mb-3">
+              <img
+                src={question.image_url}
+                alt=""
+                className="max-h-48 rounded-lg border border-gray-200 object-contain"
+              />
+            </div>
+          )}
           <p className="text-gray-800 mb-3">{question.question_text}</p>
           <div className="grid grid-cols-2 gap-2">
             {question.options?.map((opt, i) => (
@@ -1154,6 +1292,8 @@ function ReviewEditForm({
   const [correctAnswer, setCorrectAnswer] = useState(question.correct_answer || "");
   const [explanation, setExplanation] = useState(question.explanation || "");
   const [xpValue, setXpValue] = useState(question.xp_value ?? 10);
+  const [reviewImageUrl, setReviewImageUrl] = useState(question.image_url || "");
+  const [reviewImageUploading, setReviewImageUploading] = useState(false);
 
   return (
     <div className="space-y-3">
@@ -1164,7 +1304,7 @@ function ReviewEditForm({
         <div className="flex gap-2">
           <button
             onClick={() =>
-              onSave({ text, type, options, correct_answer: correctAnswer, explanation: explanation || undefined, xp_value: xpValue })
+              onSave({ text, type, options, correct_answer: correctAnswer, explanation: explanation || undefined, xp_value: xpValue, image_url: reviewImageUrl || undefined })
             }
             className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
           >
@@ -1217,6 +1357,67 @@ function ReviewEditForm({
           className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
           rows={2}
         />
+      </div>
+
+      {/* Image URL */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {t("contentDetail.questionImage")}
+        </label>
+        {reviewImageUrl ? (
+          <div className="relative inline-block">
+            <img
+              src={reviewImageUrl}
+              alt=""
+              className="max-h-36 rounded-lg border border-gray-200 object-contain"
+            />
+            <button
+              type="button"
+              onClick={() => setReviewImageUrl("")}
+              className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
+            >
+              <X size={12} />
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-2 px-3 py-2 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-indigo-300 hover:bg-gray-50 transition">
+              {reviewImageUploading ? (
+                <Loader2 size={14} className="animate-spin text-indigo-500" />
+              ) : (
+                <ImageIcon size={14} className="text-gray-400" />
+              )}
+              <span className="text-xs text-gray-500">
+                {reviewImageUploading ? t("contentDetail.uploading") : t("contentDetail.uploadImage")}
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  setReviewImageUploading(true);
+                  try {
+                    const url = await uploadImage(file);
+                    setReviewImageUrl(url);
+                  } catch {
+                    toast.error(t("contentDetail.uploadFailed"));
+                  } finally {
+                    setReviewImageUploading(false);
+                  }
+                }}
+              />
+            </label>
+            <input
+              type="text"
+              value={reviewImageUrl}
+              onChange={(e) => setReviewImageUrl(e.target.value)}
+              placeholder={t("contentDetail.imageUrl")}
+              className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-900 focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+        )}
       </div>
 
       {type === "mcq" && (

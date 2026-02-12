@@ -88,7 +88,8 @@
     "correctLabel": "Đúng!",
     "incorrectLabel": "Sai",
     "practiceProblem": "Bài tập thực hành",
-    "fromWorksheet": "Từ bài tập"
+    "fromWorksheet": "Từ bài tập",
+    "questionImage": "Hình minh họa câu hỏi"
   },
   "flashcards": {
     "noCards": "Không có thẻ nào trong bộ này",

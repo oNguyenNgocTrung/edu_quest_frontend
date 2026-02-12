@@ -10,6 +10,7 @@ import {
   AlertCircle,
   Download,
   Check,
+  ImageIcon,
 } from "lucide-react";
 import type { WorksheetExtractedQuestion } from "@/types";
 
@@ -148,6 +149,7 @@ function parseWorksheetQuestionsJSON(
     const correctAnswer = item.correct_answer || "";
     const explanation = item.explanation || "";
     const xpValue = item.xp_value != null ? Number(item.xp_value) : undefined;
+    const imageUrl = item.image_url || item.image || "";
 
     if (!text) errors.push(`Row ${i + 1}: Missing question text`);
     if (!correctAnswer) errors.push(`Row ${i + 1}: Missing correct answer`);
@@ -164,6 +166,7 @@ function parseWorksheetQuestionsJSON(
         correct_answer: String(correctAnswer),
         explanation: explanation ? String(explanation) : undefined,
         xp_value: xpValue && !isNaN(xpValue) ? xpValue : undefined,
+        image_url: imageUrl ? String(imageUrl) : undefined,
         confidence: 100,
         needs_review: false,
         similar_exercises: [],
@@ -195,6 +198,9 @@ function parseWorksheetQuestionsCSV(
   const xpIdx = headers.findIndex((h) =>
     ["xp_value", "xp"].includes(h)
   );
+  const imageUrlIdx = headers.findIndex((h) =>
+    ["image_url", "image"].includes(h)
+  );
 
   if (textIdx === -1) errors.push("Missing 'text' column in CSV header");
   if (correctIdx === -1)
@@ -213,6 +219,7 @@ function parseWorksheetQuestionsCSV(
     const explanation = explanationIdx >= 0 ? row[explanationIdx] || "" : "";
     const xpRaw = xpIdx >= 0 ? row[xpIdx] || "" : "";
     const xpValue = xpRaw ? parseInt(xpRaw, 10) : undefined;
+    const imageUrl = imageUrlIdx >= 0 ? row[imageUrlIdx] || "" : "";
 
     if (!questionText) errors.push(`Row ${i + 1}: Missing question text`);
     if (!correctAnswer) errors.push(`Row ${i + 1}: Missing correct answer`);
@@ -228,6 +235,7 @@ function parseWorksheetQuestionsCSV(
         correct_answer: correctAnswer,
         explanation: explanation || undefined,
         xp_value: xpValue && !isNaN(xpValue) ? xpValue : undefined,
+        image_url: imageUrl || undefined,
         confidence: 100,
         needs_review: false,
         similar_exercises: [],
@@ -295,6 +303,7 @@ function downloadTemplate(importType: ImportType, format: "csv" | "json") {
             correct_answer: "4",
             explanation: "Basic addition",
             xp_value: 10,
+            image_url: "",
           },
           {
             text: "Is the sky blue?",
@@ -308,7 +317,8 @@ function downloadTemplate(importType: ImportType, format: "csv" | "json") {
       );
       filename = "questions_template.json";
     } else {
-      content = `text,type,option_a,option_b,option_c,option_d,correct_answer,explanation,xp_value\n"What is 2+2?","mcq","3","4","5","6","4","Basic addition","10"\n"Is the sky blue?","true-false","","","","","True","Rayleigh scattering",""`;
+      content = `text,type,option_a,option_b,option_c,option_d,correct_answer,explanation,xp_value,image_url\n"What is 2+2?","mcq","3","4","5","6","4","Basic addition","10",""\n"Is the sky blue?","true-false","","","","","True","Rayleigh scattering","",""`;
+
       filename = "questions_template.csv";
     }
   }
@@ -612,9 +622,12 @@ export default function FileImportModal({
                               ) : (
                                 <>
                                   <td className="px-4 py-2 text-gray-800 max-w-[200px] truncate">
-                                    {
-                                      (item as WorksheetExtractedQuestion).text
-                                    }
+                                    <span className="flex items-center gap-1">
+                                      {(item as WorksheetExtractedQuestion).image_url && (
+                                        <ImageIcon size={12} className="text-indigo-400 flex-shrink-0" />
+                                      )}
+                                      {(item as WorksheetExtractedQuestion).text}
+                                    </span>
                                   </td>
                                   <td className="px-4 py-2 text-gray-800 max-w-[200px] truncate">
                                     {
