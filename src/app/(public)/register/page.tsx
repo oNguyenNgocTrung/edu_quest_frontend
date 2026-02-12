@@ -59,7 +59,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(name, email, password);
-      toast.success("Account created! Welcome to EduQuest!");
+      toast.success("Account created! Welcome to LearnNest!");
       router.push("/onboarding");
     } catch {
       toast.error("Registration failed. Please try again.");
@@ -415,7 +415,7 @@ export default function RegisterPage() {
                 className="text-3xl font-black text-white"
                 style={{ textShadow: "0 2px 10px rgba(0,0,0,0.2)" }}
               >
-                EduQuest
+                LearnNest
               </span>
             </div>
           </motion.div>
@@ -504,7 +504,7 @@ export default function RegisterPage() {
             className="text-4xl font-black text-white mb-4"
             style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}
           >
-            Join EduQuest!
+            Join LearnNest!
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}

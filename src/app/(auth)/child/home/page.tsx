@@ -344,7 +344,7 @@ export default function ChildHomePage() {
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
               <Star className="w-6 h-6 text-white fill-white" />
             </div>
-            <span className="text-xl font-black text-gray-800">EduQuest</span>
+            <span className="text-xl font-black text-gray-800">LearnNest</span>
           </div>
 
           {/* Search Bar */}

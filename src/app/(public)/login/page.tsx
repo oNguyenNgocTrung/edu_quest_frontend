@@ -263,7 +263,7 @@ export default function LoginPage() {
               href="/register"
               className="text-sm text-purple-600 underline"
             >
-              New to EduQuest? Create Account
+              New to LearnNest? Create Account
             </Link>
           </div>
         </motion.form>
@@ -344,7 +344,7 @@ export default function LoginPage() {
                 className="text-3xl font-black text-white"
                 style={{ textShadow: "0 2px 10px rgba(0,0,0,0.2)" }}
               >
-                EduQuest
+                LearnNest
               </span>
             </div>
           </motion.div>
@@ -610,7 +610,7 @@ export default function LoginPage() {
                 href="/register"
                 className="text-sm text-purple-600 underline"
               >
-                New to EduQuest? Create Account
+                New to LearnNest? Create Account
               </Link>
             </div>
           </form>

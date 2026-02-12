@@ -93,7 +93,7 @@ export default function LandingPage() {
                 <span className="text-2xl">🎓</span>
               </div>
               <div>
-                <h1 className="text-xl font-black text-gray-800">EduQuest</h1>
+                <h1 className="text-xl font-black text-gray-800">LearnNest</h1>
                 <p className="text-xs text-gray-500">Learn. Play. Grow.</p>
               </div>
             </div>
@@ -139,7 +139,7 @@ export default function LandingPage() {
               </span>
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              EduQuest combines Duolingo&apos;s engaging gamification with
+              LearnNest combines Duolingo&apos;s engaging gamification with
               Anki&apos;s proven spaced repetition to help kids ages 6-14 master
               any subject while having fun.
             </p>
@@ -331,7 +331,7 @@ export default function LandingPage() {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl font-black text-gray-800 mb-6">
-                Why Parents & Kids Love EduQuest
+                Why Parents & Kids Love LearnNest
               </h2>
               <div className="grid grid-cols-1 gap-3">
                 {benefits.map((benefit, index) => (
@@ -393,7 +393,7 @@ export default function LandingPage() {
               Loved by Families Everywhere
             </h2>
             <p className="text-xl text-gray-600">
-              See what parents are saying about EduQuest
+              See what parents are saying about LearnNest
             </p>
           </div>
 
@@ -442,7 +442,7 @@ export default function LandingPage() {
             </h2>
             <p className="text-xl text-white/90 mb-8">
               Join thousands of families who are making learning fun with
-              EduQuest. Free 14-day trial, no credit card required.
+              LearnNest. Free 14-day trial, no credit card required.
             </p>
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -473,7 +473,7 @@ export default function LandingPage() {
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
                   <span className="text-xl">🎓</span>
                 </div>
-                <span className="font-black text-xl">EduQuest</span>
+                <span className="font-black text-xl">LearnNest</span>
               </div>
               <p className="text-gray-400 text-sm">
                 Making learning magical for kids ages 6-14.
@@ -541,7 +541,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2026 EduQuest. All rights reserved.</p>
+            <p>&copy; 2026 LearnNest. All rights reserved.</p>
           </div>
         </div>
       </footer>

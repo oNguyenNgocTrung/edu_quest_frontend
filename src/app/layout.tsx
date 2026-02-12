@@ -16,7 +16,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "EduQuest - Gamified Learning for Kids",
+  title: "LearnNest - Gamified Learning for Kids",
   description: "A fun, gamified learning platform for children",
 };
 
