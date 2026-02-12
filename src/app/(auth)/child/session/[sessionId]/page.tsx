@@ -490,55 +490,62 @@ export default function SessionPage() {
                 </div>
               ) : (
                 /* MCQ (default) */
-                <div className="space-y-3">
-                  {question.options.map((option, index) => {
-                    const isSelected = selectedAnswer === index;
-                    const isCorrectAnswer =
-                      feedback && index === feedback.correct_answer_index;
-                    const isWrongSelected =
-                      feedback && isSelected && !feedback.is_correct;
+                (() => {
+                  const allShort = question.options.every((o) => o.length <= 20);
+                  const useGrid = allShort && (question.options.length === 2 || question.options.length === 4);
 
-                    return (
-                      <motion.button
-                        key={index}
-                        onClick={() => !feedback && handleSelectAnswer(index)}
-                        disabled={!!feedback}
-                        whileHover={!feedback ? { scale: 1.02 } : {}}
-                        whileTap={!feedback ? { scale: 0.98 } : {}}
-                        className={`w-full p-5 rounded-2xl font-bold text-lg transition-all ${
-                          isCorrectAnswer
-                            ? "bg-green-500 text-white shadow-lg"
-                            : isWrongSelected
-                              ? "bg-red-500 text-white shadow-lg"
-                              : isSelected
-                                ? "bg-purple-100 border-2 border-purple-500 text-purple-700"
-                                : "bg-gray-100 hover:bg-gray-200 text-gray-800 border-2 border-transparent"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <span
-                              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                                isCorrectAnswer
-                                  ? "bg-white/30 text-white"
-                                  : isWrongSelected
-                                    ? "bg-white/30 text-white"
-                                    : isSelected
-                                      ? "bg-purple-500 text-white"
-                                      : "bg-gray-200 text-gray-600"
-                              }`}
-                            >
-                              {LETTER_PREFIX[index]}
-                            </span>
-                            <span>{option}</span>
-                          </div>
-                          {isCorrectAnswer && <span className="text-2xl">✓</span>}
-                          {isWrongSelected && <span className="text-2xl">✗</span>}
-                        </div>
-                      </motion.button>
-                    );
-                  })}
-                </div>
+                  return (
+                    <div className={useGrid ? "grid grid-cols-2 gap-3" : "space-y-3"}>
+                      {question.options.map((option, index) => {
+                        const isSelected = selectedAnswer === index;
+                        const isCorrectAnswer =
+                          feedback && index === feedback.correct_answer_index;
+                        const isWrongSelected =
+                          feedback && isSelected && !feedback.is_correct;
+
+                        return (
+                          <motion.button
+                            key={index}
+                            onClick={() => !feedback && handleSelectAnswer(index)}
+                            disabled={!!feedback}
+                            whileHover={!feedback ? { scale: 1.02 } : {}}
+                            whileTap={!feedback ? { scale: 0.98 } : {}}
+                            className={`w-full ${useGrid ? "p-4" : "p-5"} rounded-2xl font-bold text-lg transition-all ${
+                              isCorrectAnswer
+                                ? "bg-green-500 text-white shadow-lg"
+                                : isWrongSelected
+                                  ? "bg-red-500 text-white shadow-lg"
+                                  : isSelected
+                                    ? "bg-purple-100 border-2 border-purple-500 text-purple-700"
+                                    : "bg-gray-100 hover:bg-gray-200 text-gray-800 border-2 border-transparent"
+                            }`}
+                          >
+                            <div className={`flex items-center ${useGrid ? "justify-center gap-2" : "justify-between"}`}>
+                              <div className={`flex items-center ${useGrid ? "gap-2" : "gap-3"}`}>
+                                <span
+                                  className={`${useGrid ? "w-7 h-7 text-xs" : "w-8 h-8 text-sm"} rounded-full flex items-center justify-center font-bold ${
+                                    isCorrectAnswer
+                                      ? "bg-white/30 text-white"
+                                      : isWrongSelected
+                                        ? "bg-white/30 text-white"
+                                        : isSelected
+                                          ? "bg-purple-500 text-white"
+                                          : "bg-gray-200 text-gray-600"
+                                  }`}
+                                >
+                                  {LETTER_PREFIX[index]}
+                                </span>
+                                <span>{option}</span>
+                              </div>
+                              {!useGrid && isCorrectAnswer && <span className="text-2xl">✓</span>}
+                              {!useGrid && isWrongSelected && <span className="text-2xl">✗</span>}
+                            </div>
+                          </motion.button>
+                        );
+                      })}
+                    </div>
+                  );
+                })()
               )}
             </div>
 
