@@ -37,6 +37,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
     localStorage.setItem("user_id", data.user.id);
+    localStorage.setItem("user_data", JSON.stringify(data.user));
     set({ user: data.user, isAuthenticated: true });
   },
 
@@ -50,6 +51,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.setItem("access_token", data.access_token);
     localStorage.setItem("refresh_token", data.refresh_token);
     localStorage.setItem("user_id", data.user.id);
+    localStorage.setItem("user_data", JSON.stringify(data.user));
     set({ user: data.user, isAuthenticated: true });
   },
 
@@ -62,6 +64,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     localStorage.removeItem("user_id");
+    localStorage.removeItem("user_data");
     localStorage.removeItem("child_profile_id");
     set({
       user: null,
@@ -73,9 +76,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   setPin: async (pin) => {
     await apiClient.post("/auth/pin", { pin });
-    set((state) => ({
-      user: state.user ? { ...state.user, has_pin: true } : null,
-    }));
+    set((state) => {
+      const updatedUser = state.user
+        ? { ...state.user, has_pin: true }
+        : null;
+      if (updatedUser) {
+        localStorage.setItem("user_data", JSON.stringify(updatedUser));
+      }
+      return { user: updatedUser };
+    });
   },
 
   verifyPin: async (pin) => {
@@ -140,7 +149,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const token = localStorage.getItem("access_token");
     const userId = localStorage.getItem("user_id");
     if (token && userId) {
-      set({ isAuthenticated: true, isLoading: false });
+      let restoredUser: User | null = null;
+      try {
+        const userData = localStorage.getItem("user_data");
+        if (userData) restoredUser = JSON.parse(userData);
+      } catch {
+        // ignore parse errors
+      }
+      set({ isAuthenticated: true, isLoading: false, user: restoredUser });
       // Fetch user data
       apiClient
         .get("/child_profiles")

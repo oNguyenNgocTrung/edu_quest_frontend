@@ -60,7 +60,7 @@ export default function RegisterPage() {
     try {
       await register(name, email, password);
       toast.success("Account created! Welcome to EduQuest!");
-      router.push("/child/home");
+      router.push("/onboarding");
     } catch {
       toast.error("Registration failed. Please try again.");
     } finally {
