@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import apiClient from "@/lib/api-client";
-import type { Deck, Flashcard, Question } from "@/types";
+import type { Deck, Flashcard, Question, WorksheetExtractedQuestion } from "@/types";
 import {
   ArrowLeft,
   Plus,
@@ -16,8 +16,13 @@ import {
   Check,
   Edit3,
   GripVertical,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
+import FileImportModal, {
+  type ImportedFlashcard,
+  type ImportedQuestion,
+} from "@/components/parent/FileImportModal";
 
 export default function DeckDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -36,6 +41,7 @@ export default function DeckDetailPage() {
     explanation: "",
     xp_value: 10,
   });
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const { data: deck, isLoading: deckLoading } = useQuery({
     queryKey: ["deck", id],
@@ -175,6 +181,54 @@ export default function DeckDetailPage() {
     },
   });
 
+  const batchFlashcards = useMutation({
+    mutationFn: async (flashcards: ImportedFlashcard[]) => {
+      const { data } = await apiClient.post(`/decks/${id}/flashcards/batch`, {
+        flashcards,
+      });
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      toast.success(`${variables.length} flashcards imported!`);
+      queryClient.invalidateQueries({ queryKey: ["deck", id, "flashcards"] });
+      queryClient.invalidateQueries({ queryKey: ["deck", id] });
+      queryClient.invalidateQueries({ queryKey: ["decks"] });
+      setShowImportModal(false);
+    },
+    onError: () => {
+      toast.error("Failed to import flashcards");
+    },
+  });
+
+  const batchQuestions = useMutation({
+    mutationFn: async (questions: ImportedQuestion[]) => {
+      const { data } = await apiClient.post(`/decks/${id}/questions/batch`, {
+        questions,
+      });
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      toast.success(`${variables.length} questions imported!`);
+      queryClient.invalidateQueries({ queryKey: ["deck", id, "questions"] });
+      queryClient.invalidateQueries({ queryKey: ["deck", id] });
+      queryClient.invalidateQueries({ queryKey: ["decks"] });
+      setShowImportModal(false);
+    },
+    onError: () => {
+      toast.error("Failed to import questions");
+    },
+  });
+
+  const handleImport = (
+    data: ImportedFlashcard[] | ImportedQuestion[] | WorksheetExtractedQuestion[]
+  ) => {
+    if (deck?.deck_type === "flashcards") {
+      batchFlashcards.mutate(data as ImportedFlashcard[]);
+    } else {
+      batchQuestions.mutate(data as ImportedQuestion[]);
+    }
+  };
+
   if (deckLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -254,16 +308,25 @@ export default function DeckDetailPage() {
       </div>
 
       <div className="max-w-4xl mx-auto p-4 space-y-4">
-        {/* Add button */}
-        <button
-          onClick={() =>
-            isFlashcardDeck ? setShowAddCard(true) : setShowAddQuestion(true)
-          }
-          className="w-full bg-white border-2 border-dashed border-gray-200 rounded-xl p-4 text-gray-500 hover:border-indigo-300 hover:text-indigo-500 transition flex items-center justify-center gap-2"
-        >
-          <Plus size={20} />
-          Add {isFlashcardDeck ? "Flashcard" : "Question"}
-        </button>
+        {/* Add / Import buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={() =>
+              isFlashcardDeck ? setShowAddCard(true) : setShowAddQuestion(true)
+            }
+            className="flex-1 bg-white border-2 border-dashed border-gray-200 rounded-xl p-4 text-gray-500 hover:border-indigo-300 hover:text-indigo-500 transition flex items-center justify-center gap-2"
+          >
+            <Plus size={20} />
+            Add {isFlashcardDeck ? "Flashcard" : "Question"}
+          </button>
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="bg-white border-2 border-dashed border-gray-200 rounded-xl p-4 text-gray-500 hover:border-indigo-300 hover:text-indigo-500 transition flex items-center justify-center gap-2 px-6"
+          >
+            <Upload size={20} />
+            Import from File
+          </button>
+        </div>
 
         {/* Add flashcard form */}
         {showAddCard && (
@@ -516,6 +579,15 @@ export default function DeckDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Import Modal */}
+      <FileImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        importType={isFlashcardDeck ? "flashcards" : "questions"}
+        onImport={handleImport}
+        isSubmitting={batchFlashcards.isPending || batchQuestions.isPending}
+      />
     </div>
   );
 }

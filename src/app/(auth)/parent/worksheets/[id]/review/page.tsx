@@ -14,11 +14,16 @@ import {
   ArrowLeft,
   Plus,
   Save,
+  Upload,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
 import apiClient from "@/lib/api-client";
 import type { Worksheet, WorksheetExtractedQuestion } from "@/types";
+import FileImportModal, {
+  type ImportedFlashcard,
+  type ImportedQuestion,
+} from "@/components/parent/FileImportModal";
 
 export default function ReviewQuestionsPage({
   params,
@@ -34,6 +39,7 @@ export default function ReviewQuestionsPage({
   );
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [showAddQuestion, setShowAddQuestion] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -85,6 +91,24 @@ export default function ReviewQuestionsPage({
     setQuestions((prev) => [...prev, newQ]);
     setHasUnsavedChanges(true);
     setShowAddQuestion(false);
+  };
+
+  const handleBulkImport = (
+    imported: ImportedFlashcard[] | ImportedQuestion[] | WorksheetExtractedQuestion[]
+  ) => {
+    const typedQuestions = imported as WorksheetExtractedQuestion[];
+    setQuestions((prev) => {
+      const startNumber = prev.length + 1;
+      const numbered = typedQuestions.map((q, i) => ({
+        ...q,
+        id: Date.now() + i,
+        number: startNumber + i,
+      }));
+      return [...prev, ...numbered];
+    });
+    setHasUnsavedChanges(true);
+    setShowImportModal(false);
+    toast.success(`${typedQuestions.length} questions imported!`);
   };
 
   const saveMutation = useMutation({
@@ -296,14 +320,23 @@ Verify AI-extracted questions before adding to practice
           </div>
         </motion.div>
 
-        {/* Add Question Button */}
-        <button
-          onClick={() => setShowAddQuestion(true)}
-          className="w-full mb-4 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-indigo-400 hover:text-indigo-600 font-semibold transition-colors flex items-center justify-center gap-2"
-        >
-          <Plus className="w-5 h-5" />
-          Add Question
-        </button>
+        {/* Add / Import buttons */}
+        <div className="flex gap-3 mb-4">
+          <button
+            onClick={() => setShowAddQuestion(true)}
+            className="flex-1 py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-indigo-400 hover:text-indigo-600 font-semibold transition-colors flex items-center justify-center gap-2"
+          >
+            <Plus className="w-5 h-5" />
+            Add Question
+          </button>
+          <button
+            onClick={() => setShowImportModal(true)}
+            className="py-3 px-6 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:border-indigo-400 hover:text-indigo-600 font-semibold transition-colors flex items-center justify-center gap-2"
+          >
+            <Upload className="w-5 h-5" />
+            Import from File
+          </button>
+        </div>
 
         {/* Add Question Form */}
         {showAddQuestion && <AddQuestionForm
@@ -546,6 +579,14 @@ Verify AI-extracted questions before adding to practice
           </div>
         )}
       </div>
+
+      {/* Import Modal */}
+      <FileImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        importType="worksheet_questions"
+        onImport={handleBulkImport}
+      />
     </div>
   );
 }
