@@ -159,49 +159,40 @@ export function Mascot({
           {mood === "waving" ? (
             <>
               <ellipse cx="22" cy="55" rx="12" ry="20" fill="#6D28D9" />
-              <motion.ellipse
-                cx="78"
-                cy="55"
-                rx="12"
-                ry="20"
-                fill="#6D28D9"
-                animate={{ cy: [55, 45, 55], rx: [12, 15, 12] }}
+              <motion.g
+                animate={{ y: [0, -10, 0] }}
                 transition={{
                   duration: 1.5,
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-              />
+              >
+                <ellipse cx="78" cy="55" rx="12" ry="20" fill="#6D28D9" />
+              </motion.g>
             </>
           ) : mood === "excited" ? (
             <>
-              <motion.ellipse
-                cx="22"
-                cy="45"
-                rx="12"
-                ry="20"
-                fill="#6D28D9"
-                animate={{ cy: [45, 40, 45], ry: [20, 22, 20] }}
+              <motion.g
+                animate={{ y: [0, -5, 0] }}
                 transition={{
                   duration: 0.6,
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-              />
-              <motion.ellipse
-                cx="78"
-                cy="45"
-                rx="12"
-                ry="20"
-                fill="#6D28D9"
-                animate={{ cy: [45, 40, 45], ry: [20, 22, 20] }}
+              >
+                <ellipse cx="22" cy="45" rx="12" ry="20" fill="#6D28D9" />
+              </motion.g>
+              <motion.g
+                animate={{ y: [0, -5, 0] }}
                 transition={{
                   duration: 0.6,
                   repeat: Infinity,
                   ease: "easeInOut",
                   delay: 0.1,
                 }}
-              />
+              >
+                <ellipse cx="78" cy="45" rx="12" ry="20" fill="#6D28D9" />
+              </motion.g>
             </>
           ) : (
             <>
