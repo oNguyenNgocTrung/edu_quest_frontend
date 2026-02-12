@@ -163,6 +163,8 @@
   },
   "rewards": {
     "title": "Reward Shop",
+    "shop": "Shop",
+    "myStuff": "My Stuff",
     "spendCoins": "Spend Your Coins!",
     "spendCoinsDesc": "Complete lessons and quests to earn more coins and unlock amazing rewards!",
     "locked": "Locked",
@@ -181,7 +183,13 @@
     "youGot": "You got:",
     "checkWithParent": "Check with your parent to claim it!",
     "redeemSuccess": "Redeemed: {{name}}!",
-    "redeemError": "Not enough coins or reward unavailable"
+    "redeemError": "Not enough coins or reward unavailable",
+    "noRedemptions": "No rewards yet! Visit the shop to redeem your coins.",
+    "goToShop": "Go to Shop",
+    "pending": "Pending",
+    "approved": "Approved",
+    "denied": "Denied",
+    "claimed": "Claimed"
   },
   "brainBoost": {
     "title": "Brain Boost!",

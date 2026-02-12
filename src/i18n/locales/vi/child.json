@@ -163,6 +163,8 @@
   },
   "rewards": {
     "title": "Cửa hàng phần thưởng",
+    "shop": "Cửa hàng",
+    "myStuff": "Của tôi",
     "spendCoins": "Tiêu xu nào!",
     "spendCoinsDesc": "Hoàn thành bài học và nhiệm vụ để kiếm thêm xu và mở phần thưởng tuyệt vời!",
     "locked": "Khóa",
@@ -181,7 +183,13 @@
     "youGot": "Bạn nhận được:",
     "checkWithParent": "Hỏi phụ huynh để nhận nhé!",
     "redeemSuccess": "Đã đổi: {{name}}!",
-    "redeemError": "Không đủ xu hoặc phần thưởng không khả dụng"
+    "redeemError": "Không đủ xu hoặc phần thưởng không khả dụng",
+    "noRedemptions": "Chưa có phần thưởng nào! Ghé cửa hàng để đổi xu nhé.",
+    "goToShop": "Đến cửa hàng",
+    "pending": "Đang chờ",
+    "approved": "Đã duyệt",
+    "denied": "Đã từ chối",
+    "claimed": "Đã nhận"
   },
   "brainBoost": {
     "title": "Brain Boost!",

@@ -159,6 +159,16 @@ export interface Reward {
   expires_at: string | null;
 }
 
+export interface RewardRedemption {
+  id: string;
+  status: "pending" | "approved" | "denied" | "claimed";
+  reward_name: string;
+  reward_icon: string;
+  reward_cost: number;
+  child_name: string;
+  created_at: string;
+}
+
 export interface Achievement {
   id: string;
   name: string;
