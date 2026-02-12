@@ -15,18 +15,13 @@ import enChild from './locales/en/child.json';
 import enParent from './locales/en/parent.json';
 import enLanding from './locales/en/landing.json';
 
-// Read saved language synchronously to avoid SSR/client mismatch.
-// LanguageDetector is NOT used because it runs differently on server (no
-// localStorage) vs client, causing hydration errors.
-const savedLng =
-  typeof window !== 'undefined'
-    ? localStorage.getItem('language') || 'vi'
-    : 'vi';
-
+// Always init with 'vi' so SSR and the first client render produce
+// identical HTML.  After hydration, HtmlLangUpdater switches to the
+// language saved in localStorage (if any).
 i18n
   .use(initReactI18next)
   .init({
-    lng: savedLng,
+    lng: 'vi',
     resources: {
       vi: {
         common: viCommon,
