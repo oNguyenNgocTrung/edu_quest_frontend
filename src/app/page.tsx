@@ -183,7 +183,7 @@ export default function LandingPage() {
                       <span className="text-2xl">👦</span>
                     </div>
                     <div>
-                      <p className="font-bold text-gray-800">Alex</p>
+                      <p className="font-bold text-gray-800">{t('demo.name')}</p>
                       <p className="text-sm text-gray-500">{t('demo.level')}</p>
                     </div>
                   </div>
