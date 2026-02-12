@@ -277,6 +277,8 @@ export interface WorksheetExtractedQuestion {
   type: "mcq" | "fill-blank" | "true-false";
   options: string[];
   correct_answer: string;
+  explanation?: string;
+  xp_value?: number;
   confidence: number;
   needs_review: boolean;
   similar_exercises: WorksheetSimilarExercise[];

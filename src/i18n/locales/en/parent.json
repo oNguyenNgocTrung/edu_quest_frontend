@@ -180,7 +180,8 @@
     "cancelImport": "Cancel Import",
     "editImportedQuestion": "Edit Question {{number}}",
     "questionType": "Type",
-    "correctAnswer": "Correct Answer"
+    "correctAnswer": "Correct Answer",
+    "xpValue": "XP Value"
   },
   "aiGenerator": {
     "title": "AI Content Generator",

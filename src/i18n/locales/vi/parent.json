@@ -180,7 +180,8 @@
     "cancelImport": "Hủy nhập",
     "editImportedQuestion": "Sửa câu hỏi {{number}}",
     "questionType": "Loại",
-    "correctAnswer": "Đáp án đúng"
+    "correctAnswer": "Đáp án đúng",
+    "xpValue": "Điểm XP"
   },
   "aiGenerator": {
     "title": "Tạo nội dung bằng AI",

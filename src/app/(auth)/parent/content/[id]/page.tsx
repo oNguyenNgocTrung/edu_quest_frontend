@@ -207,30 +207,34 @@ export default function DeckDetailPage() {
   const confirmImport = useMutation({
     mutationFn: async (qs: WorksheetExtractedQuestion[]) => {
       const converted = qs.map((q) => {
+        const base = {
+          explanation: q.explanation || undefined,
+          xp_value: q.xp_value || 10,
+        };
         if (q.type === "true-false") {
           return {
+            ...base,
             question_text: q.text,
             question_type: "true_false",
             options: ["True", "False"],
             correct_answer_index: q.correct_answer === "True" ? 0 : 1,
-            xp_value: 10,
           };
         }
         if (q.type === "fill-blank") {
           return {
+            ...base,
             question_text: q.text,
             question_type: "fill_blank",
             options: [q.correct_answer],
             correct_answer_index: 0,
-            xp_value: 10,
           };
         }
         return {
+          ...base,
           question_text: q.text,
           question_type: "mcq",
           options: q.options,
           correct_answer_index: Math.max(q.options.indexOf(q.correct_answer), 0),
-          xp_value: 10,
         };
       });
       const { data } = await apiClient.post(`/decks/${id}/questions/batch`, {
@@ -461,6 +465,18 @@ export default function DeckDetailPage() {
                           <div className="px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg text-sm font-medium inline-block">
                             {q.correct_answer}
                           </div>
+                        )}
+
+                        {q.explanation && (
+                          <p className="text-sm text-gray-500 mt-2 italic">
+                            {q.explanation}
+                          </p>
+                        )}
+
+                        {q.xp_value && (
+                          <span className="text-xs text-gray-400 mt-1 inline-block">
+                            {q.xp_value} XP
+                          </span>
                         )}
                       </div>
                       <div className="flex gap-1 ml-3">
@@ -1118,6 +1134,8 @@ function ReviewEditForm({
   const [type, setType] = useState(question.type);
   const [options, setOptions] = useState(question.options || []);
   const [correctAnswer, setCorrectAnswer] = useState(question.correct_answer || "");
+  const [explanation, setExplanation] = useState(question.explanation || "");
+  const [xpValue, setXpValue] = useState(question.xp_value ?? 10);
 
   return (
     <div className="space-y-3">
@@ -1128,7 +1146,7 @@ function ReviewEditForm({
         <div className="flex gap-2">
           <button
             onClick={() =>
-              onSave({ text, type, options, correct_answer: correctAnswer })
+              onSave({ text, type, options, correct_answer: correctAnswer, explanation: explanation || undefined, xp_value: xpValue })
             }
             className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
           >
@@ -1259,6 +1277,34 @@ function ReviewEditForm({
           />
         </div>
       )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t("contentDetail.explanationOptional")}
+          </label>
+          <input
+            type="text"
+            value={explanation}
+            onChange={(e) => setExplanation(e.target.value)}
+            placeholder={t("contentDetail.explanationPlaceholder")}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {t("contentDetail.xpValue")}
+          </label>
+          <input
+            type="number"
+            min={1}
+            max={100}
+            value={xpValue}
+            onChange={(e) => setXpValue(parseInt(e.target.value, 10) || 10)}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+      </div>
     </div>
   );
 }

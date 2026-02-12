@@ -146,6 +146,8 @@ function parseWorksheetQuestionsJSON(
     const type = normalizeQuestionType(item.type || "mcq");
     const options: string[] = Array.isArray(item.options) ? item.options : [];
     const correctAnswer = item.correct_answer || "";
+    const explanation = item.explanation || "";
+    const xpValue = item.xp_value != null ? Number(item.xp_value) : undefined;
 
     if (!text) errors.push(`Row ${i + 1}: Missing question text`);
     if (!correctAnswer) errors.push(`Row ${i + 1}: Missing correct answer`);
@@ -160,6 +162,8 @@ function parseWorksheetQuestionsJSON(
         type,
         options: options.map(String),
         correct_answer: String(correctAnswer),
+        explanation: explanation ? String(explanation) : undefined,
+        xp_value: xpValue && !isNaN(xpValue) ? xpValue : undefined,
         confidence: 100,
         needs_review: false,
         similar_exercises: [],
@@ -187,6 +191,10 @@ function parseWorksheetQuestionsCSV(
   const correctIdx = headers.findIndex((h) =>
     ["correct_answer", "correct"].includes(h)
   );
+  const explanationIdx = headers.indexOf("explanation");
+  const xpIdx = headers.findIndex((h) =>
+    ["xp_value", "xp"].includes(h)
+  );
 
   if (textIdx === -1) errors.push("Missing 'text' column in CSV header");
   if (correctIdx === -1)
@@ -202,6 +210,9 @@ function parseWorksheetQuestionsCSV(
       .map((idx) => (idx >= 0 ? row[idx] || "" : ""))
       .filter((o) => o !== "");
     const correctAnswer = row[correctIdx] || "";
+    const explanation = explanationIdx >= 0 ? row[explanationIdx] || "" : "";
+    const xpRaw = xpIdx >= 0 ? row[xpIdx] || "" : "";
+    const xpValue = xpRaw ? parseInt(xpRaw, 10) : undefined;
 
     if (!questionText) errors.push(`Row ${i + 1}: Missing question text`);
     if (!correctAnswer) errors.push(`Row ${i + 1}: Missing correct answer`);
@@ -215,6 +226,8 @@ function parseWorksheetQuestionsCSV(
         options:
           type === "true-false" ? ["True", "False"] : options,
         correct_answer: correctAnswer,
+        explanation: explanation || undefined,
+        xp_value: xpValue && !isNaN(xpValue) ? xpValue : undefined,
         confidence: 100,
         needs_review: false,
         similar_exercises: [],
@@ -280,11 +293,14 @@ function downloadTemplate(importType: ImportType, format: "csv" | "json") {
             type: "mcq",
             options: ["3", "4", "5", "6"],
             correct_answer: "4",
+            explanation: "Basic addition",
+            xp_value: 10,
           },
           {
             text: "Is the sky blue?",
             type: "true-false",
             correct_answer: "True",
+            explanation: "The sky appears blue due to Rayleigh scattering",
           },
         ],
         null,
@@ -292,7 +308,7 @@ function downloadTemplate(importType: ImportType, format: "csv" | "json") {
       );
       filename = "questions_template.json";
     } else {
-      content = `text,type,option_a,option_b,option_c,option_d,correct_answer\n"What is 2+2?","mcq","3","4","5","6","4"\n"Is the sky blue?","true-false","","","","","True"`;
+      content = `text,type,option_a,option_b,option_c,option_d,correct_answer,explanation,xp_value\n"What is 2+2?","mcq","3","4","5","6","4","Basic addition","10"\n"Is the sky blue?","true-false","","","","","True","Rayleigh scattering",""`;
       filename = "questions_template.csv";
     }
   }
