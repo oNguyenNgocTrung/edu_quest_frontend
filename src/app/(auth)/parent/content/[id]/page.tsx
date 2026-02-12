@@ -946,6 +946,7 @@ function QuestionItem({
     question.correct_answer_index ?? 0
   );
   const [explanation, setExplanation] = useState(question.explanation || "");
+  const [xpValue, setXpValue] = useState(question.xp_value ?? 10);
 
   if (isEditing) {
     return (
@@ -1004,16 +1005,31 @@ function QuestionItem({
               ))}
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("contentDetail.explanation")}
-            </label>
-            <input
-              type="text"
-              value={explanation}
-              onChange={(e) => setExplanation(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("contentDetail.explanation")}
+              </label>
+              <input
+                type="text"
+                value={explanation}
+                onChange={(e) => setExplanation(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("contentDetail.xpValue")}
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={100}
+                value={xpValue}
+                onChange={(e) => setXpValue(Number(e.target.value) || 1)}
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
           </div>
         </div>
         <div className="flex gap-2 mt-4">
@@ -1024,6 +1040,7 @@ function QuestionItem({
                 options,
                 correct_answer_index: correctIdx,
                 explanation,
+                xp_value: xpValue,
               })
             }
             disabled={!text || isSaving}
@@ -1038,6 +1055,7 @@ function QuestionItem({
               setOptions(question.options || []);
               setCorrectIdx(question.correct_answer_index ?? 0);
               setExplanation(question.explanation || "");
+              setXpValue(question.xp_value ?? 10);
               onCancelEdit();
             }}
             className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
