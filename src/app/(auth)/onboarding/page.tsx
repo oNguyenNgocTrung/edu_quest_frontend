@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuthStore } from "@/stores/auth-store";
@@ -13,23 +13,24 @@ type OnboardingStep = "pin" | "child";
 export default function OnboardingPage() {
   const router = useRouter();
   const { t } = useTranslation("onboarding");
-  const user = useAuthStore((s) => s.user);
-  const childProfiles = useAuthStore((s) => s.childProfiles);
   const fetchChildProfiles = useAuthStore((s) => s.fetchChildProfiles);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [steps, setSteps] = useState<OnboardingStep[]>([]);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    fetchChildProfiles().then(() => setReady(true));
+    fetchChildProfiles().then(() => {
+      // Compute steps once at load — freeze so completing a step
+      // (e.g. PIN setting has_pin=true) doesn't shrink the array mid-flow
+      const needed: OnboardingStep[] = [];
+      const currentUser = useAuthStore.getState().user;
+      const profiles = useAuthStore.getState().childProfiles;
+      if (currentUser && !currentUser.has_pin) needed.push("pin");
+      if (profiles.length === 0) needed.push("child");
+      setSteps(needed);
+      setReady(true);
+    });
   }, [fetchChildProfiles]);
-
-  const steps = useMemo<OnboardingStep[]>(() => {
-    if (!ready) return [];
-    const needed: OnboardingStep[] = [];
-    if (user && !user.has_pin) needed.push("pin");
-    if (childProfiles.length === 0) needed.push("child");
-    return needed;
-  }, [ready, user, childProfiles]);
 
   useEffect(() => {
     if (ready && steps.length === 0) {
