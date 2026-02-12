@@ -87,6 +87,39 @@ export default function SessionPage() {
     return [] as Question[];
   }, [questionsData, sessionData]);
 
+  // Extract answered question IDs from fetched session data (for resume)
+  const answeredQuestionIds = useMemo(() => {
+    const ids = new Set<string>();
+    if (!sessionData?.data?.relationships?.session_answers?.data) return ids;
+    const answerRefs = sessionData.data.relationships.session_answers.data as { id: string }[];
+    const included = (sessionData.included || []) as { id: string; type: string; attributes: { question_id: string } }[];
+    for (const item of included) {
+      if (item.type === "session_answer" && answerRefs.some((a) => a.id === item.id)) {
+        ids.add(item.attributes.question_id);
+      }
+    }
+    return ids;
+  }, [sessionData]);
+
+  // Determine the starting question index for resumed sessions
+  const resumeIndex = useMemo(() => {
+    if (answeredQuestionIds.size === 0 || questions.length === 0) return 0;
+    const idx = questions.findIndex((q) => !answeredQuestionIds.has(q.id));
+    return idx === -1 ? questions.length : idx; // all answered → past the end
+  }, [answeredQuestionIds, questions]);
+
+  // Check if a fetched session is already finished
+  const isSessionAlreadyDone = useMemo(() => {
+    if (!sessionData) return false;
+    const status = (sessionData.data.attributes as LearningSession).status;
+    if (status === "completed" || status === "failed") return true;
+    // All questions answered but session still in_progress
+    if (answeredQuestionIds.size > 0 && questions.length > 0 && resumeIndex >= questions.length) return true;
+    return false;
+  }, [sessionData, answeredQuestionIds, questions, resumeIndex]);
+
+  // Effective question index: when resuming, start from the first unanswered question
+  const effectiveIndex = Math.max(currentIndex, resumeIndex);
 
   const submitAnswer = useMutation({
     mutationFn: async ({
@@ -151,7 +184,7 @@ export default function SessionPage() {
 
   const handleSubmit = () => {
     if (!session) return;
-    const question = questions[currentIndex];
+    const question = questions[effectiveIndex];
 
     if (question.question_type === "fill_blank") {
       if (!fillBlankAnswer.trim()) return;
@@ -170,7 +203,7 @@ export default function SessionPage() {
 
   const handleSkip = () => {
     if (!session) return;
-    const question = questions[currentIndex];
+    const question = questions[effectiveIndex];
     // Skip = submit wrong answer, costs a life
     if (question.question_type === "fill_blank") {
       submitAnswer.mutate({
@@ -191,10 +224,10 @@ export default function SessionPage() {
 
   const handleNext = () => {
     if (!session) return;
-    if (session.lives_remaining <= 0 || currentIndex >= questions.length - 1) {
+    if (session.lives_remaining <= 0 || effectiveIndex >= questions.length - 1) {
       completeSession.mutate();
     } else {
-      setCurrentIndex((i) => i + 1);
+      setCurrentIndex(effectiveIndex + 1);
       setSelectedAnswer(null);
       setFillBlankAnswer("");
       setFeedback(null);
@@ -210,7 +243,7 @@ export default function SessionPage() {
     );
   }
 
-  if (showCompletion) {
+  if (showCompletion || isSessionAlreadyDone) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-purple-100 to-pink-100 flex items-center justify-center p-4">
         <motion.div
@@ -277,8 +310,8 @@ export default function SessionPage() {
     );
   }
 
-  const question = questions[currentIndex];
-  const progress = ((currentIndex + 1) / questions.length) * 100;
+  const question = questions[effectiveIndex];
+  const progress = ((effectiveIndex + 1) / questions.length) * 100;
   const isWorksheetSession = questions.some((q) => q.is_ai_generated !== undefined);
 
   const canSubmit =
@@ -330,7 +363,7 @@ export default function SessionPage() {
             />
           </div>
           <p className="text-xs text-gray-500 mt-1 text-center">
-            {t('session.questionOf', { current: currentIndex + 1, total: questions.length })}
+            {t('session.questionOf', { current: effectiveIndex + 1, total: questions.length })}
           </p>
         </div>
       </div>
@@ -339,7 +372,7 @@ export default function SessionPage() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentIndex}
+            key={effectiveIndex}
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -100 }}
@@ -596,7 +629,7 @@ export default function SessionPage() {
                   className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition flex items-center justify-center gap-2"
                 >
                   {session.lives_remaining <= 0 ||
-                  currentIndex >= questions.length - 1
+                  effectiveIndex >= questions.length - 1
                     ? t('session.seeResults')
                     : t('session.nextQuestion')}
                   <ArrowRight size={18} />
