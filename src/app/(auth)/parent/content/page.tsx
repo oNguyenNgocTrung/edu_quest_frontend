@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "@/lib/api-client";
 import type { Deck } from "@/types";
-import { ArrowLeft, Plus, BookOpen, HelpCircle, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, BookOpen, HelpCircle, Trash2, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ContentCreatorPage() {
@@ -155,26 +155,61 @@ export default function ContentCreatorPage() {
         {/* Decks list */}
         <div className="space-y-3">
           {filteredDecks?.map((deck) => (
-            <div
+            <button
               key={deck.id}
-              className="bg-white rounded-xl p-4 shadow-sm flex items-center justify-between"
+              onClick={() => router.push(`/parent/content/${deck.id}`)}
+              className="w-full bg-white rounded-xl p-4 shadow-sm flex items-center justify-between hover:shadow-md transition text-left group"
             >
-              <div>
-                <h3 className="font-semibold text-gray-800">{deck.name}</h3>
-                <p className="text-sm text-gray-500">
-                  {deck.deck_type === "flashcards"
-                    ? `${deck.flashcards_count} cards`
-                    : `${deck.questions_count} questions`}{" "}
-                  · {deck.difficulty}
-                </p>
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                    deck.deck_type === "flashcards"
+                      ? "bg-indigo-100 text-indigo-600"
+                      : "bg-purple-100 text-purple-600"
+                  }`}
+                >
+                  {deck.deck_type === "flashcards" ? (
+                    <BookOpen size={20} />
+                  ) : (
+                    <HelpCircle size={20} />
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-gray-800 truncate">
+                    {deck.name}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {deck.deck_type === "flashcards"
+                      ? `${deck.flashcards_count} cards`
+                      : `${deck.questions_count} questions`}{" "}
+                    · {deck.difficulty}
+                  </p>
+                </div>
               </div>
-              <button
-                onClick={() => deleteDeck.mutate(deck.id)}
-                className="text-gray-400 hover:text-red-500 transition"
-              >
-                <Trash2 size={18} />
-              </button>
-            </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteDeck.mutate(deck.id);
+                  }}
+                  className="text-gray-400 hover:text-red-500 transition p-1"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.stopPropagation();
+                      deleteDeck.mutate(deck.id);
+                    }
+                  }}
+                >
+                  <Trash2 size={18} />
+                </span>
+                <ChevronRight
+                  size={18}
+                  className="text-gray-300 group-hover:text-gray-500 transition"
+                />
+              </div>
+            </button>
           ))}
         </div>
       </div>

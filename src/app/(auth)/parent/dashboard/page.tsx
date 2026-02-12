@@ -398,7 +398,7 @@ export default function ParentDashboardPage() {
                     Recent Worksheets
                   </h2>
                   <button
-                    onClick={() => router.push("/parent/worksheets/upload")}
+                    onClick={() => router.push("/parent/worksheets")}
                     className="text-sm text-indigo-600 font-semibold hover:text-indigo-700"
                   >
                     View all
@@ -409,11 +409,12 @@ export default function ParentDashboardPage() {
                     <button
                       key={ws.id}
                       onClick={() => {
-                        if (ws.status === "extracted") {
+                        if (ws.status === "extracted" || ws.status === "approved") {
                           router.push(`/parent/worksheets/${ws.id}/review`);
                         } else if (
                           ws.status === "pending" ||
-                          ws.status === "processing"
+                          ws.status === "processing" ||
+                          ws.status === "failed"
                         ) {
                           router.push(`/parent/worksheets/${ws.id}/processing`);
                         }
