@@ -9,7 +9,7 @@ interface ParentModeButtonProps {
 
 export function ParentModeButton({ onClick }: ParentModeButtonProps) {
   return (
-    <div className="fixed top-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-50">
       <motion.button
         onClick={onClick}
         whileHover={{ scale: 1.1 }}
@@ -41,7 +41,7 @@ export function ParentModeButton({ onClick }: ParentModeButtonProps) {
         </div>
 
         {/* Tooltip on hover */}
-        <div className="absolute right-14 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+        <div className="absolute bottom-14 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
           <div
             className="px-3 py-1.5 rounded-lg shadow-md"
             style={{
