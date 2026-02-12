@@ -535,17 +535,18 @@ export default function ChildHomePage() {
                       {t('home.completeLessonsToday', { count: questTotal })}
                     </p>
                     <div className="flex items-center gap-3">
-                      <div className="flex-1 h-3 rounded-full bg-white/30">
+                      <div className="flex-1 h-3 rounded-full bg-white/30 overflow-hidden">
                         <motion.div
-                          className="h-full rounded-full bg-yellow-400"
+                          className="h-full rounded-full"
+                          style={{ background: isQuestComplete ? "linear-gradient(90deg, #FBBF24, #F59E0B)" : "linear-gradient(90deg, #FDE68A, #FBBF24)" }}
                           initial={{ width: 0 }}
                           animate={{
-                            width: `${(questProgress / questTotal) * 100}%`,
+                            width: `${Math.min((questProgress / questTotal) * 100, 100)}%`,
                           }}
                           transition={{ duration: 0.8, delay: 0.5 }}
                         />
                       </div>
-                      <span className="font-bold text-white">
+                      <span className="font-bold text-white text-sm">
                         {questProgress}/{questTotal}
                       </span>
                     </div>
@@ -1018,10 +1019,10 @@ export default function ChildHomePage() {
                   >
                     <motion.div
                       className="h-full rounded-full"
-                      style={{ backgroundColor: "#FBBF24" }}
+                      style={{ background: isQuestComplete ? "linear-gradient(90deg, #FBBF24, #F59E0B)" : "linear-gradient(90deg, #FDE68A, #FBBF24)" }}
                       initial={{ width: 0 }}
                       animate={{
-                        width: `${(questProgress / questTotal) * 100}%`,
+                        width: `${Math.min((questProgress / questTotal) * 100, 100)}%`,
                       }}
                       transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
                     />
