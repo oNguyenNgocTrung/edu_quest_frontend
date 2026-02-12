@@ -117,7 +117,7 @@ export default function AIGeneratorPage() {
               <select
                 value={contentType}
                 onChange={(e) => setContentType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
               >
                 <option>Flashcards</option>
                 <option>Multiple Choice Quiz</option>
@@ -130,7 +130,7 @@ export default function AIGeneratorPage() {
               <select
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
               >
                 <option>Auto-detect</option>
                 <option>Math</option>
@@ -144,7 +144,7 @@ export default function AIGeneratorPage() {
               <select
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900"
               >
                 <option>Auto-adjust</option>
                 <option>Easy</option>
@@ -165,7 +165,7 @@ export default function AIGeneratorPage() {
             onChange={(e) => setInputText(e.target.value)}
             rows={6}
             placeholder="Paste text from a textbook, article, or lesson notes. The AI will generate flashcards or quiz questions from it..."
-            className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-purple-500 resize-none"
           />
           <button
             disabled={!inputText.trim() || isGenerating}

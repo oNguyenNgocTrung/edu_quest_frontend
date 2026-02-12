@@ -123,12 +123,12 @@ export default function ContentCreatorPage() {
               placeholder="Deck name"
               value={newDeck.name}
               onChange={(e) => setNewDeck((d) => ({ ...d, name: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
             />
             <select
               value={newDeck.difficulty}
               onChange={(e) => setNewDeck((d) => ({ ...d, difficulty: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
             >
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>

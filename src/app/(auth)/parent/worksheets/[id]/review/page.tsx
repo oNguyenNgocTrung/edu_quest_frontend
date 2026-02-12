@@ -618,7 +618,7 @@ function EditQuestionForm({
               setOptions(["", "", "", ""]);
             }
           }}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
         >
           <option value="mcq">Multiple Choice</option>
           <option value="true-false">True/False</option>
@@ -633,7 +633,7 @@ function EditQuestionForm({
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
           rows={2}
         />
       </div>
@@ -670,7 +670,7 @@ function EditQuestionForm({
                     setOptions(newOpts);
                     if (wasCorrect) setCorrectAnswer(e.target.value);
                   }}
-                  className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
             ))}
@@ -713,7 +713,7 @@ function EditQuestionForm({
             type="text"
             value={correctAnswer}
             onChange={(e) => setCorrectAnswer(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           />
         </div>
       )}
@@ -779,7 +779,7 @@ function AddQuestionForm({
               setCorrectAnswer("");
               if (newType === "mcq") setOptions(["", "", "", ""]);
             }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
           >
             <option value="mcq">Multiple Choice</option>
             <option value="true-false">True/False</option>
@@ -795,7 +795,7 @@ function AddQuestionForm({
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Enter your question..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
             rows={2}
           />
         </div>
@@ -835,7 +835,7 @@ function AddQuestionForm({
                       if (wasCorrect) setCorrectAnswer(e.target.value);
                     }}
                     placeholder={`Option ${String.fromCharCode(65 + i)}`}
-                    className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   />
                 </div>
               ))}
@@ -879,7 +879,7 @@ function AddQuestionForm({
               value={correctAnswer}
               onChange={(e) => setCorrectAnswer(e.target.value)}
               placeholder="Enter the correct answer"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
             />
           </div>
         )}

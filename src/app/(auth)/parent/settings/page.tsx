@@ -86,7 +86,7 @@ export default function SettingsPage() {
                   setPinValue(e.target.value.replace(/\D/g, "").slice(0, 4))
                 }
                 placeholder="Enter 4-digit PIN"
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-center tracking-widest text-2xl"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 text-center tracking-widest text-2xl"
               />
               <div className="flex gap-2">
                 <button

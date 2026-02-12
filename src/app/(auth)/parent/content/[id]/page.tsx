@@ -286,7 +286,7 @@ export default function DeckDetailPage() {
                     setNewCard((c) => ({ ...c, front_text: e.target.value }))
                   }
                   placeholder="Enter question..."
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
                   rows={3}
                 />
               </div>
@@ -300,7 +300,7 @@ export default function DeckDetailPage() {
                     setNewCard((c) => ({ ...c, back_text: e.target.value }))
                   }
                   placeholder="Enter answer..."
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
                   rows={3}
                 />
               </div>
@@ -353,7 +353,7 @@ export default function DeckDetailPage() {
                     }))
                   }
                   placeholder="Enter question..."
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
                   rows={2}
                 />
               </div>
@@ -394,7 +394,7 @@ export default function DeckDetailPage() {
                           setNewQuestion((q) => ({ ...q, options: opts }));
                         }}
                         placeholder={`Option ${String.fromCharCode(65 + i)}`}
-                        className="flex-1 px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="flex-1 px-4 py-2 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
                       />
                     </div>
                   ))}
@@ -417,7 +417,7 @@ export default function DeckDetailPage() {
                     }))
                   }
                   placeholder="Why is this the correct answer?"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
             </div>
@@ -560,7 +560,7 @@ function FlashcardItem({
             <textarea
               value={front}
               onChange={(e) => setFront(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
               rows={3}
             />
           </div>
@@ -571,7 +571,7 @@ function FlashcardItem({
             <textarea
               value={back}
               onChange={(e) => setBack(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
               rows={3}
             />
           </div>
@@ -690,7 +690,7 @@ function QuestionItem({
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
               rows={2}
             />
           </div>
@@ -723,7 +723,7 @@ function QuestionItem({
                       newOpts[i] = e.target.value;
                       setOptions(newOpts);
                     }}
-                    className="flex-1 px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex-1 px-4 py-2 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
               ))}
@@ -737,7 +737,7 @@ function QuestionItem({
               type="text"
               value={explanation}
               onChange={(e) => setExplanation(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
             />
           </div>
         </div>

@@ -318,7 +318,7 @@ export default function WorksheetUploadPage() {
                       setMetadata({ ...metadata, title: e.target.value })
                     }
                     placeholder="e.g., Math Worksheet - Fractions"
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 transition-colors"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
                 </div>
@@ -339,7 +339,7 @@ export default function WorksheetUploadPage() {
                         child_profile_id: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 transition-colors"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
                     <option value="">Select child (optional)</option>
@@ -364,7 +364,7 @@ export default function WorksheetUploadPage() {
                     onChange={(e) =>
                       setMetadata({ ...metadata, subject_id: e.target.value })
                     }
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 transition-colors"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   >
                     <option value="">Auto-detect</option>
@@ -390,7 +390,7 @@ export default function WorksheetUploadPage() {
                     onChange={(e) =>
                       setMetadata({ ...metadata, school_date: e.target.value })
                     }
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 transition-colors"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
                 </div>
@@ -410,7 +410,7 @@ export default function WorksheetUploadPage() {
                       setMetadata({ ...metadata, chapter: e.target.value })
                     }
                     placeholder="e.g., Chapter 5: Fractions"
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 transition-colors"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
                 </div>
@@ -433,7 +433,7 @@ export default function WorksheetUploadPage() {
                       })
                     }
                     placeholder="e.g., Math Grade 4, Page 142"
-                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-400 transition-colors"
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:border-purple-400 transition-colors"
                     style={{ fontFamily: "Inter, sans-serif" }}
                   />
                 </div>
