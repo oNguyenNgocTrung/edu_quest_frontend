@@ -18,7 +18,14 @@
     "viewTrophies": "View your trophies and badges",
     "continueLearning": "Continue Learning",
     "readyToLearn": "Ready to learn today?",
-    "searchLessons": "Search lessons..."
+    "searchLessons": "Search lessons...",
+    "xpToNextLevel": "{{xp}} XP to next level",
+    "percentComplete": "{{percent}}% Complete",
+    "noSubjectsYet": "No subjects yet!",
+    "startExploring": "Start exploring subjects to begin your learning journey",
+    "exploreSubjects": "Explore Subjects",
+    "cardsReadyToReview": "{{count}} cards ready to review",
+    "allCaughtUp": "All caught up!"
   },
   "learn": {
     "title": "Your Learning Journey",

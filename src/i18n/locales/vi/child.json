@@ -18,7 +18,14 @@
     "viewTrophies": "Xem cúp và huy hiệu",
     "continueLearning": "Tiếp tục học",
     "readyToLearn": "Sẵn sàng học hôm nay?",
-    "searchLessons": "Tìm bài học..."
+    "searchLessons": "Tìm bài học...",
+    "xpToNextLevel": "{{xp}} XP để lên cấp",
+    "percentComplete": "{{percent}}% Hoàn thành",
+    "noSubjectsYet": "Chưa có môn học nào!",
+    "startExploring": "Bắt đầu khám phá các môn học để bắt đầu hành trình học tập",
+    "exploreSubjects": "Khám phá môn học",
+    "cardsReadyToReview": "{{count}} thẻ sẵn sàng ôn tập",
+    "allCaughtUp": "Đã ôn hết!"
   },
   "learn": {
     "title": "Hành trình học tập",

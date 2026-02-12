@@ -249,6 +249,15 @@ export default function ChildHomePage() {
     enabled: !!currentChildProfile,
   });
 
+  const { data: cardReviewData } = useQuery({
+    queryKey: ["card_reviews", currentChildProfile?.id],
+    queryFn: async () => {
+      const { data } = await apiClient.get("/card_reviews");
+      return data as { due_count: number; new_count: number };
+    },
+    enabled: !!currentChildProfile,
+  });
+
   // Profile selector if no child profile selected
   if (!currentChildProfile) {
     return (
@@ -336,8 +345,8 @@ export default function ChildHomePage() {
     }
   };
 
-  // Hardcoded cards due for now (would come from API)
-  const cardsDue = 12;
+  const cardsDue = cardReviewData?.due_count ?? 0;
+  const enrolledSubjects = subjects?.filter((s) => s.enrollment) ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-100 via-pink-50 to-orange-50 pb-24 lg:pb-0">
@@ -452,8 +461,8 @@ export default function ChildHomePage() {
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">🧠</span>
                 <div>
-                  <h4 className="font-bold text-white text-sm">Brain Boost!</h4>
-                  <p className="text-xs text-purple-100">{cardsDue} cards ready</p>
+                  <h4 className="font-bold text-white text-sm">{t('brainBoost.title')}</h4>
+                  <p className="text-xs text-purple-100">{cardsDue} {t('brainBoost.cardsReady')}</p>
                 </div>
               </div>
             </motion.div>
@@ -495,8 +504,8 @@ export default function ChildHomePage() {
                 />
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">{xpToNextLevel} XP to next level</span>
-                <span className="font-bold text-purple-600">{Math.round(xpProgress)}% Complete</span>
+                <span className="text-gray-600">{t('home.xpToNextLevel', { xp: xpToNextLevel })}</span>
+                <span className="font-bold text-purple-600">{t('home.percentComplete', { percent: Math.round(xpProgress) })}</span>
               </div>
             </motion.div>
 
@@ -563,7 +572,7 @@ export default function ChildHomePage() {
           )}
 
           {/* Your Subjects Section */}
-          {subjects && subjects.length > 0 && (
+          {enrolledSubjects.length > 0 ? (
             <div className="mb-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-black text-gray-800">{t('home.yourSubjects')}</h2>
@@ -577,7 +586,7 @@ export default function ChildHomePage() {
               </div>
 
               <div className="grid grid-cols-4 gap-6">
-                {subjects.slice(0, 8).map((subject, index) => (
+                {enrolledSubjects.slice(0, 8).map((subject, index) => (
                   <SubjectCardDesktop
                     key={subject.id}
                     subject={subject}
@@ -587,6 +596,24 @@ export default function ChildHomePage() {
                 ))}
               </div>
             </div>
+          ) : subjects && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8 bg-white rounded-3xl p-8 shadow-lg text-center"
+            >
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
+                <BookOpen className="w-8 h-8 text-purple-500" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">{t('home.noSubjectsYet')}</h3>
+              <p className="text-gray-500 mb-4">{t('home.startExploring')}</p>
+              <button
+                onClick={() => router.push("/child/learn")}
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-full hover:shadow-lg transition-all"
+              >
+                {t('home.exploreSubjects')}
+              </button>
+            </motion.div>
           )}
 
           {/* Two Column Bottom Section */}
@@ -600,11 +627,11 @@ export default function ChildHomePage() {
               <div className="space-y-4">
                 <QuickActionCardDesktop
                   icon="🧠"
-                  title={cardsDue > 0 ? "Brain Boost!" : "All Done!"}
+                  title={cardsDue > 0 ? t('brainBoost.title') : t('brainBoost.allDone')}
                   subtitle={
                     cardsDue > 0
-                      ? `${cardsDue} cards ready to review`
-                      : "All caught up!"
+                      ? t('home.cardsReadyToReview', { count: cardsDue })
+                      : t('home.allCaughtUp')
                   }
                   gradient={
                     cardsDue > 0
@@ -625,41 +652,32 @@ export default function ChildHomePage() {
               </div>
             </div>
 
-            {/* Continue Learning */}
-            <div>
-              <h3 className="text-xl font-bold text-gray-800 mb-4">
-                {t('home.continueLearning')}
-              </h3>
-              <div className="space-y-3">
-                <ContinueLearningCard
-                  subject="Math"
-                  lesson="Lesson 4: Division"
-                  progress={65}
-                  bgColor="#DBEAFE"
-                  iconColor="#3B82F6"
-                  icon={Calculator}
-                  onClick={() => router.push("/child/learn")}
-                />
-                <ContinueLearningCard
-                  subject="Science"
-                  lesson="Lesson 2: Planets"
-                  progress={40}
-                  bgColor="#D1FAE5"
-                  iconColor="#10B981"
-                  icon={FlaskConical}
-                  onClick={() => router.push("/child/learn")}
-                />
-                <ContinueLearningCard
-                  subject="Language"
-                  lesson="Lesson 8: Verbs"
-                  progress={85}
-                  bgColor="#EDE9FE"
-                  iconColor="#8B5CF6"
-                  icon={BookOpen}
-                  onClick={() => router.push("/child/learn")}
-                />
+            {/* Continue Learning — only show enrolled subjects */}
+            {enrolledSubjects.length > 0 && (
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">
+                  {t('home.continueLearning')}
+                </h3>
+                <div className="space-y-3">
+                  {enrolledSubjects.slice(0, 3).map((subject) => {
+                    const Icon = iconMap[subject.icon_name] || BookOpen;
+                    const mastery = subject.enrollment?.mastery_level ?? 0;
+                    return (
+                      <ContinueLearningCard
+                        key={subject.id}
+                        subject={subject.name}
+                        lesson={`${t('common:level')} ${subject.enrollment?.current_level ?? 1}`}
+                        progress={mastery}
+                        bgColor={`${subject.display_color}20`}
+                        iconColor={subject.display_color}
+                        icon={Icon}
+                        onClick={() => router.push(`/child/learn/${subject.id}`)}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -1023,12 +1041,30 @@ export default function ChildHomePage() {
           onReviewClick={() => router.push("/child/flashcards/review")}
         />
 
-        {/* Subjects */}
-        {subjects && (
+        {/* Subjects — only show enrolled ones */}
+        {enrolledSubjects.length > 0 ? (
           <YourSubjects
-            subjects={subjects}
+            subjects={enrolledSubjects}
             onSubjectClick={(subjectId) => router.push(`/child/learn/${subjectId}`)}
           />
+        ) : subjects && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 bg-white rounded-3xl p-6 shadow-lg text-center"
+          >
+            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-purple-100 flex items-center justify-center">
+              <BookOpen className="w-6 h-6 text-purple-500" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-1">{t('home.noSubjectsYet')}</h3>
+            <p className="text-sm text-gray-500 mb-3">{t('home.startExploring')}</p>
+            <button
+              onClick={() => router.push("/child/learn")}
+              className="px-5 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-bold rounded-full"
+            >
+              {t('home.exploreSubjects')}
+            </button>
+          </motion.div>
         )}
 
         {/* Quick Actions */}
@@ -1101,13 +1137,13 @@ export default function ChildHomePage() {
                       className="font-bold text-white text-left leading-tight"
                       style={{ fontSize: "15px" }}
                     >
-                      {cardsDue > 0 ? "Brain Boost!" : "All Done!"}
+                      {cardsDue > 0 ? t('brainBoost.title') : t('brainBoost.allDone')}
                     </h3>
                     <p
                       className="text-left font-medium"
                       style={{ fontSize: "12px", color: "rgba(255, 255, 255, 0.8)" }}
                     >
-                      {cardsDue > 0 ? `${cardsDue} cards ready` : "All caught up!"}
+                      {cardsDue > 0 ? `${cardsDue} ${t('brainBoost.cardsReady')}` : t('home.allCaughtUp')}
                     </p>
                   </div>
                 </div>
