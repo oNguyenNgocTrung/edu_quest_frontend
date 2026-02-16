@@ -336,7 +336,13 @@
     "retry": "Thử lại",
     "dashboard": "Tổng quan",
     "untitled": "Bài tập chưa đặt tên",
-    "questionsCount": "{{count}} câu hỏi"
+    "questionsCount": "{{count}} câu hỏi",
+    "delete": "Xóa",
+    "deleteConfirmTitle": "Xóa bài tập?",
+    "deleteConfirmMessage": "Bạn có chắc chắn muốn xóa \"{{title}}\"? Hành động này không thể hoàn tác.",
+    "deleteSuccess": "Đã xóa bài tập thành công",
+    "deleteError": "Không thể xóa bài tập",
+    "cancel": "Hủy"
   },
   "worksheetUpload": {
     "title": "Tải lên bài tập",

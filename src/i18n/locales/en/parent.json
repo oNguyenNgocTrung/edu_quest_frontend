@@ -336,7 +336,13 @@
     "retry": "Retry",
     "dashboard": "Dashboard",
     "untitled": "Untitled Worksheet",
-    "questionsCount": "{{count}} questions"
+    "questionsCount": "{{count}} questions",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete Worksheet?",
+    "deleteConfirmMessage": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
+    "deleteSuccess": "Worksheet deleted successfully",
+    "deleteError": "Failed to delete worksheet",
+    "cancel": "Cancel"
   },
   "worksheetUpload": {
     "title": "Upload Worksheet",
