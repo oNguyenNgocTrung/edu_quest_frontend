@@ -46,6 +46,7 @@ export default function DeckDetailPage() {
     explanation: "",
     xp_value: 10,
     image_url: "" as string,
+    image_blob_id: "" as string,
   });
   const [newQuestionUploading, setNewQuestionUploading] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -154,6 +155,7 @@ export default function DeckDetailPage() {
         explanation: "",
         xp_value: 10,
         image_url: "",
+        image_blob_id: "",
       });
     },
   });
@@ -652,7 +654,7 @@ export default function DeckDetailPage() {
                     />
                     <button
                       type="button"
-                      onClick={() => setNewQuestion((q) => ({ ...q, image_url: "" }))}
+                      onClick={() => setNewQuestion((q) => ({ ...q, image_url: "", image_blob_id: "" }))}
                       className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
                     >
                       <X size={14} />
@@ -677,8 +679,8 @@ export default function DeckDetailPage() {
                         if (!file) return;
                         setNewQuestionUploading(true);
                         try {
-                          const url = await uploadImage(file);
-                          setNewQuestion((q) => ({ ...q, image_url: url }));
+                          const { url, blob_id } = await uploadImage(file);
+                          setNewQuestion((q) => ({ ...q, image_url: url, image_blob_id: blob_id }));
                         } catch {
                           toast.error(t("contentDetail.uploadFailed"));
                         } finally {
@@ -759,6 +761,7 @@ export default function DeckDetailPage() {
                 onClick={() => createQuestion.mutate({
                   ...newQuestion,
                   image_url: newQuestion.image_url || undefined,
+                  image_blob_id: newQuestion.image_blob_id || undefined,
                 } as typeof newQuestion)}
                 disabled={
                   !newQuestion.question_text ||
@@ -780,6 +783,7 @@ export default function DeckDetailPage() {
                     explanation: "",
                     xp_value: 10,
                     image_url: "",
+                    image_blob_id: "",
                   });
                 }}
                 className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
@@ -1021,6 +1025,7 @@ function QuestionItem({
   const [explanation, setExplanation] = useState(question.explanation || "");
   const [xpValue, setXpValue] = useState(question.xp_value ?? 10);
   const [imageUrl, setImageUrl] = useState(question.image_url || "");
+  const [imageBlobId, setImageBlobId] = useState(question.image_blob_id || "");
   const [imageUploading, setImageUploading] = useState(false);
 
   if (isEditing) {
@@ -1059,7 +1064,7 @@ function QuestionItem({
                 />
                 <button
                   type="button"
-                  onClick={() => setImageUrl("")}
+                  onClick={() => { setImageUrl(""); setImageBlobId(""); }}
                   className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
                 >
                   <X size={14} />
@@ -1084,8 +1089,9 @@ function QuestionItem({
                     if (!file) return;
                     setImageUploading(true);
                     try {
-                      const url = await uploadImage(file);
+                      const { url, blob_id } = await uploadImage(file);
                       setImageUrl(url);
+                      setImageBlobId(blob_id);
                     } catch {
                       toast.error(t("contentDetail.uploadFailed"));
                     } finally {
@@ -1169,6 +1175,7 @@ function QuestionItem({
                 explanation,
                 xp_value: xpValue,
                 image_url: imageUrl || null,
+                image_blob_id: imageBlobId || null,
               })
             }
             disabled={!text || isSaving}
@@ -1185,6 +1192,7 @@ function QuestionItem({
               setExplanation(question.explanation || "");
               setXpValue(question.xp_value ?? 10);
               setImageUrl(question.image_url || "");
+              setImageBlobId(question.image_blob_id || "");
               onCancelEdit();
             }}
             className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition"
@@ -1293,6 +1301,7 @@ function ReviewEditForm({
   const [explanation, setExplanation] = useState(question.explanation || "");
   const [xpValue, setXpValue] = useState(question.xp_value ?? 10);
   const [reviewImageUrl, setReviewImageUrl] = useState(question.image_url || "");
+  const [reviewImageBlobId, setReviewImageBlobId] = useState(question.image_blob_id || "");
   const [reviewImageUploading, setReviewImageUploading] = useState(false);
 
   return (
@@ -1304,7 +1313,7 @@ function ReviewEditForm({
         <div className="flex gap-2">
           <button
             onClick={() =>
-              onSave({ text, type, options, correct_answer: correctAnswer, explanation: explanation || undefined, xp_value: xpValue, image_url: reviewImageUrl || undefined })
+              onSave({ text, type, options, correct_answer: correctAnswer, explanation: explanation || undefined, xp_value: xpValue, image_url: reviewImageUrl || undefined, image_blob_id: reviewImageBlobId || undefined })
             }
             className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
           >
@@ -1373,7 +1382,7 @@ function ReviewEditForm({
             />
             <button
               type="button"
-              onClick={() => setReviewImageUrl("")}
+              onClick={() => { setReviewImageUrl(""); setReviewImageBlobId(""); }}
               className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
             >
               <X size={12} />
@@ -1399,8 +1408,9 @@ function ReviewEditForm({
                   if (!file) return;
                   setReviewImageUploading(true);
                   try {
-                    const url = await uploadImage(file);
+                    const { url, blob_id } = await uploadImage(file);
                     setReviewImageUrl(url);
+                    setReviewImageBlobId(blob_id);
                   } catch {
                     toast.error(t("contentDetail.uploadFailed"));
                   } finally {

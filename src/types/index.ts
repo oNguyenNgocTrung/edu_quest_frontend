@@ -87,6 +87,8 @@ export interface Flashcard {
   back_text: string;
   front_image_url: string | null;
   back_image_url: string | null;
+  front_image_blob_id?: string | null;
+  back_image_blob_id?: string | null;
   position: number;
 }
 
@@ -102,6 +104,7 @@ export interface Question {
   correct_answer_index?: number;
   explanation?: string;
   image_url?: string | null;
+  image_blob_id?: string | null;
 }
 
 // ─── Learning Session ──────────────────────────────────────────
@@ -281,6 +284,7 @@ export interface WorksheetExtractedQuestion {
   explanation?: string;
   xp_value?: number;
   image_url?: string | null;
+  image_blob_id?: string | null;
   confidence: number;
   needs_review: boolean;
   similar_exercises: WorksheetSimilarExercise[];
