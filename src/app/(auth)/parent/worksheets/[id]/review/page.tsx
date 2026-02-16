@@ -16,7 +16,10 @@ import {
   Save,
   Upload,
   X,
+  Image as ImageIcon,
+  Loader2,
 } from "lucide-react";
+import { uploadImage } from "@/lib/upload";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import apiClient from "@/lib/api-client";
@@ -606,80 +609,88 @@ function EditQuestionForm({
   const [text, setText] = useState(question.text);
   const [type, setType] = useState(question.type);
   const [options, setOptions] = useState(question.options || []);
-  const [correctAnswer, setCorrectAnswer] = useState(
-    question.correct_answer || ""
-  );
+  const [correctAnswer, setCorrectAnswer] = useState(question.correct_answer || "");
+  const [explanation, setExplanation] = useState(question.explanation || "");
+  const [xpValue, setXpValue] = useState(question.xp_value ?? 10);
+  const [imageUrl, setImageUrl] = useState(question.image_url || "");
+  const [imageBlobId, setImageBlobId] = useState(question.image_blob_id || "");
+  const [imageUploading, setImageUploading] = useState(false);
+
+  // Get correct answer index for MCQ
+  const correctIdx = type === "mcq" ? options.findIndex(opt => opt === correctAnswer) : -1;
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h4 className="font-semibold text-gray-700">
-          {t("worksheetReview.editQuestionNumber", { number: question.number || index + 1 })}
-        </h4>
-        <div className="flex gap-2">
-          <button
-            onClick={() =>
-              onSave({
-                text,
-                type,
-                options,
-                correct_answer: correctAnswer,
-                needs_review: false,
-              })
-            }
-            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
-          >
-            <Check size={14} />
-            {t("worksheetReview.save")}
-          </button>
-          <button
-            onClick={onCancel}
-            className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
-          >
-            <X size={14} />
-            {t("worksheetReview.cancel")}
-          </button>
-        </div>
-      </div>
+      <h4 className="font-semibold text-gray-700">
+        {t("worksheetReview.editQuestionNumber", { number: question.number || index + 1 })}
+      </h4>
 
+      {/* Question Text */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          {t("worksheetReview.questionType")}
-        </label>
-        <select
-          value={type}
-          onChange={(e) => {
-            const newType = e.target.value as typeof type;
-            setType(newType);
-            if (newType === "true-false") {
-              setOptions(["True", "False"]);
-              setCorrectAnswer("True");
-            } else if (newType === "fill-blank") {
-              setOptions([]);
-            } else if (newType === "mcq" && options.length < 2) {
-              setOptions(["", "", "", ""]);
-            }
-          }}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-        >
-          <option value="mcq">{t("worksheetReview.multipleChoice")}</option>
-          <option value="true-false">{t("worksheetReview.trueFalse")}</option>
-          <option value="fill-blank">{t("worksheetReview.fillBlank")}</option>
-        </select>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           {t("worksheetReview.questionTextLabel")}
         </label>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+          className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500 resize-none"
           rows={2}
         />
       </div>
 
+      {/* Image upload */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {t("worksheetReview.questionImage")}
+        </label>
+        {imageUrl ? (
+          <div className="relative inline-block">
+            <img
+              src={imageUrl}
+              alt=""
+              className="max-h-48 rounded-lg border border-gray-200 object-contain"
+            />
+            <button
+              type="button"
+              onClick={() => { setImageUrl(""); setImageBlobId(""); }}
+              className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ) : (
+          <label className="flex items-center gap-2 px-4 py-3 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-indigo-300 hover:bg-gray-50 transition w-fit">
+            {imageUploading ? (
+              <Loader2 size={16} className="animate-spin text-indigo-500" />
+            ) : (
+              <ImageIcon size={16} className="text-gray-400" />
+            )}
+            <span className="text-sm text-gray-500">
+              {imageUploading ? t("worksheetReview.uploading") : t("worksheetReview.uploadImage")}
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setImageUploading(true);
+                try {
+                  const { url, blob_id } = await uploadImage(file);
+                  setImageUrl(url);
+                  setImageBlobId(blob_id);
+                } catch {
+                  toast.error(t("worksheetReview.uploadFailed"));
+                }
+                setImageUploading(false);
+              }}
+            />
+          </label>
+        )}
+      </div>
+
+      {/* MCQ Options */}
       {type === "mcq" && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -687,32 +698,32 @@ function EditQuestionForm({
           </label>
           <div className="space-y-2">
             {options.map((opt, i) => (
-              <div key={i} className="flex items-center gap-2">
+              <div key={i} className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setCorrectAnswer(opt)}
+                  onClick={() => setCorrectAnswer(options[i])}
                   className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                    correctAnswer === opt
+                    correctIdx === i
                       ? "border-green-500 bg-green-500 text-white"
                       : "border-gray-300 hover:border-green-400"
                   }`}
                 >
-                  {correctAnswer === opt && <Check size={12} />}
+                  {correctIdx === i && <Check size={14} />}
                 </button>
-                <span className="text-sm text-gray-500 w-6">
+                <span className="text-sm font-medium text-gray-500 w-6">
                   {String.fromCharCode(65 + i)}.
                 </span>
                 <input
                   type="text"
                   value={opt}
                   onChange={(e) => {
-                    const wasCorrect = correctAnswer === opt;
+                    const wasCorrect = correctIdx === i;
                     const newOpts = [...options];
                     newOpts[i] = e.target.value;
                     setOptions(newOpts);
                     if (wasCorrect) setCorrectAnswer(e.target.value);
                   }}
-                  className="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
             ))}
@@ -720,6 +731,7 @@ function EditQuestionForm({
         </div>
       )}
 
+      {/* True/False Options */}
       {type === "true-false" && (
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -746,19 +758,78 @@ function EditQuestionForm({
         </div>
       )}
 
+      {/* Fill-in-the-blank Answer */}
       {type === "fill-blank" && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             {t("worksheetReview.correctAnswerLabel")}
           </label>
           <input
             type="text"
             value={correctAnswer}
             onChange={(e) => setCorrectAnswer(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
           />
         </div>
       )}
+
+      {/* Explanation & XP Value */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {t("worksheetReview.explanation")}
+          </label>
+          <input
+            type="text"
+            value={explanation}
+            onChange={(e) => setExplanation(e.target.value)}
+            placeholder={t("worksheetReview.explanationPlaceholder")}
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            {t("worksheetReview.xpValue")}
+          </label>
+          <input
+            type="number"
+            min={1}
+            max={100}
+            value={xpValue}
+            onChange={(e) => setXpValue(Number(e.target.value) || 1)}
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none text-gray-900 focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+      </div>
+
+      {/* Buttons at bottom */}
+      <div className="flex gap-2 pt-2">
+        <button
+          onClick={() =>
+            onSave({
+              text,
+              type,
+              options,
+              correct_answer: correctAnswer,
+              explanation: explanation || undefined,
+              xp_value: xpValue,
+              image_url: imageUrl || undefined,
+              image_blob_id: imageBlobId || undefined,
+              needs_review: false,
+            })
+          }
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition"
+        >
+          <Check size={16} />
+          {t("worksheetReview.save")}
+        </button>
+        <button
+          onClick={onCancel}
+          className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg font-medium hover:bg-gray-200 transition"
+        >
+          {t("worksheetReview.cancel")}
+        </button>
+      </div>
     </div>
   );
 }

@@ -441,7 +441,14 @@
     "approvedSuccess": "Approved! {{count}} questions added to practice.",
     "approveError": "Failed to approve worksheet",
     "questionsImported": "{{count}} questions imported!",
-    "cancelProcessing": "Cancel Processing"
+    "cancelProcessing": "Cancel Processing",
+    "questionImage": "Question Image (optional)",
+    "uploading": "Uploading...",
+    "uploadImage": "Upload Image",
+    "uploadFailed": "Failed to upload image",
+    "explanation": "Explanation",
+    "explanationPlaceholder": "Explain why this is the correct answer...",
+    "xpValue": "XP Value"
   },
   "worksheetProcessing": {
     "dashboard": "Dashboard",

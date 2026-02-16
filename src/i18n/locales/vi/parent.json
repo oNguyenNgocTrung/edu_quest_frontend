@@ -441,7 +441,14 @@
     "approvedSuccess": "Đã duyệt! {{count}} câu hỏi được thêm vào luyện tập.",
     "approveError": "Không thể duyệt bài tập",
     "questionsImported": "Đã nhập {{count}} câu hỏi!",
-    "cancelProcessing": "Hủy xử lý"
+    "cancelProcessing": "Hủy xử lý",
+    "questionImage": "Hình ảnh câu hỏi (tùy chọn)",
+    "uploading": "Đang tải lên...",
+    "uploadImage": "Tải lên hình ảnh",
+    "uploadFailed": "Không thể tải lên hình ảnh",
+    "explanation": "Giải thích",
+    "explanationPlaceholder": "Giải thích tại sao đây là đáp án đúng...",
+    "xpValue": "Giá trị XP"
   },
   "worksheetProcessing": {
     "title": "Đang xử lý bài tập",
