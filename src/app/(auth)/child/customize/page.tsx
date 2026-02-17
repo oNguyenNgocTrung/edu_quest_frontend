@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Coins, Lock, Check, Sparkles, Star, Trophy } from "lucide-react";
@@ -72,8 +72,13 @@ export default function CustomizePage() {
   const purchaseMutation = usePurchaseItem();
   const equipMutation = useEquipItem();
 
+  useEffect(() => {
+    if (!currentChildProfile) {
+      router.push("/child/home");
+    }
+  }, [currentChildProfile, router]);
+
   if (!currentChildProfile) {
-    router.push("/child/home");
     return null;
   }
 

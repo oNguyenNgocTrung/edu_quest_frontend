@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -37,8 +38,13 @@ export default function ChildProfilePage() {
   const { data: customization } = useMascotCustomization();
   const updateAvatarMutation = useUpdateAvatar();
 
+  useEffect(() => {
+    if (!currentChildProfile) {
+      router.push("/child/home");
+    }
+  }, [currentChildProfile, router]);
+
   if (!currentChildProfile) {
-    router.push("/child/home");
     return null;
   }
 
