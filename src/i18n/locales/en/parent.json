@@ -545,5 +545,52 @@
     "loading": "Loading...",
     "error": "Error",
     "success": "Success"
+  },
+  "coinRewards": {
+    "title": "Coin Rewards Settings",
+    "subtitle": "Customize how many coins your children earn",
+    "howItWorks": "How Coin Rewards Work",
+    "description": "Children earn coins for completing lessons, maintaining streaks, and more. Customize the coin amounts below, or disable specific rewards entirely.",
+    "loading": "Loading settings...",
+    "settingsSaved": "Settings saved successfully!",
+    "saveError": "Failed to save settings",
+    "resetToDefault": "Reset to default",
+    "saveChanges": "Save Changes",
+    "saving": "Saving...",
+    "customized": "Customized",
+    "defaultCoins": "Default: {{count}} coins",
+    "action": "action",
+    "actions": "actions",
+    "categories": {
+      "lessons": "Lesson Rewards",
+      "quests": "Daily Quest Rewards",
+      "streaks": "Streak Milestones",
+      "bosses": "Boss Level Rewards"
+    },
+    "actions": {
+      "lesson_completed": "Complete a lesson (1 star)",
+      "good_lesson_score": "Good lesson score (2 stars)",
+      "perfect_lesson_score": "Perfect lesson score (3 stars)",
+      "daily_quest_completed": "Complete daily quest",
+      "streak_7_day": "7-day streak milestone",
+      "streak_14_day": "14-day streak milestone",
+      "streak_30_day": "30-day streak milestone",
+      "beat_boss_level": "Beat a boss level"
+    },
+    "perChildSettings": "Per-Child Settings",
+    "perChildDescription": "Set custom coin multipliers for individual children",
+    "selectChild": "Select Child",
+    "chooseChild": "Choose a child profile...",
+    "levelMultiplier": "Coin Multiplier",
+    "multiplierExplanation": "All coin rewards will be multiplied by this value for this child",
+    "saveChildSettings": "Save Child Settings",
+    "childOverridesSaved": "Child settings saved!",
+    "tips": "Tips for Motivation",
+    "tip1": "Start with default values and adjust based on engagement",
+    "tip2": "Higher streak rewards encourage daily learning habits",
+    "tip3": "Boss level bonuses make challenges more exciting",
+    "tip4": "Use per-child multipliers to balance younger vs older children",
+    "coinRewardsSettings": "Coin Rewards",
+    "customizeCoinRewards": "Customize reward amounts"
   }
 }

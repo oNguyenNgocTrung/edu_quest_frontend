@@ -544,5 +544,52 @@
     "loading": "Đang tải...",
     "error": "Lỗi",
     "success": "Thành công"
+  },
+  "coinRewards": {
+    "title": "Cài đặt thưởng xu",
+    "subtitle": "Tùy chỉnh số xu con bạn nhận được",
+    "howItWorks": "Cách thưởng xu hoạt động",
+    "description": "Con nhận xu khi hoàn thành bài học, duy trì chuỗi ngày, và nhiều hơn nữa. Tùy chỉnh số xu bên dưới hoặc tắt các phần thưởng cụ thể.",
+    "loading": "Đang tải cài đặt...",
+    "settingsSaved": "Đã lưu cài đặt!",
+    "saveError": "Không thể lưu cài đặt",
+    "resetToDefault": "Đặt lại mặc định",
+    "saveChanges": "Lưu thay đổi",
+    "saving": "Đang lưu...",
+    "customized": "Đã tùy chỉnh",
+    "defaultCoins": "Mặc định: {{count}} xu",
+    "action": "hành động",
+    "actions": "hành động",
+    "categories": {
+      "lessons": "Thưởng bài học",
+      "quests": "Thưởng nhiệm vụ hàng ngày",
+      "streaks": "Mốc chuỗi ngày",
+      "bosses": "Thưởng màn Boss"
+    },
+    "actions": {
+      "lesson_completed": "Hoàn thành bài học (1 sao)",
+      "good_lesson_score": "Điểm tốt (2 sao)",
+      "perfect_lesson_score": "Điểm hoàn hảo (3 sao)",
+      "daily_quest_completed": "Hoàn thành nhiệm vụ hàng ngày",
+      "streak_7_day": "Mốc chuỗi 7 ngày",
+      "streak_14_day": "Mốc chuỗi 14 ngày",
+      "streak_30_day": "Mốc chuỗi 30 ngày",
+      "beat_boss_level": "Vượt qua màn Boss"
+    },
+    "perChildSettings": "Cài đặt theo từng con",
+    "perChildDescription": "Đặt hệ số nhân xu riêng cho từng con",
+    "selectChild": "Chọn con",
+    "chooseChild": "Chọn hồ sơ con...",
+    "levelMultiplier": "Hệ số nhân xu",
+    "multiplierExplanation": "Tất cả phần thưởng xu sẽ được nhân với giá trị này cho con này",
+    "saveChildSettings": "Lưu cài đặt con",
+    "childOverridesSaved": "Đã lưu cài đặt con!",
+    "tips": "Mẹo tạo động lực",
+    "tip1": "Bắt đầu với giá trị mặc định và điều chỉnh dựa trên mức độ tham gia",
+    "tip2": "Thưởng chuỗi ngày cao hơn khuyến khích thói quen học hàng ngày",
+    "tip3": "Thưởng màn Boss làm thử thách thú vị hơn",
+    "tip4": "Dùng hệ số nhân riêng để cân bằng giữa con nhỏ và con lớn",
+    "coinRewardsSettings": "Thưởng xu",
+    "customizeCoinRewards": "Tùy chỉnh số xu thưởng"
   }
 }

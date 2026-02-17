@@ -22,6 +22,7 @@ import {
   AlertCircle,
   Plus,
   GraduationCap,
+  Coins,
 } from "lucide-react";
 import apiClient from "@/lib/api-client";
 import type { Worksheet, DashboardSummary, MasteryDataPoint } from "@/types";
@@ -91,6 +92,13 @@ export default function ParentDashboardPage() {
       href: "/parent/rewards",
       color: "bg-amber-100 text-amber-600",
       description: t("dashboard.manageRewardShop"),
+    },
+    {
+      label: t("coinRewards.coinRewardsSettings"),
+      icon: Coins,
+      href: "/parent/coin-rewards",
+      color: "bg-yellow-100 text-yellow-600",
+      description: t("coinRewards.customizeCoinRewards"),
     },
     {
       label: t("dashboard.settings"),
@@ -538,6 +546,13 @@ export default function ParentDashboardPage() {
                 >
                   <Gift className="w-4 h-4 text-amber-500" />
                   {t("dashboard.manageRewards")}
+                </button>
+                <button
+                  onClick={() => router.push("/parent/coin-rewards")}
+                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition-colors flex items-center gap-2"
+                >
+                  <Coins className="w-4 h-4 text-yellow-500" />
+                  {t("coinRewards.coinRewardsSettings")}
                 </button>
                 <button
                   onClick={() => router.push("/parent/settings")}

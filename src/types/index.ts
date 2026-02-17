@@ -399,3 +399,29 @@ export interface MascotCustomization {
   coins: number;
   level: number;
 }
+
+// ─── Coin Reward Settings ────────────────────────────────────────
+export type CoinRewardCategory = "lessons" | "quests" | "streaks" | "bosses";
+
+export interface CoinRewardSetting {
+  action_key: string;
+  coin_amount: number;
+  enabled: boolean;
+  category: CoinRewardCategory;
+  description: string;
+  default_coins: number;
+  is_customized: boolean;
+}
+
+export interface ResolvedCoinReward {
+  coins: number;
+  enabled: boolean;
+  source: "default" | "parent_setting" | "child_override" | "disabled";
+  category: CoinRewardCategory;
+  description: string;
+}
+
+export interface CoinRewardOverrides {
+  level_multiplier?: number;
+  action_overrides?: Record<string, number>;
+}
