@@ -17,11 +17,25 @@ import {
 } from "lucide-react";
 import { BottomNav } from "@/components/child/BottomNav";
 import { resolveAvatar } from "@/lib/avatars";
+import { useMascotCustomization, useUpdateAvatar } from "@/hooks/use-mascot-customization";
+
+const AVAILABLE_AVATARS = [
+  { emoji: "🦊", name: "fox", unlocked: true },
+  { emoji: "🐼", name: "panda", unlocked: true },
+  { emoji: "🦁", name: "lion", unlocked: true },
+  { emoji: "🐸", name: "frog", unlocked: true },
+  { emoji: "🐰", name: "bunny", requiredLevel: 5 },
+  { emoji: "🦉", name: "owl", requiredLevel: 10 },
+  { emoji: "🐯", name: "tiger", requiredLevel: 15 },
+  { emoji: "🐨", name: "koala", requiredLevel: 20 },
+];
 
 export default function ChildProfilePage() {
   const router = useRouter();
   const { currentChildProfile, logout } = useAuthStore();
   const { t } = useTranslation('child');
+  const { data: customization } = useMascotCustomization();
+  const updateAvatarMutation = useUpdateAvatar();
 
   if (!currentChildProfile) {
     router.push("/child/home");
@@ -29,7 +43,23 @@ export default function ChildProfilePage() {
   }
 
   const profile = currentChildProfile;
-  const { emoji } = resolveAvatar(profile.avatar);
+  const currentAvatarEmoji = customization?.avatar_emoji || profile.avatar;
+  const { emoji } = resolveAvatar(currentAvatarEmoji);
+
+  const handleAvatarChange = async (avatarName: string) => {
+    if (updateAvatarMutation.isPending) return;
+    try {
+      await updateAvatarMutation.mutateAsync(avatarName);
+    } catch (err) {
+      console.error("Failed to update avatar:", err);
+    }
+  };
+
+  const isAvatarUnlocked = (avatar: typeof AVAILABLE_AVATARS[0]) => {
+    if (avatar.unlocked) return true;
+    if (avatar.requiredLevel && profile.level >= avatar.requiredLevel) return true;
+    return false;
+  };
 
   // Hardcoded achievements (would come from API)
   const achievements = [
@@ -160,6 +190,7 @@ export default function ChildProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
+          onClick={() => router.push("/child/customize")}
           className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-3xl p-6 text-white cursor-pointer hover:shadow-2xl transition-shadow"
         >
           <div className="flex items-center justify-between mb-4">
@@ -203,24 +234,29 @@ export default function ChildProfilePage() {
           </p>
 
           <div className="grid grid-cols-4 gap-3">
-            {["🦊", "🐼", "🦁", "🐸", "🐰", "🦉", "🐯", "🐨"].map(
-              (e, index) => (
+            {AVAILABLE_AVATARS.map((avatar) => {
+              const unlocked = isAvatarUnlocked(avatar);
+              const isSelected = currentAvatarEmoji === avatar.name || currentAvatarEmoji === avatar.emoji;
+
+              return (
                 <motion.button
-                  key={index}
-                  whileHover={{ scale: index < 4 ? 1.1 : 1 }}
-                  whileTap={{ scale: index < 4 ? 0.9 : 1 }}
+                  key={avatar.name}
+                  onClick={() => unlocked && handleAvatarChange(avatar.name)}
+                  disabled={!unlocked || updateAvatarMutation.isPending}
+                  whileHover={{ scale: unlocked ? 1.1 : 1 }}
+                  whileTap={{ scale: unlocked ? 0.9 : 1 }}
                   className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl transition-all ${
-                    index === 0
+                    isSelected
                       ? "bg-gradient-to-br from-purple-100 to-pink-100 ring-2 ring-purple-500"
-                      : index < 4
+                      : unlocked
                         ? "bg-gray-100 hover:bg-gray-200"
-                        : "bg-gray-100 opacity-50"
+                        : "bg-gray-100 opacity-50 cursor-not-allowed"
                   }`}
                 >
-                  {index < 4 ? e : "🔒"}
+                  {unlocked ? avatar.emoji : <Lock className="w-5 h-5 text-gray-400" />}
                 </motion.button>
-              )
-            )}
+              );
+            })}
           </div>
         </motion.div>
 

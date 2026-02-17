@@ -367,3 +367,35 @@ export interface CardReview {
   ease_factor: number;
   review_count: number;
 }
+
+// ─── Mascot Customization ─────────────────────────────────────
+export type CustomizationCategory = "colors" | "accessories" | "backgrounds" | "effects";
+
+export interface MascotItem {
+  id: string;
+  name: string;
+  category: CustomizationCategory;
+  cost: number;
+  preview: string;
+  required_level: number | null;
+  owned: boolean;
+  equipped: boolean;
+  unlocked: boolean;
+}
+
+export interface MascotEquipped {
+  color: string;
+  accessory: string;
+  background: string;
+  effect: string;
+}
+
+export interface MascotCustomization {
+  id: string;
+  avatar_emoji: string;
+  owned_items: string[];
+  equipped: MascotEquipped;
+  available_items: MascotItem[];
+  coins: number;
+  level: number;
+}
