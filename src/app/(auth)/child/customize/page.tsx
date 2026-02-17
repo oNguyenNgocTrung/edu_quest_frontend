@@ -63,10 +63,23 @@ function getBackgroundGradient(backgroundId: string): string {
   }
 }
 
+interface PreviewState {
+  color: string | null;
+  accessory: string | null;
+  background: string | null;
+  effect: string | null;
+}
+
 export default function CustomizePage() {
   const router = useRouter();
   const { currentChildProfile } = useAuthStore();
   const [selectedCategory, setSelectedCategory] = useState<CustomizationCategory>("colors");
+  const [preview, setPreview] = useState<PreviewState>({
+    color: null,
+    accessory: null,
+    background: null,
+    effect: null,
+  });
 
   const { data: customization, isLoading, error } = useMascotCustomization();
   const purchaseMutation = usePurchaseItem();
@@ -117,10 +130,50 @@ export default function CustomizePage() {
   const level = customization.level;
   const equipped = customization.equipped;
 
+  // Merge equipped with preview - preview takes precedence
+  const displayed = {
+    color: preview.color || equipped.color,
+    accessory: preview.accessory || equipped.accessory,
+    background: preview.background || equipped.background,
+    effect: preview.effect || equipped.effect,
+  };
+
+  // Check if currently previewing (any preview item differs from equipped)
+  const isPreviewing =
+    preview.color !== null ||
+    preview.accessory !== null ||
+    preview.background !== null ||
+    preview.effect !== null;
+
+  const handlePreview = (item: MascotItem) => {
+    // Don't preview locked items
+    if (!item.unlocked) return;
+
+    const categoryKey = item.category === "accessories"
+      ? "accessory"
+      : item.category.slice(0, -1) as keyof PreviewState;
+
+    // Toggle preview off if clicking the same item
+    if (preview[categoryKey] === item.id) {
+      setPreview(prev => ({ ...prev, [categoryKey]: null }));
+    } else {
+      setPreview(prev => ({ ...prev, [categoryKey]: item.id }));
+    }
+  };
+
+  const clearPreview = () => {
+    setPreview({ color: null, accessory: null, background: null, effect: null });
+  };
+
   const handlePurchase = async (item: MascotItem) => {
     if (purchaseMutation.isPending) return;
     try {
       await purchaseMutation.mutateAsync(item.id);
+      // Clear preview for this category after purchase
+      const categoryKey = item.category === "accessories"
+        ? "accessory"
+        : item.category.slice(0, -1) as keyof PreviewState;
+      setPreview(prev => ({ ...prev, [categoryKey]: null }));
     } catch (err) {
       console.error("Purchase failed:", err);
     }
@@ -130,24 +183,33 @@ export default function CustomizePage() {
     if (equipMutation.isPending) return;
     try {
       await equipMutation.mutateAsync(item.id);
+      // Clear preview for this category after equip
+      const categoryKey = item.category === "accessories"
+        ? "accessory"
+        : item.category.slice(0, -1) as keyof PreviewState;
+      setPreview(prev => ({ ...prev, [categoryKey]: null }));
     } catch (err) {
       console.error("Equip failed:", err);
     }
   };
 
-  const getItemEmoji = (preview: string): string => {
-    return ITEM_EMOJIS[preview] || "❓";
+  const getItemEmoji = (itemPreview: string): string => {
+    return ITEM_EMOJIS[itemPreview] || "❓";
   };
 
   const isItemEquipped = (itemId: string): boolean => {
     return Object.values(equipped).includes(itemId);
   };
 
-  const equippedAccessoryItem = customization.available_items.find(
-    (item) => item.id === equipped.accessory
+  const isItemPreviewing = (itemId: string): boolean => {
+    return Object.values(preview).includes(itemId);
+  };
+
+  const displayedAccessoryItem = customization.available_items.find(
+    (item) => item.id === displayed.accessory
   );
-  const equippedColorItem = customization.available_items.find(
-    (item) => item.id === equipped.color
+  const displayedColorItem = customization.available_items.find(
+    (item) => item.id === displayed.color
   );
 
   return (
@@ -176,10 +238,25 @@ export default function CustomizePage() {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className={`bg-gradient-to-br ${getBackgroundGradient(equipped.background)} rounded-3xl p-8 mb-6 relative overflow-hidden shadow-xl`}
+          className={`bg-gradient-to-br ${getBackgroundGradient(displayed.background)} rounded-3xl p-8 mb-6 relative overflow-hidden shadow-xl`}
         >
+          {/* Preview indicator */}
+          {isPreviewing && (
+            <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10">
+              <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                Preview
+              </span>
+              <button
+                onClick={clearPreview}
+                className="bg-white/80 text-gray-700 text-xs font-bold px-3 py-1 rounded-full hover:bg-white"
+              >
+                Reset
+              </button>
+            </div>
+          )}
+
           {/* Background effects for starry night */}
-          {equipped.background === "bg-stars" && (
+          {displayed.background === "bg-stars" && (
             <div className="absolute inset-0">
               {Array.from({ length: 20 }).map((_, i) => (
                 <motion.div
@@ -198,13 +275,14 @@ export default function CustomizePage() {
 
           <div className="relative flex flex-col items-center">
             {/* Accessory badge */}
-            {equipped.accessory !== "acc-none" && equippedAccessoryItem && (
+            {displayed.accessory !== "acc-none" && displayedAccessoryItem && (
               <motion.div
+                key={displayed.accessory}
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 className="absolute -top-4 text-5xl"
               >
-                {getItemEmoji(equippedAccessoryItem.preview)}
+                {getItemEmoji(displayedAccessoryItem.preview)}
               </motion.div>
             )}
 
@@ -213,9 +291,9 @@ export default function CustomizePage() {
               <Mascot mood="celebrating" size="lg" />
 
               {/* Effect overlay */}
-              {equipped.effect !== "effect-none" && (
+              {displayed.effect !== "effect-none" && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  {equipped.effect === "effect-sparkles" && (
+                  {displayed.effect === "effect-sparkles" && (
                     <>
                       {Array.from({ length: 8 }).map((_, i) => (
                         <motion.div
@@ -240,7 +318,7 @@ export default function CustomizePage() {
                       ))}
                     </>
                   )}
-                  {equipped.effect === "effect-hearts" && (
+                  {displayed.effect === "effect-hearts" && (
                     <>
                       {Array.from({ length: 6 }).map((_, i) => (
                         <motion.div
@@ -263,7 +341,7 @@ export default function CustomizePage() {
                       ))}
                     </>
                   )}
-                  {equipped.effect === "effect-fire" && (
+                  {displayed.effect === "effect-fire" && (
                     <motion.div
                       className="absolute bottom-0 text-4xl"
                       animate={{ scale: [1, 1.2, 1] }}
@@ -272,7 +350,7 @@ export default function CustomizePage() {
                       🔥
                     </motion.div>
                   )}
-                  {equipped.effect === "effect-stars" && (
+                  {displayed.effect === "effect-stars" && (
                     <>
                       {Array.from({ length: 5 }).map((_, i) => (
                         <motion.div
@@ -297,7 +375,7 @@ export default function CustomizePage() {
                       ))}
                     </>
                   )}
-                  {equipped.effect === "effect-magic" && (
+                  {displayed.effect === "effect-magic" && (
                     <motion.div
                       className="absolute text-4xl"
                       animate={{
@@ -314,10 +392,10 @@ export default function CustomizePage() {
             </div>
 
             {/* Color indicator */}
-            {equippedColorItem && (
+            {displayedColorItem && (
               <div className="mt-4 flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-                <span className="text-2xl">{getItemEmoji(equippedColorItem.preview)}</span>
-                <span className="text-sm font-bold text-white">{equippedColorItem.name}</span>
+                <span className="text-2xl">{getItemEmoji(displayedColorItem.preview)}</span>
+                <span className="text-sm font-bold text-white">{displayedColorItem.name}</span>
               </div>
             )}
           </div>
@@ -346,6 +424,7 @@ export default function CustomizePage() {
           {filteredItems.map((item, index) => {
             const isLocked = !item.unlocked;
             const isEquippedItem = isItemEquipped(item.id);
+            const isPreviewingItem = isItemPreviewing(item.id);
             const canAfford = coins >= item.cost;
             const isPending = purchaseMutation.isPending || equipMutation.isPending;
 
@@ -355,15 +434,26 @@ export default function CustomizePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                whileHover={{ scale: item.owned || item.cost === 0 ? 1.05 : 1 }}
-                className={`relative bg-white rounded-2xl p-4 shadow-md ${
-                  isLocked ? "opacity-50" : ""
-                } ${isEquippedItem ? "ring-4 ring-purple-500" : ""}`}
+                whileHover={{ scale: isLocked ? 1 : 1.05 }}
+                whileTap={{ scale: isLocked ? 1 : 0.98 }}
+                onClick={() => handlePreview(item)}
+                className={`relative bg-white rounded-2xl p-4 shadow-md cursor-pointer transition-all ${
+                  isLocked ? "opacity-50 cursor-not-allowed" : ""
+                } ${isEquippedItem ? "ring-4 ring-purple-500" : ""} ${
+                  isPreviewingItem && !isEquippedItem ? "ring-4 ring-orange-400" : ""
+                }`}
               >
                 {/* Equipped Badge */}
                 {isEquippedItem && (
                   <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg z-10">
                     <Check className="w-5 h-5 text-white" />
+                  </div>
+                )}
+
+                {/* Preview Badge */}
+                {isPreviewingItem && !isEquippedItem && (
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-orange-400 rounded-full flex items-center justify-center shadow-lg z-10">
+                    <span className="text-white text-xs font-bold">👁</span>
                   </div>
                 )}
 
@@ -383,7 +473,10 @@ export default function CustomizePage() {
                 {/* Action Button */}
                 {item.owned ? (
                   <button
-                    onClick={() => handleEquip(item)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEquip(item);
+                    }}
                     disabled={isEquippedItem || isPending}
                     className={`w-full py-2 rounded-lg font-bold text-sm transition-all ${
                       isEquippedItem
@@ -402,7 +495,10 @@ export default function CustomizePage() {
                   </div>
                 ) : item.cost === 0 ? (
                   <button
-                    onClick={() => handleEquip(item)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEquip(item);
+                    }}
                     disabled={isPending}
                     className="w-full bg-gray-100 text-gray-700 py-2 rounded-lg font-bold text-sm hover:bg-gray-200"
                   >
@@ -410,7 +506,10 @@ export default function CustomizePage() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => handlePurchase(item)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePurchase(item);
+                    }}
                     disabled={!canAfford || isPending}
                     className={`w-full py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-1 transition-all ${
                       canAfford
