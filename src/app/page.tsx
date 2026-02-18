@@ -16,9 +16,14 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { Mascot } from "@/components/Mascot";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useAuthStore } from "@/stores/auth-store";
 
 export default function LandingPage() {
   const { t } = useTranslation('landing');
+  const { isAuthenticated, currentChildProfile, isLoading } = useAuthStore();
+
+  // Determine dashboard URL based on current context
+  const dashboardUrl = currentChildProfile ? "/child/home" : "/parent/dashboard";
 
   const features = [
     {
@@ -72,27 +77,47 @@ export default function LandingPage() {
             </div>
             <div className="hidden md:flex items-center gap-6">
               <LanguageSwitcher />
-              <Link
-                href="/login"
-                className="text-gray-600 hover:text-gray-800 font-semibold transition-colors"
-              >
-                {t('nav.login')}
-              </Link>
-              <Link
-                href="/register"
-                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-6 py-2 rounded-full hover:shadow-lg transition-shadow"
-              >
-                {t('nav.getStarted')}
-              </Link>
+              {!isLoading && isAuthenticated ? (
+                <Link
+                  href={dashboardUrl}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-6 py-2 rounded-full hover:shadow-lg transition-shadow"
+                >
+                  {currentChildProfile ? t('nav.continueLearning') : t('nav.goToDashboard')}
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="text-gray-600 hover:text-gray-800 font-semibold transition-colors"
+                  >
+                    {t('nav.login')}
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-6 py-2 rounded-full hover:shadow-lg transition-shadow"
+                  >
+                    {t('nav.getStarted')}
+                  </Link>
+                </>
+              )}
             </div>
             <div className="md:hidden flex items-center gap-3">
               <LanguageSwitcher />
-              <Link
-                href="/register"
-                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-4 py-2 rounded-full text-sm"
-              >
-                {t('nav.startFree')}
-              </Link>
+              {!isLoading && isAuthenticated ? (
+                <Link
+                  href={dashboardUrl}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-4 py-2 rounded-full text-sm"
+                >
+                  {currentChildProfile ? t('nav.continueLearning') : t('nav.goToDashboard')}
+                </Link>
+              ) : (
+                <Link
+                  href="/register"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-4 py-2 rounded-full text-sm"
+                >
+                  {t('nav.startFree')}
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -116,29 +141,59 @@ export default function LandingPage() {
               {t('hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  href="/register"
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center gap-2"
-                >
-                  {t('hero.startTrial')}
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  href="/login"
-                  className="bg-white text-gray-700 font-semibold px-8 py-4 rounded-xl border-2 border-gray-300 hover:border-purple-500 transition-colors flex items-center justify-center"
-                >
-                  {t('hero.learnMore')}
-                </Link>
-              </motion.div>
+              {!isLoading && isAuthenticated ? (
+                <>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      href="/child/home"
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center gap-2"
+                    >
+                      {t('hero.goToChildHome')}
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      href="/parent/dashboard"
+                      className="bg-white text-gray-700 font-semibold px-8 py-4 rounded-xl border-2 border-gray-300 hover:border-purple-500 transition-colors flex items-center justify-center"
+                    >
+                      {t('hero.goToParentDashboard')}
+                    </Link>
+                  </motion.div>
+                </>
+              ) : (
+                <>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      href="/register"
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center gap-2"
+                    >
+                      {t('hero.startTrial')}
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      href="/login"
+                      className="bg-white text-gray-700 font-semibold px-8 py-4 rounded-xl border-2 border-gray-300 hover:border-purple-500 transition-colors flex items-center justify-center"
+                    >
+                      {t('hero.learnMore')}
+                    </Link>
+                  </motion.div>
+                </>
+              )}
             </div>
             <div className="flex items-center gap-6 mt-8">
               <div className="flex items-center gap-2">
@@ -407,10 +462,14 @@ export default function LandingPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
-              {t('cta.title')}
+              {!isLoading && isAuthenticated ? t('hero.welcomeBack') : t('cta.title')}
             </h2>
             <p className="text-xl text-white/90 mb-8">
-              {t('cta.subtitle')}
+              {!isLoading && isAuthenticated
+                ? (currentChildProfile
+                    ? t('hero.goToChildHome')
+                    : t('cta.subtitle'))
+                : t('cta.subtitle')}
             </p>
             <motion.div
               whileHover={{ scale: 1.05 }}
@@ -418,15 +477,19 @@ export default function LandingPage() {
               className="inline-block"
             >
               <Link
-                href="/register"
+                href={!isLoading && isAuthenticated ? dashboardUrl : "/register"}
                 className="bg-white text-purple-600 font-bold px-10 py-4 rounded-xl shadow-xl hover:shadow-2xl transition-shadow text-lg inline-block"
               >
-                {t('cta.getStarted')}
+                {!isLoading && isAuthenticated
+                  ? (currentChildProfile ? t('nav.continueLearning') : t('nav.goToDashboard'))
+                  : t('cta.getStarted')}
               </Link>
             </motion.div>
-            <p className="text-white/80 mt-4 text-sm">
-              {t('cta.noCard')} &bull; {t('cta.cancelAnytime')} &bull; {t('cta.freeTrial')}
-            </p>
+            {!isAuthenticated && (
+              <p className="text-white/80 mt-4 text-sm">
+                {t('cta.noCard')} &bull; {t('cta.cancelAnytime')} &bull; {t('cta.freeTrial')}
+              </p>
+            )}
           </motion.div>
         </div>
       </section>

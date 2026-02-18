@@ -3,7 +3,9 @@
     "tagline": "Learn. Play. Grow.",
     "login": "Login",
     "getStarted": "Get Started",
-    "startFree": "Start Free"
+    "startFree": "Start Free",
+    "goToDashboard": "Go to Dashboard",
+    "continueLearning": "Continue Learning"
   },
   "hero": {
     "titlePart1": "Learning Made",
@@ -12,7 +14,10 @@
     "startTrial": "Start Free Trial",
     "learnMore": "Learn More",
     "familyCount": "10,000+ families",
-    "newAchievement": "New Achievement!"
+    "newAchievement": "New Achievement!",
+    "welcomeBack": "Welcome Back!",
+    "goToChildHome": "Continue Learning",
+    "goToParentDashboard": "Parent Dashboard"
   },
   "demo": {
     "name": "Alex",

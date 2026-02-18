@@ -3,7 +3,9 @@
     "tagline": "Học. Chơi. Lớn lên.",
     "login": "Đăng nhập",
     "getStarted": "Bắt đầu",
-    "startFree": "Miễn phí"
+    "startFree": "Miễn phí",
+    "goToDashboard": "Vào bảng điều khiển",
+    "continueLearning": "Tiếp tục học"
   },
   "hero": {
     "titlePart1": "Học tập thật",
@@ -12,7 +14,10 @@
     "startTrial": "Dùng thử miễn phí",
     "learnMore": "Tìm hiểu thêm",
     "familyCount": "10.000+ gia đình",
-    "newAchievement": "Thành tựu mới!"
+    "newAchievement": "Thành tựu mới!",
+    "welcomeBack": "Chào mừng trở lại!",
+    "goToChildHome": "Tiếp tục học",
+    "goToParentDashboard": "Bảng điều khiển"
   },
   "demo": {
     "name": "Khánh Hân",
