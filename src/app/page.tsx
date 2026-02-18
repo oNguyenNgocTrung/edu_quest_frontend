@@ -26,6 +26,7 @@ export default function LandingPage() {
   const router = useRouter();
   const { isAuthenticated, currentChildProfile, isLoading, hydrate, clearChildProfile, user } = useAuthStore();
   const [isPinDialogOpen, setIsPinDialogOpen] = useState(false);
+  const [isPwaParentRedirect, setIsPwaParentRedirect] = useState(false);
 
   // Hydrate auth state from localStorage on mount
   useEffect(() => {
@@ -50,9 +51,19 @@ export default function LandingPage() {
       if (savedChildProfileId) {
         router.replace("/child/home");
       } else {
-        // Clear any stale child profile state when going to parent dashboard
-        clearChildProfile();
-        router.replace("/parent/dashboard");
+        // Read user data from localStorage to check if PIN is set
+        const userData = localStorage.getItem("user_data");
+        const hasPin = userData ? JSON.parse(userData)?.has_pin : false;
+
+        if (hasPin) {
+          // Require PIN verification before accessing parent dashboard
+          setIsPwaParentRedirect(true);
+          setIsPinDialogOpen(true);
+        } else {
+          // No PIN set, redirect directly
+          clearChildProfile();
+          router.replace("/parent/dashboard");
+        }
       }
     }
   }, [isLoading, isAuthenticated, router, clearChildProfile]);
@@ -69,7 +80,23 @@ export default function LandingPage() {
 
   const handlePinSuccess = () => {
     clearChildProfile();
-    router.push("/parent/dashboard");
+    // Use replace for PWA redirect to avoid back navigation issues
+    if (isPwaParentRedirect) {
+      router.replace("/parent/dashboard");
+    } else {
+      router.push("/parent/dashboard");
+    }
+    setIsPwaParentRedirect(false);
+  };
+
+  const handlePinDialogClose = () => {
+    setIsPinDialogOpen(false);
+    // If PWA was trying to redirect to parent but user cancelled,
+    // redirect to child home instead (safer for kids)
+    if (isPwaParentRedirect) {
+      setIsPwaParentRedirect(false);
+      router.replace("/child/home");
+    }
   };
 
   const features = [
@@ -626,7 +653,7 @@ export default function LandingPage() {
       {/* PIN Verification Dialog */}
       <PinVerificationDialog
         isOpen={isPinDialogOpen}
-        onClose={() => setIsPinDialogOpen(false)}
+        onClose={handlePinDialogClose}
         onSuccess={handlePinSuccess}
       />
     </div>
