@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ParentModeButton } from "@/components/child/ParentModeButton";
 import { PinVerificationDialog } from "@/components/PinVerificationDialog";
+import { useAuthStore } from "@/stores/auth-store";
 
 export default function ChildLayout({
   children,
@@ -12,6 +13,12 @@ export default function ChildLayout({
 }) {
   const [isPinDialogOpen, setIsPinDialogOpen] = useState(false);
   const router = useRouter();
+  const { clearChildProfile } = useAuthStore();
+
+  const handlePinSuccess = () => {
+    clearChildProfile();
+    router.push("/parent/dashboard");
+  };
 
   return (
     <>
@@ -20,7 +27,7 @@ export default function ChildLayout({
       <PinVerificationDialog
         isOpen={isPinDialogOpen}
         onClose={() => setIsPinDialogOpen(false)}
-        onSuccess={() => router.push("/parent/dashboard")}
+        onSuccess={handlePinSuccess}
       />
     </>
   );
