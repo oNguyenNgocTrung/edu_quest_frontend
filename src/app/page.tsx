@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Star,
@@ -18,10 +19,13 @@ import { useTranslation } from "react-i18next";
 import { Mascot } from "@/components/Mascot";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthStore } from "@/stores/auth-store";
+import { PinVerificationDialog } from "@/components/PinVerificationDialog";
 
 export default function LandingPage() {
   const { t } = useTranslation('landing');
-  const { isAuthenticated, currentChildProfile, isLoading, hydrate } = useAuthStore();
+  const router = useRouter();
+  const { isAuthenticated, currentChildProfile, isLoading, hydrate, clearChildProfile, user } = useAuthStore();
+  const [isPinDialogOpen, setIsPinDialogOpen] = useState(false);
 
   // Hydrate auth state from localStorage on mount
   useEffect(() => {
@@ -30,6 +34,21 @@ export default function LandingPage() {
 
   // Determine dashboard URL based on current context
   const dashboardUrl = currentChildProfile ? "/child/home" : "/parent/dashboard";
+
+  // Handle parent dashboard access - requires PIN if child profile is selected
+  const handleParentDashboardClick = () => {
+    if (currentChildProfile && user?.has_pin) {
+      setIsPinDialogOpen(true);
+    } else {
+      clearChildProfile();
+      router.push("/parent/dashboard");
+    }
+  };
+
+  const handlePinSuccess = () => {
+    clearChildProfile();
+    router.push("/parent/dashboard");
+  };
 
   const features = [
     {
@@ -165,12 +184,12 @@ export default function LandingPage() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Link
-                      href="/parent/dashboard"
+                    <button
+                      onClick={handleParentDashboardClick}
                       className="bg-white text-gray-700 font-semibold px-8 py-4 rounded-xl border-2 border-gray-300 hover:border-purple-500 transition-colors flex items-center justify-center"
                     >
                       {t('hero.goToParentDashboard')}
-                    </Link>
+                    </button>
                   </motion.div>
                 </>
               ) : (
@@ -581,6 +600,13 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* PIN Verification Dialog */}
+      <PinVerificationDialog
+        isOpen={isPinDialogOpen}
+        onClose={() => setIsPinDialogOpen(false)}
+        onSuccess={handlePinSuccess}
+      />
     </div>
   );
 }
