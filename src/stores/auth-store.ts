@@ -66,6 +66,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     localStorage.removeItem("user_id");
     localStorage.removeItem("user_data");
     localStorage.removeItem("child_profile_id");
+    // Clear parent access verification on logout
+    sessionStorage.removeItem("parent_access_verified");
     set({
       user: null,
       childProfiles: [],

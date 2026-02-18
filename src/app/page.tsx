@@ -79,19 +79,17 @@ export default function LandingPage() {
   };
 
   const handlePinSuccess = () => {
-    clearChildProfile();
-    // Use replace for PWA redirect to avoid back navigation issues
-    if (isPwaParentRedirect) {
-      router.replace("/parent/dashboard");
-    } else {
-      router.push("/parent/dashboard");
-    }
+    // Mark as no longer a PWA redirect BEFORE navigation to prevent
+    // handlePinDialogClose from also redirecting
     setIsPwaParentRedirect(false);
+    setIsPinDialogOpen(false);
+    clearChildProfile();
+    router.replace("/parent/dashboard");
   };
 
   const handlePinDialogClose = () => {
     setIsPinDialogOpen(false);
-    // If PWA was trying to redirect to parent but user cancelled,
+    // If PWA was trying to redirect to parent but user cancelled (not success),
     // redirect to child home instead (safer for kids)
     if (isPwaParentRedirect) {
       setIsPwaParentRedirect(false);

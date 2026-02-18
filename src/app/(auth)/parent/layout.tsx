@@ -7,7 +7,10 @@ import { Play } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTranslation } from "react-i18next";
 import { resolveAvatar } from "@/lib/avatars";
+import { PinVerificationDialog } from "@/components/PinVerificationDialog";
 import type { ChildProfile } from "@/types";
+
+const PARENT_ACCESS_VERIFIED_KEY = "parent_access_verified";
 
 export default function ParentLayout({
   children,
@@ -16,9 +19,42 @@ export default function ParentLayout({
 }) {
   const router = useRouter();
   const { t } = useTranslation("common");
-  const { childProfiles, selectChildProfile } = useAuthStore();
+  const { childProfiles, selectChildProfile, user, clearChildProfile } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
+  const [isPinDialogOpen, setIsPinDialogOpen] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isCheckingVerification, setIsCheckingVerification] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Check if parent access is already verified in this session
+  useEffect(() => {
+    const verified = sessionStorage.getItem(PARENT_ACCESS_VERIFIED_KEY) === "true";
+    if (verified) {
+      setIsVerified(true);
+      setIsCheckingVerification(false);
+    } else if (user?.has_pin) {
+      // User has PIN, need to verify
+      setIsPinDialogOpen(true);
+      setIsCheckingVerification(false);
+    } else {
+      // No PIN set, allow access
+      setIsVerified(true);
+      setIsCheckingVerification(false);
+    }
+  }, [user?.has_pin]);
+
+  const handlePinSuccess = () => {
+    sessionStorage.setItem(PARENT_ACCESS_VERIFIED_KEY, "true");
+    setIsVerified(true);
+    setIsPinDialogOpen(false);
+    clearChildProfile();
+  };
+
+  const handlePinDialogClose = () => {
+    setIsPinDialogOpen(false);
+    // If user cancels PIN, redirect to child home (safer for kids)
+    router.replace("/child/home");
+  };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -37,6 +73,26 @@ export default function ParentLayout({
     setIsOpen(false);
     router.push("/child/home");
   };
+
+  // Show loading while checking verification
+  if (isCheckingVerification) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600" />
+      </div>
+    );
+  }
+
+  // Show PIN dialog if not verified
+  if (!isVerified) {
+    return (
+      <PinVerificationDialog
+        isOpen={isPinDialogOpen}
+        onClose={handlePinDialogClose}
+        onSuccess={handlePinSuccess}
+      />
+    );
+  }
 
   if (childProfiles.length === 0) {
     return <>{children}</>;
