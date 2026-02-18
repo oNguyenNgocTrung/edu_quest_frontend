@@ -35,6 +35,19 @@ export default function LandingPage() {
   // Determine dashboard URL based on current context
   const dashboardUrl = currentChildProfile ? "/child/home" : "/parent/dashboard";
 
+  // Auto-redirect logged-in users when opening PWA (standalone mode)
+  useEffect(() => {
+    if (isLoading) return;
+
+    // Check if running as installed PWA (standalone mode)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+      || (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
+
+    if (isStandalone && isAuthenticated) {
+      router.replace(dashboardUrl);
+    }
+  }, [isLoading, isAuthenticated, dashboardUrl, router]);
+
   // Handle parent dashboard access - requires PIN if child profile is selected
   const handleParentDashboardClick = () => {
     if (currentChildProfile && user?.has_pin) {
