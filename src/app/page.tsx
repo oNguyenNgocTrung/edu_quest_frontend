@@ -47,10 +47,15 @@ export default function LandingPage() {
       // Read child_profile_id directly from localStorage to avoid race condition
       // (currentChildProfile may not be hydrated yet from API)
       const savedChildProfileId = localStorage.getItem("child_profile_id");
-      const redirectUrl = savedChildProfileId ? "/child/home" : "/parent/dashboard";
-      router.replace(redirectUrl);
+      if (savedChildProfileId) {
+        router.replace("/child/home");
+      } else {
+        // Clear any stale child profile state when going to parent dashboard
+        clearChildProfile();
+        router.replace("/parent/dashboard");
+      }
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, router, clearChildProfile]);
 
   // Handle parent dashboard access - requires PIN if child profile is selected
   const handleParentDashboardClick = () => {
