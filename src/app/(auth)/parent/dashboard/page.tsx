@@ -55,7 +55,7 @@ function formatTimeAgo(dateStr: string): string {
 export default function ParentDashboardPage() {
   const router = useRouter();
   const { t } = useTranslation("parent");
-  const { user, logout, childProfiles, selectChildProfile } = useAuthStore();
+  const { user, logout, childProfiles } = useAuthStore();
 
   const menuItems = [
     {
@@ -111,14 +111,9 @@ export default function ParentDashboardPage() {
 
   const defaultChildId = useMemo(() => {
     if (childProfiles.length === 0) return "";
-    const saved = typeof window !== "undefined" ? localStorage.getItem("child_profile_id") : null;
-    const found = childProfiles.find((p) => p.id === saved);
-    const defaultProfile = found || childProfiles[0];
-    // Ensure localStorage is set for apiClient header
-    if (!found && defaultProfile && typeof window !== "undefined") {
-      localStorage.setItem("child_profile_id", defaultProfile.id);
-    }
-    return defaultProfile.id;
+    // Use first child as default for analytics view (don't persist to localStorage)
+    // localStorage child_profile_id is only for determining child vs parent mode
+    return childProfiles[0].id;
   }, [childProfiles]);
 
   const [selectedChildId, setSelectedChildId] = useState<string>("");
@@ -127,11 +122,10 @@ export default function ParentDashboardPage() {
   const resolvedChildId = selectedChildId || defaultChildId;
 
   const handleChildSelect = (id: string) => {
+    // Only update local state for analytics view
+    // Don't call selectChildProfile as that persists to localStorage
+    // and would affect PWA startup mode
     setSelectedChildId(id);
-    const profile = childProfiles.find((p) => p.id === id);
-    if (profile) {
-      selectChildProfile(profile);
-    }
   };
 
   const selectedChild = childProfiles.find((p) => p.id === resolvedChildId);
