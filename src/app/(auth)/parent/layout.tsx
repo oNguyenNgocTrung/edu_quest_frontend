@@ -12,6 +12,12 @@ import type { ChildProfile } from "@/types";
 
 const PARENT_ACCESS_VERIFIED_KEY = "parent_access_verified";
 
+// Check sessionStorage synchronously for initial state
+function getInitialVerifiedState(): boolean {
+  if (typeof window === "undefined") return false;
+  return sessionStorage.getItem(PARENT_ACCESS_VERIFIED_KEY) === "true";
+}
+
 export default function ParentLayout({
   children,
 }: {
@@ -22,26 +28,34 @@ export default function ParentLayout({
   const { childProfiles, selectChildProfile, user, clearChildProfile } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
   const [isPinDialogOpen, setIsPinDialogOpen] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
-  const [isCheckingVerification, setIsCheckingVerification] = useState(true);
+  // Initialize from sessionStorage to avoid flash
+  const [isVerified, setIsVerified] = useState(getInitialVerifiedState);
+  const [needsPinCheck, setNeedsPinCheck] = useState(true);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Check if parent access is already verified in this session
+  // Check if parent access needs PIN verification
   useEffect(() => {
-    const verified = sessionStorage.getItem(PARENT_ACCESS_VERIFIED_KEY) === "true";
-    if (verified) {
-      setIsVerified(true);
-      setIsCheckingVerification(false);
-    } else if (user?.has_pin) {
-      // User has PIN, need to verify
+    // Already verified via sessionStorage
+    if (isVerified) {
+      setNeedsPinCheck(false);
+      return;
+    }
+
+    // Wait for user data to be available
+    if (user === null) {
+      return;
+    }
+
+    // User has PIN and not verified - show dialog
+    if (user.has_pin) {
       setIsPinDialogOpen(true);
-      setIsCheckingVerification(false);
+      setNeedsPinCheck(false);
     } else {
       // No PIN set, allow access
       setIsVerified(true);
-      setIsCheckingVerification(false);
+      setNeedsPinCheck(false);
     }
-  }, [user?.has_pin]);
+  }, [user, isVerified]);
 
   const handlePinSuccess = () => {
     sessionStorage.setItem(PARENT_ACCESS_VERIFIED_KEY, "true");
@@ -51,9 +65,11 @@ export default function ParentLayout({
   };
 
   const handlePinDialogClose = () => {
-    setIsPinDialogOpen(false);
-    // If user cancels PIN, redirect to child home (safer for kids)
-    router.replace("/child/home");
+    // Only redirect if not already verified (user actually cancelled)
+    if (!isVerified) {
+      setIsPinDialogOpen(false);
+      router.replace("/child/home");
+    }
   };
 
   useEffect(() => {
@@ -74,8 +90,8 @@ export default function ParentLayout({
     router.push("/child/home");
   };
 
-  // Show loading while checking verification
-  if (isCheckingVerification) {
+  // Show loading while waiting for user data to determine if PIN is needed
+  if (needsPinCheck && !isVerified) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600" />
@@ -83,8 +99,8 @@ export default function ParentLayout({
     );
   }
 
-  // Show PIN dialog if not verified
-  if (!isVerified) {
+  // Show PIN dialog if not verified and dialog is open
+  if (!isVerified && isPinDialogOpen) {
     return (
       <PinVerificationDialog
         isOpen={isPinDialogOpen}
@@ -92,6 +108,13 @@ export default function ParentLayout({
         onSuccess={handlePinSuccess}
       />
     );
+  }
+
+  // If not verified and dialog not open (user closed it), this shouldn't happen
+  // but handle it by redirecting
+  if (!isVerified) {
+    router.replace("/child/home");
+    return null;
   }
 
   if (childProfiles.length === 0) {
