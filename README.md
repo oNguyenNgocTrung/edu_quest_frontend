@@ -49,6 +49,32 @@ Copy `.env.example` to `.env.local` and fill in the values.
 - **Charts:** Recharts
 - **Components:** CVA (class-variance-authority) + tailwind-merge
 - **Component Library:** Storybook 10
+- **PWA:** @ducanh2912/next-pwa
+
+## PWA Support
+
+LearnNest is a Progressive Web App, enabling:
+
+- **Offline access** — Cached pages work without internet
+- **Installable** — Add to home screen on mobile/desktop
+- **Fast navigation** — Front-end caching for instant page transitions
+
+### Configuration
+
+PWA is configured in `next.config.ts` using `@ducanh2912/next-pwa`:
+
+- Service worker disabled in development (enable with `disable: false` for testing)
+- Manifest generated from `src/app/manifest.ts`
+- App icon at `public/icons/icon.svg`
+
+### Testing PWA Locally
+
+```bash
+npm run build
+npm run start    # PWA only works in production mode
+```
+
+Open Chrome DevTools > Application > Service Workers to verify registration.
 
 ## Project Structure
 
