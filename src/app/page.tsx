@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Star,
@@ -20,7 +21,12 @@ import { useAuthStore } from "@/stores/auth-store";
 
 export default function LandingPage() {
   const { t } = useTranslation('landing');
-  const { isAuthenticated, currentChildProfile, isLoading } = useAuthStore();
+  const { isAuthenticated, currentChildProfile, isLoading, hydrate } = useAuthStore();
+
+  // Hydrate auth state from localStorage on mount
+  useEffect(() => {
+    hydrate();
+  }, [hydrate]);
 
   // Determine dashboard URL based on current context
   const dashboardUrl = currentChildProfile ? "/child/home" : "/parent/dashboard";
