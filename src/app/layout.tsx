@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Nunito, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/lib/providers";
@@ -19,6 +19,27 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "LearnNest - Gamified Learning for Kids",
   description: "A fun, gamified learning platform for children",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "LearnNest",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: "/icons/icon.svg",
+    apple: "/icons/icon.svg",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#9333EA",
 };
 
 export default function RootLayout({
