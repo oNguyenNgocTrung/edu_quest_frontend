@@ -84,6 +84,8 @@ export default function LandingPage() {
     setIsPwaParentRedirect(false);
     setIsPinDialogOpen(false);
     clearChildProfile();
+    // Set parent access verified so parent layout doesn't ask for PIN again
+    sessionStorage.setItem("parent_access_verified", "true");
     router.replace("/parent/dashboard");
   };
 
