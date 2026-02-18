@@ -44,9 +44,13 @@ export default function LandingPage() {
       || (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
 
     if (isStandalone && isAuthenticated) {
-      router.replace(dashboardUrl);
+      // Read child_profile_id directly from localStorage to avoid race condition
+      // (currentChildProfile may not be hydrated yet from API)
+      const savedChildProfileId = localStorage.getItem("child_profile_id");
+      const redirectUrl = savedChildProfileId ? "/child/home" : "/parent/dashboard";
+      router.replace(redirectUrl);
     }
-  }, [isLoading, isAuthenticated, dashboardUrl, router]);
+  }, [isLoading, isAuthenticated, router]);
 
   // Handle parent dashboard access - requires PIN if child profile is selected
   const handleParentDashboardClick = () => {
