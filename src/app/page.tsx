@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -19,14 +19,11 @@ import { useTranslation } from "react-i18next";
 import { Mascot } from "@/components/Mascot";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuthStore } from "@/stores/auth-store";
-import { PinVerificationDialog } from "@/components/PinVerificationDialog";
 
 export default function LandingPage() {
   const { t } = useTranslation('landing');
   const router = useRouter();
-  const { isAuthenticated, currentChildProfile, isLoading, hydrate, clearChildProfile, user } = useAuthStore();
-  const [isPinDialogOpen, setIsPinDialogOpen] = useState(false);
-  const [isPwaParentRedirect, setIsPwaParentRedirect] = useState(false);
+  const { isAuthenticated, currentChildProfile, isLoading, hydrate, clearChildProfile } = useAuthStore();
 
   // Hydrate auth state from localStorage on mount
   useEffect(() => {
@@ -46,57 +43,21 @@ export default function LandingPage() {
 
     if (isStandalone && isAuthenticated) {
       // Read child_profile_id directly from localStorage to avoid race condition
-      // (currentChildProfile may not be hydrated yet from API)
       const savedChildProfileId = localStorage.getItem("child_profile_id");
       if (savedChildProfileId) {
         router.replace("/child/home");
       } else {
-        // Read user data from localStorage to check if PIN is set
-        const userData = localStorage.getItem("user_data");
-        const hasPin = userData ? JSON.parse(userData)?.has_pin : false;
-
-        if (hasPin) {
-          // Require PIN verification before accessing parent dashboard
-          setIsPwaParentRedirect(true);
-          setIsPinDialogOpen(true);
-        } else {
-          // No PIN set, redirect directly
-          clearChildProfile();
-          router.replace("/parent/dashboard");
-        }
+        // Redirect to parent dashboard - parent layout handles PIN verification
+        clearChildProfile();
+        router.replace("/parent/dashboard");
       }
     }
   }, [isLoading, isAuthenticated, router, clearChildProfile]);
 
-  // Handle parent dashboard access - requires PIN if child profile is selected
+  // Handle parent dashboard click - parent layout handles PIN verification
   const handleParentDashboardClick = () => {
-    if (currentChildProfile && user?.has_pin) {
-      setIsPinDialogOpen(true);
-    } else {
-      clearChildProfile();
-      router.push("/parent/dashboard");
-    }
-  };
-
-  const handlePinSuccess = () => {
-    // Mark as no longer a PWA redirect BEFORE navigation to prevent
-    // handlePinDialogClose from also redirecting
-    setIsPwaParentRedirect(false);
-    setIsPinDialogOpen(false);
     clearChildProfile();
-    // Set parent access verified so parent layout doesn't ask for PIN again
-    sessionStorage.setItem("parent_access_verified", "true");
-    router.replace("/parent/dashboard");
-  };
-
-  const handlePinDialogClose = () => {
-    setIsPinDialogOpen(false);
-    // If PWA was trying to redirect to parent but user cancelled (not success),
-    // redirect to child home instead (safer for kids)
-    if (isPwaParentRedirect) {
-      setIsPwaParentRedirect(false);
-      router.replace("/child/home");
-    }
+    router.push("/parent/dashboard");
   };
 
   const features = [
@@ -649,13 +610,6 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
-
-      {/* PIN Verification Dialog */}
-      <PinVerificationDialog
-        isOpen={isPinDialogOpen}
-        onClose={handlePinDialogClose}
-        onSuccess={handlePinSuccess}
-      />
     </div>
   );
 }

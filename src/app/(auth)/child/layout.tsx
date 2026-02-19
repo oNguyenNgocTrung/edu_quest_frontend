@@ -17,6 +17,9 @@ export default function ChildLayout({
 
   const handlePinSuccess = () => {
     clearChildProfile();
+    setIsPinDialogOpen(false);
+    // Mark parent access as verified so parent layout doesn't ask again
+    sessionStorage.setItem("parent_access_verified", "true");
     router.push("/parent/dashboard");
   };
 

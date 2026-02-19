@@ -87,6 +87,8 @@ export default function ParentLayout({
   const handleSwitchToChild = (profile: ChildProfile) => {
     selectChildProfile(profile);
     setIsOpen(false);
+    // Clear parent verification so PIN is required next time
+    sessionStorage.removeItem(PARENT_ACCESS_VERIFIED_KEY);
     router.push("/child/home");
   };
 

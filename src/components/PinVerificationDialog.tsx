@@ -103,7 +103,7 @@ export function PinVerificationDialog({
       const verified = await verifyPin(pinCode);
       if (verified) {
         onSuccess();
-        onClose();
+        // Don't call onClose here - let onSuccess handle cleanup
       } else {
         setError(t('pin.incorrectPin'));
         setPin(["", "", "", ""]);
