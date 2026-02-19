@@ -3,6 +3,7 @@ import { Nunito, Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/lib/providers";
 import { HtmlLangUpdater } from "@/components/HtmlLangUpdater";
+import { Analytics } from "@vercel/analytics/next";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -57,6 +58,7 @@ export default function RootLayout({
           <HtmlLangUpdater />
           {children}
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
